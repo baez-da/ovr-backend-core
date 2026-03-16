@@ -34,9 +34,12 @@ El OVR no opera en aislamiento. Se integra con sistemas upstream (que lo aliment
 
 ### 2.1 Sistemas upstream
 
-**GMS (Games Management System)** — Fuente de verdad pre-competición. Gestiona acreditación, cuotas e inscripciones
-deportivas. Relación DDD: **Conformist + Anti-Corruption Layer**. No podemos negociar su modelo de datos; nuestro ACL
-traduce sus estructuras a nuestro dominio interno.
+**GMS (Games Management System)** — Fuente de verdad pre-competición. Internamente comprende dos subsistemas
+relevantes: **ACR** (Accreditation), que gestiona datos personales y acreditaciones, y **SEQ** (Sport Entries &
+Qualification), que gestiona inscripciones deportivas a nivel de evento. SEQ es el que captura qué atleta compite en
+qué evento, incluyendo datos de inscripción como `Seed` y tipo de clasificación (`QUAL_TYPE`). Relación DDD:
+**Conformist + Anti-Corruption Layer**. No podemos negociar su modelo de datos; nuestro ACL traduce sus estructuras a
+nuestro dominio interno.
 
 **Timing & Scoring (T&S)** — Puede ser un proveedor externo (Omega, Swiss Timing, Seiko) o una solución propia. Es el
 componente central de captura de datos crudos de competición. Incluye:
@@ -93,12 +96,23 @@ Concepto crítico de la arquitectura. La "propiedad" de los datos cambia de mano
 **Fase pre-competición: GMS es el dueño.** Gestiona registros, cuotas, acreditaciones. Empuja datos hacia el OVR para
 inicializar sistemas.
 
+**Initial Download.** Entre 3 y 5 días antes del inicio de la competición (SS-x), el GMS ejecuta una descarga masiva
+hacia el OVR que incluye: todos los participantes acreditados (`DT_PARTIC`), equipos conformados (`DT_PARTIC_TEAMS`) e
+inscripciones por evento (`DT_ENTRIES`). Se envían **todos** los atletas — incluyendo cancelados (`CANCEL`) y reservas
+(`AP`) — para que la sede tenga datos completos ante posibles sustituciones de última hora. Los participantes llegan
+pre-inscritos en los eventos específicos del SEQ, con la excepción de disciplinas donde la selección se hace en la
+reunión de capitanes (esquí de fondo, biatlón, gimnasia artística): en esos casos, los atletas llegan inscritos en un
+**evento genérico** a nivel disciplina-género (ej. "Biatlón Masculino") y es el operador del OVR quien los mueve al
+evento real una vez definido. Estos mensajes se envían múltiples veces antes de la fecha oficial de transferencia para
+pruebas, verificación de calidad de datos y traducción de nombres por consumidores externos.
+
 **Punto de transferencia.** Coincide con: cierre oficial de inscripciones, finalización de reunión técnica, pesaje
 oficial (deportes por peso), o publicación de primera start list.
 
 **Fase de competición: OVR toma el control.** El OVR es el dueño absoluto de lo que ocurre en el campo de juego. GMS
 queda bloqueado para cambios directos. El OVR genera mensajes ODF y los envía al ODR, notificando al GMS y demás
-sistemas.
+sistemas. **El flujo se invierte:** tras la transferencia, es el OVR quien actualiza electrónicamente al SEQ/GMS para
+que los registros centrales reflejen los cambios hechos en sede (nuevas inscripciones, correcciones, bajas).
 
 ---
 
@@ -205,8 +219,12 @@ Registry, Team Composition y Competition Config.
 SWM y `WDR` en OWS simultáneamente. Esto resuelve el problema histórico del atleta lesionado que aparecía en start lists
 de disciplinas donde ya no competía.
 
-**Materialización del transfer of control:** Una vez activas las inscripciones, este módulo deja de aceptar cambios del
-GMS y solo el operador local puede modificar.
+**Materialización del transfer of control:** Antes de la transferencia, el módulo recibe inscripciones del SEQ/GMS vía
+ACL como carga inicial (Initial Download). Una vez completada la transferencia, el módulo deja de aceptar cambios del
+GMS y solo el operador local puede modificar. Esto incluye: corregir inscripciones existentes, dar de baja atletas
+(`WDR`), y reasignar atletas de eventos genéricos a eventos reales (en disciplinas donde la selección se define en
+reunión de capitanes). Cada cambio realizado en sede genera un `DT_ENTRIES` actualizado que Data Distribution emite
+hacia el exterior, invirtiendo el flujo original GMS → OVR a OVR → GMS/SEQ.
 
 **Mensajes ODF asociados:** `DT_ENTRIES`.
 
