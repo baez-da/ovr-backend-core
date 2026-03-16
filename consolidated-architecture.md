@@ -137,6 +137,63 @@ que los registros centrales reflejen los cambios hechos en sede (nuevas inscripc
   `Code=SHIRT_NAME, Value="G. OCHOA"`). La estructura base nunca cambia; se agregan nuevos `Code` por diccionario de
   deporte.
 
+**Sistema de nombres ODF:**
+
+El ODF define múltiples representaciones del nombre de un participante, cada una optimizada para un contexto de
+visualización específico. Los nombres base (`GivenName`, `FamilyName`) son la fuente desde la cual se derivan todas las
+demás variantes.
+
+*Nombres base (datos biográficos):*
+
+- `FamilyName` (M, 25 chars) — Apellido preferido/deportivo en *mixed case* (ej. `McPherson`). Es el campo obligatorio
+  porque algunos atletas son conocidos por un solo nombre (ej. futbolistas brasileños); en ese caso `GivenName` queda
+  vacío y el nombre único va aquí.
+- `GivenName` (O, 25 chars) — Nombre de pila preferido en *mixed case* (ej. `Liz`).
+- `PassportFamilyName` / `PassportGivenName` (O, 25 chars) — Nombres legales del pasaporte, siempre en **MAYÚSCULAS**
+  (ej. `MCPHERSON`, `ELIZABETH`). Solo para acreditación y seguridad.
+- `LocalFamilyName` / `LocalGivenName` (O, 25 chars) — Nombre traducido al idioma local del país anfitrión.
+
+*Nombres para impresión y reportes:*
+
+- `PrintName` (M, 35 chars) — Apellido en *limited mixed case* + espacio + nombre en *mixed case*.
+  Ej: `McPHERSON Liz`. Se usa en reportes oficiales impresos y MediaZone.
+- `PrintInitialName` (M, 18 chars) — Apellido + espacio + inicial del nombre **sin punto**.
+  Ej: `McPHERSON L`. Para reportes con espacio reducido.
+
+*Nombres para gráficos de televisión:*
+
+- `TVName` (M, 35 chars) — Nombre + espacio + apellido en *limited mixed case*.
+  Ej: `Liz McPHERSON`. Para gráficos en pantalla y CIS.
+- `TVInitialName` (M, 18 chars) — Inicial con punto + espacio + apellido.
+  Ej: `L. McPHERSON`. Versión corta para TV.
+- `TVFamilyName` (M, 18 chars) — Solo el apellido en *limited mixed case*.
+  Ej: `McPHERSON`. Para gráficos donde solo cabe el apellido.
+
+*Nombres para scoreboards en sede (generados por OVR):*
+
+- `PSCBName` / `PSCBShortName` / `PSCBLongName` (O, 50 chars cada uno) — Variantes para las pantallas físicas del
+  estadio. **No llegan del GMS; los crea y mantiene exclusivamente el OVR** según tamaños y resoluciones de pantalla de
+  cada sede. Formato habitual: apellido en MAYÚSCULAS + nombre en mixed case (ej. `SMITH John`).
+
+*Reglas de construcción de nombres:*
+
+- **Juego de caracteres:** Solo ASCII romano + apóstrofo + guion + espacio. Sin acentos ni diacríticos — `á` → `a`,
+  `ñ` → `n`, `ß` → `ss`, `æ` → `ae`. Hay tabla de conversión definida por ODF.
+- **Algoritmo de limited mixed case:** Reconoce partículas (`de`, `von`, `van`, `del`, `der`, `di`, `dos`, `du`, `la`,
+  `le`, `los`, `ter`, `vander`) y las deja en minúsculas. Detecta prefijos `Mc`/`Mac` para capitalización especial
+  (`MCBAIN` → `McBAIN`). Alcanza ~90% de precisión automática; el ~6% de nombres complejos requiere intervención manual.
+- **Truncamiento (en orden de prioridad):** 1) Abreviar nombre de pila a inicial con punto. 2) Eliminar la inicial
+  completamente. 3) Truncar apellido hasta el límite y **siempre añadir punto final** para indicar truncamiento
+  (ej. `van KOOPEREN-SCHMORAN.`).
+- **Desambiguación de duplicados:** Si dos atletas del mismo NOC y mismo apellido compiten en el mismo evento, el
+  `TVFamilyName` concatena iniciales del nombre al apellido hasta distinguirlos (ej. Alice D'Amato → `Al.D'AMATO`,
+  Asia D'Amato → `As.D'AMATO`).
+- **TV Name Switching (regla asiática):** Para atletas de CHN, JPN, KOR, PRK, TPE, HKG, MAC y COR, el orden en
+  nombres de TV se invierte automáticamente: en lugar de `John SMITH` se muestra `SMITH John`; en lugar de `J. SMITH`
+  se muestra `SMITH J.`.
+- **Ordenamiento:** Sort estricto UPPERCASE por `FamilyName` como campo único completo. Las partículas cuentan:
+  `von BIDDER` va bajo la V, `de SILVA` bajo la D.
+
 **Regla fundamental:** Un participante existe una vez y nunca se elimina. Lo que cambia es el estado de sus
 inscripciones y asignaciones, no su perfil.
 
@@ -153,6 +210,13 @@ inscripciones y asignaciones, no su perfil.
 - `teamId` — ID propio del equipo (ej. `JUDXTEAM--FRA01`).
 - `Composition` — Lista de `participantId` de los miembros.
 - `Substitute` — Atributo por miembro (`Y`/`N`) para indicar suplentes.
+- `Name` (M, 73 chars) — Nombre completo del equipo. Para parejas: concatenación de print names separados por barra
+  (ej. `JONES Tom / SMITH John`). Para naciones: nombre largo del NOC en mixed case (ej. `United States of America`).
+- `ShortName` (M, 40 chars) — Versión corta. Para parejas: initial names (ej. `JONES T / SMITH J`). Para naciones:
+  nombre corto (ej. `United States`).
+- `TVTeamName` (M, 21 chars) — Formato específico para gráficos de TV (ej. `GREENE/SMITH`).
+- `PSCBName` / `PSCBShortName` / `PSCBLongName` (O, 50 chars) — Nombres para scoreboards, generados y mantenidos
+  exclusivamente por el OVR, igual que en participantes individuales.
 
 **Regla de oro ODF:** Un equipo participa en un solo evento; si las mismas personas participan en múltiples eventos, hay
 un equipo distinto (con ID distinto) para cada evento. Esto no es una convención arbitraria — el código del evento está
