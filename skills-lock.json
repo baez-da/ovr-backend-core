@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "dotnet-10-csharp-14": {
+      "source": "mhagrelius/dotfiles",
+      "sourceType": "github",
+      "computedHash": "9cf6f204c46377203415bced22b9d56c844aece170bb6aa5afab2fe50d7e78fb"
+    }
+  }
+}
