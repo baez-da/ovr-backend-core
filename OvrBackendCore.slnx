@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/OVR.Api/OVR.Api.csproj" />
+    <Project Path="src/OVR.Ingestion/OVR.Ingestion.csproj" />
+    <Project Path="src/OVR.Modules.CoachAssignment/OVR.Modules.CoachAssignment.csproj" />
+    <Project Path="src/OVR.Modules.CompetitionConfig/OVR.Modules.CompetitionConfig.csproj" />
+    <Project Path="src/OVR.Modules.DataDistribution/OVR.Modules.DataDistribution.csproj" />
+    <Project Path="src/OVR.Modules.DataEntry/OVR.Modules.DataEntry.csproj" />
+    <Project Path="src/OVR.Modules.Entries/OVR.Modules.Entries.csproj" />
+    <Project Path="src/OVR.Modules.OfficialAssignment/OVR.Modules.OfficialAssignment.csproj" />
+    <Project Path="src/OVR.Modules.ParticipantRegistry/OVR.Modules.ParticipantRegistry.csproj" />
+    <Project Path="src/OVR.Modules.Progression/OVR.Modules.Progression.csproj" />
+    <Project Path="src/OVR.Modules.Reporting/OVR.Modules.Reporting.csproj" />
+    <Project Path="src/OVR.Modules.Scheduling/OVR.Modules.Scheduling.csproj" />
+    <Project Path="src/OVR.Modules.TeamComposition/OVR.Modules.TeamComposition.csproj" />
+    <Project Path="src/OVR.SharedKernel/OVR.SharedKernel.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/OVR.Api.IntegrationTests/OVR.Api.IntegrationTests.csproj" />
+    <Project Path="tests/OVR.Modules.DataEntry.Tests/OVR.Modules.DataEntry.Tests.csproj" />
+    <Project Path="tests/OVR.Modules.Entries.Tests/OVR.Modules.Entries.Tests.csproj" />
+    <Project Path="tests/OVR.Modules.ParticipantRegistry.Tests/OVR.Modules.ParticipantRegistry.Tests.csproj" />
+    <Project Path="tests/OVR.SharedKernel.Tests/OVR.SharedKernel.Tests.csproj" />
+  </Folder>
+</Solution>
