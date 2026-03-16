@@ -49,6 +49,8 @@ Thumbs.db
 appsettings.Development.json
 appsettings.Local.json
 secrets.json
+http-client.private.env.json
+http/http-client.private.env.json
 
 # Node tooling, if later added for frontend/assets
 node_modules/

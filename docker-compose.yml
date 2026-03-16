@@ -1,0 +1,13 @@
+services:
+  mongodb:
+    image: mongo:8
+    container_name: ovr-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - ovr-mongo-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: ovr
+
+volumes:
+  ovr-mongo-data:

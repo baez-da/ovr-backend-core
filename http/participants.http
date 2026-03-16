@@ -1,0 +1,145 @@
+### Health check
+GET {{host}}/
+Accept: application/json
+
+### Create Participant - Athlete (Swimming, USA)
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "participantId": "1234567",
+  "type": "Athlete",
+  "givenName": "Katie",
+  "familyName": "Ledecky",
+  "genderCode": "F",
+  "birthDate": "1997-03-17",
+  "noc": "USA"
+}
+
+### Create Participant - Athlete (Track & Field, Jamaica)
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "participantId": "2345678",
+  "type": "Athlete",
+  "givenName": "Shelly-Ann",
+  "familyName": "Fraser-Pryce",
+  "genderCode": "F",
+  "birthDate": "1986-12-27",
+  "noc": "JAM"
+}
+
+### Create Participant - Team Official
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "participantId": "9000001",
+  "type": "TeamOfficial",
+  "givenName": "Carlos",
+  "familyName": "Rodriguez",
+  "genderCode": "M",
+  "birthDate": "1975-06-15",
+  "noc": "ESP"
+}
+
+### Create Participant - Technical Official
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "participantId": "8000001",
+  "type": "TechnicalOfficial",
+  "givenName": "Hans",
+  "familyName": "Mueller",
+  "genderCode": "M",
+  "birthDate": null,
+  "noc": "GER"
+}
+
+### Get Participant by ID
+GET {{host}}/api/participants/1234567
+Accept: application/json
+
+### Get Participant (not found)
+GET {{host}}/api/participants/9999999
+Accept: application/json
+
+### List Participants by NOC - USA
+GET {{host}}/api/participants/by-noc/USA
+Accept: application/json
+
+### List Participants by NOC - Jamaica
+GET {{host}}/api/participants/by-noc/JAM
+Accept: application/json
+
+### List Participants by NOC (empty result)
+GET {{host}}/api/participants/by-noc/ZZZ
+Accept: application/json
+
+### Validation: empty participantId
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "participantId": "",
+  "type": "Athlete",
+  "givenName": "Test",
+  "familyName": "User",
+  "genderCode": "M",
+  "noc": "USA"
+}
+
+### Validation: invalid type
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "participantId": "9999999",
+  "type": "InvalidType",
+  "givenName": "Test",
+  "familyName": "User",
+  "genderCode": "M",
+  "noc": "USA"
+}
+
+### Validation: invalid gender code
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "participantId": "9999998",
+  "type": "Athlete",
+  "givenName": "Test",
+  "familyName": "User",
+  "genderCode": "Z",
+  "noc": "USA"
+}
+
+### Validation: NOC too short
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "participantId": "9999997",
+  "type": "Athlete",
+  "givenName": "Test",
+  "familyName": "User",
+  "genderCode": "M",
+  "noc": "US"
+}
+
+### Conflict: duplicate participant
+# Run after creating participant 1234567
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "participantId": "1234567",
+  "type": "Athlete",
+  "givenName": "Another",
+  "familyName": "Person",
+  "genderCode": "M",
+  "noc": "USA"
+}

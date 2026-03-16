@@ -73,6 +73,7 @@ try
 
     // Core services
     builder.Services.AddProblemDetails();
+    builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
     builder.Services.AddOpenApi();
 
     // Modules
