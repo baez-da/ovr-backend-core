@@ -79,6 +79,12 @@ This project has ODF documentation loaded in a NotebookLM notebook that can be q
 - Encountering a domain concept you haven't seen before (e.g., "generic events", "Initial Download").
 - Making decisions about state machines, progression logic, or result lifecycle.
 
+**Colloquial trigger phrases (team shorthand):**
+
+- If the request includes phrasing like "pregunta al oraculo de odf", "pregunta al oraculo",
+  "consulta al oraculo de odf", or similar, treat it as an explicit instruction to query the ODF NotebookLM notebook.
+- If the phrase is ambiguous, default to asking 1 clarifying question and then proceed with the NotebookLM query.
+
 **How to query:**
 
 ```bash
