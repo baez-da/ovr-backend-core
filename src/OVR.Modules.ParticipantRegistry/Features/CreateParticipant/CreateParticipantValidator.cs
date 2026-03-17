@@ -11,7 +11,7 @@ public sealed class CreateParticipantValidator : AbstractValidator<CreatePartici
         RuleFor(x => x.GivenName).NotEmpty().MaximumLength(100);
         RuleFor(x => x.FamilyName).NotEmpty().MaximumLength(100);
         RuleFor(x => x.GenderCode).NotEmpty().Must(code => code is "M" or "F" or "X").WithMessage("Gender must be M, F, or X");
-        RuleFor(x => x.Noc).NotEmpty().Length(3);
+        RuleFor(x => x.Organisation).NotEmpty().Length(3);
     }
 
     private static bool BeValidType(string type) =>

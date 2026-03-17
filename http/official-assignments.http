@@ -1,0 +1,45 @@
+### Assign Technical Official - Referee for Swimming 400m Final
+POST {{host}}/api/official-assignments
+Content-Type: application/json
+
+{
+  "participantId": "8000001",
+  "unitRsc": "SWMW400MFR------------FNL-000100--",
+  "function": "PR",
+  "organisation": "GER"
+}
+
+### Assign Technical Official - Timekeeper
+POST {{host}}/api/official-assignments
+Content-Type: application/json
+
+{
+  "participantId": "8000002",
+  "unitRsc": "SWMW400MFR------------FNL-000100--",
+  "function": "TIMEKEEPER",
+  "organisation": "FRA",
+  "accreditationFunction": "Judge"
+}
+
+### Get Official Assignment by ID
+GET {{host}}/api/official-assignments/8000001_SWMW400MFR------------FNL-000100--
+Accept: application/json
+
+### List Officials by RSC prefix (unit level)
+GET {{host}}/api/official-assignments/by-rsc/SWMW400MFR------------FNL-000100
+Accept: application/json
+
+### List Officials by RSC prefix (phase level)
+GET {{host}}/api/official-assignments/by-rsc/SWMW400MFR------------FNL
+Accept: application/json
+
+### Validation: missing function
+POST {{host}}/api/official-assignments
+Content-Type: application/json
+
+{
+  "participantId": "8000003",
+  "unitRsc": "SWMW400MFR------------FNL-000100--",
+  "function": "",
+  "organisation": "ESP"
+}

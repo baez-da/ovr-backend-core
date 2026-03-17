@@ -12,7 +12,7 @@ public sealed class ListParticipantsByEventHandler(IParticipantRepository reposi
         ListParticipantsByEventQuery request,
         CancellationToken cancellationToken)
     {
-        var participants = await repository.FindByNocAsync(request.Noc, cancellationToken);
+        var participants = await repository.FindByOrganisationAsync(request.Organisation, cancellationToken);
 
         var responses = participants.Select(p => new ParticipantResponse(
             p.Id,

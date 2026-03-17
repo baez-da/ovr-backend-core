@@ -1,5 +1,4 @@
 using OVR.Modules.ParticipantRegistry.Domain;
-using OVR.Modules.ParticipantRegistry.Domain.NameSystem;
 using OVR.SharedKernel.Domain.ValueObjects;
 
 namespace OVR.Modules.ParticipantRegistry.Persistence;
@@ -14,7 +13,7 @@ internal static class ParticipantMapping
         FamilyName = participant.Description.FamilyName,
         GenderCode = participant.Description.Gender.Value,
         BirthDate = participant.Description.BirthDate,
-        Noc = participant.Description.Organisation.Code,
+        Organisation = participant.Description.Organisation.Code,
         PrintName = participant.PrintName,
         TvName = participant.TvName,
         ExtendedDescription = new Dictionary<string, string>(participant.ExtendedDescription.Properties),
@@ -27,9 +26,16 @@ internal static class ParticipantMapping
         var participantId = ParticipantId.Create(doc.Id);
         var type = Enum.Parse<ParticipantType>(doc.Type, ignoreCase: true);
         var gender = Gender.FromCode(doc.GenderCode);
-        var noc = Noc.Create(doc.Noc);
-        var description = Description.Create(doc.GivenName, doc.FamilyName, gender, doc.BirthDate, noc);
+        var organisation = Organisation.Create(doc.Organisation);
+        var description = Description.Create(doc.GivenName, doc.FamilyName, gender, doc.BirthDate, organisation);
 
-        return Participant.Create(participantId, type, description);
+        var extendedDescription = new ExtendedDescription();
+        foreach (var kvp in doc.ExtendedDescription)
+            extendedDescription.Set(kvp.Key, kvp.Value);
+
+        return Participant.Hydrate(
+            participantId, type, description,
+            doc.PrintName, doc.TvName, extendedDescription,
+            doc.CreatedAt, doc.UpdatedAt);
     }
 }

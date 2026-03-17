@@ -12,7 +12,7 @@ public sealed record ParticipantResponse(
     string FamilyName,
     string GenderCode,
     DateOnly? BirthDate,
-    string Noc,
+    string Organisation,
     string PrintName,
     string TvName,
     DateTime CreatedAt,

@@ -43,6 +43,33 @@ public sealed class Participant : AggregateRoot<string>
         return participant;
     }
 
+    /// <summary>
+    /// Reconstitutes a Participant from persistence or external systems. No domain events raised.
+    /// </summary>
+    public static Participant Hydrate(
+        ParticipantId participantId,
+        ParticipantType type,
+        Description description,
+        string printName,
+        string tvName,
+        ExtendedDescription? extendedDescription,
+        DateTime createdAt,
+        DateTime? updatedAt)
+    {
+        return new Participant
+        {
+            Id = participantId.Value,
+            ParticipantId = participantId,
+            Type = type,
+            Description = description,
+            PrintName = printName,
+            TvName = tvName,
+            ExtendedDescription = extendedDescription ?? new ExtendedDescription(),
+            CreatedAt = createdAt,
+            UpdatedAt = updatedAt
+        };
+    }
+
     public void UpdateDescription(Description newDescription)
     {
         Description = newDescription;

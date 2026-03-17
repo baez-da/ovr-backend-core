@@ -14,9 +14,9 @@ internal sealed class MongoParticipantRepository(IMongoDatabase database) : IPar
         return doc is null ? null : ParticipantMapping.ToDomain(doc);
     }
 
-    public async Task<IReadOnlyList<Participant>> FindByNocAsync(string noc, CancellationToken ct = default)
+    public async Task<IReadOnlyList<Participant>> FindByOrganisationAsync(string organisation, CancellationToken ct = default)
     {
-        var docs = await Collection.Find(d => d.Noc == noc).ToListAsync(ct);
+        var docs = await Collection.Find(d => d.Organisation == organisation).ToListAsync(ct);
         return docs.Select(ParticipantMapping.ToDomain).ToList();
     }
 

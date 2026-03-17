@@ -10,7 +10,7 @@ public sealed record CreateParticipantCommand(
     string FamilyName,
     string GenderCode,
     DateOnly? BirthDate,
-    string Noc) : IRequest<ErrorOr<CreateParticipantResponse>>;
+    string Organisation) : IRequest<ErrorOr<CreateParticipantResponse>>;
 
 public sealed record CreateParticipantResponse(
     string Id,

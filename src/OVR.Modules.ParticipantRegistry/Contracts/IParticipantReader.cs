@@ -8,5 +8,5 @@ public interface IParticipantReader
 public sealed record ParticipantSummary(
     string Id,
     string PrintName,
-    string Noc,
+    string Organisation,
     string Type);

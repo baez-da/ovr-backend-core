@@ -11,7 +11,7 @@ public sealed class ParticipantDocument
     public string FamilyName { get; set; } = string.Empty;
     public string GenderCode { get; set; } = string.Empty;
     public DateOnly? BirthDate { get; set; }
-    public string Noc { get; set; } = string.Empty;
+    public string Organisation { get; set; } = string.Empty;
     public string PrintName { get; set; } = string.Empty;
     public string TvName { get; set; } = string.Empty;
     public Dictionary<string, string> ExtendedDescription { get; set; } = [];

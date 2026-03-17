@@ -1,0 +1,45 @@
+### Assign Coach - Head Coach for Swimming
+POST {{host}}/api/coach-assignments
+Content-Type: application/json
+
+{
+  "participantId": "9000001",
+  "eventRsc": "SWMW400MFR------------",
+  "function": "COACH",
+  "organisation": "ESP",
+  "accreditationFunction": "Coach"
+}
+
+### Assign Assistant Coach
+POST {{host}}/api/coach-assignments
+Content-Type: application/json
+
+{
+  "participantId": "9000002",
+  "eventRsc": "SWMW400MFR------------",
+  "function": "AST_COA",
+  "organisation": "ESP"
+}
+
+### Get Coach Assignment by ID
+GET {{host}}/api/coach-assignments/9000001_SWMW400MFR----------------------------
+Accept: application/json
+
+### List Coaches by RSC prefix (event level)
+GET {{host}}/api/coach-assignments/by-rsc/SWMW400MFR
+Accept: application/json
+
+### List Coaches by RSC prefix (discipline level)
+GET {{host}}/api/coach-assignments/by-rsc/SWM
+Accept: application/json
+
+### Validation: missing function
+POST {{host}}/api/coach-assignments
+Content-Type: application/json
+
+{
+  "participantId": "9000003",
+  "eventRsc": "SWMW400MFR------------",
+  "function": "",
+  "organisation": "USA"
+}

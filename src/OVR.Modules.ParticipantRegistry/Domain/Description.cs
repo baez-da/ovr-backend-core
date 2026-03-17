@@ -9,9 +9,9 @@ public sealed class Description : ValueObject
     public string FamilyName { get; }
     public Gender Gender { get; }
     public DateOnly? BirthDate { get; }
-    public Noc Organisation { get; }
+    public Organisation Organisation { get; }
 
-    private Description(string givenName, string familyName, Gender gender, DateOnly? birthDate, Noc organisation)
+    private Description(string givenName, string familyName, Gender gender, DateOnly? birthDate, Organisation organisation)
     {
         GivenName = givenName;
         FamilyName = familyName;
@@ -20,7 +20,7 @@ public sealed class Description : ValueObject
         Organisation = organisation;
     }
 
-    public static Description Create(string givenName, string familyName, Gender gender, DateOnly? birthDate, Noc organisation)
+    public static Description Create(string givenName, string familyName, Gender gender, DateOnly? birthDate, Organisation organisation)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(givenName);
         ArgumentException.ThrowIfNullOrWhiteSpace(familyName);

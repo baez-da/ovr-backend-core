@@ -13,7 +13,7 @@ Content-Type: application/json
   "familyName": "Ledecky",
   "genderCode": "F",
   "birthDate": "1997-03-17",
-  "noc": "USA"
+  "organisation": "USA"
 }
 
 ### Create Participant - Athlete (Track & Field, Jamaica)
@@ -27,7 +27,7 @@ Content-Type: application/json
   "familyName": "Fraser-Pryce",
   "genderCode": "F",
   "birthDate": "1986-12-27",
-  "noc": "JAM"
+  "organisation": "JAM"
 }
 
 ### Create Participant - Team Official
@@ -41,7 +41,7 @@ Content-Type: application/json
   "familyName": "Rodriguez",
   "genderCode": "M",
   "birthDate": "1975-06-15",
-  "noc": "ESP"
+  "organisation": "ESP"
 }
 
 ### Create Participant - Technical Official
@@ -55,7 +55,7 @@ Content-Type: application/json
   "familyName": "Mueller",
   "genderCode": "M",
   "birthDate": null,
-  "noc": "GER"
+  "organisation": "GER"
 }
 
 ### Get Participant by ID
@@ -66,30 +66,13 @@ Accept: application/json
 GET {{host}}/api/participants/9999999
 Accept: application/json
 
-### List Participants by NOC - USA
-GET {{host}}/api/participants/by-noc/USA
+### List Participants by Organisation - USA
+GET {{host}}/api/participants/by-organisation/USA
 Accept: application/json
 
-### List Participants by NOC - Jamaica
-GET {{host}}/api/participants/by-noc/JAM
+### List Participants by Organisation - Jamaica
+GET {{host}}/api/participants/by-organisation/JAM
 Accept: application/json
-
-### List Participants by NOC (empty result)
-GET {{host}}/api/participants/by-noc/ZZZ
-Accept: application/json
-
-### Validation: empty participantId
-POST {{host}}/api/participants
-Content-Type: application/json
-
-{
-  "participantId": "",
-  "type": "Athlete",
-  "givenName": "Test",
-  "familyName": "User",
-  "genderCode": "M",
-  "noc": "USA"
-}
 
 ### Validation: invalid type
 POST {{host}}/api/participants
@@ -101,37 +84,10 @@ Content-Type: application/json
   "givenName": "Test",
   "familyName": "User",
   "genderCode": "M",
-  "noc": "USA"
-}
-
-### Validation: invalid gender code
-POST {{host}}/api/participants
-Content-Type: application/json
-
-{
-  "participantId": "9999998",
-  "type": "Athlete",
-  "givenName": "Test",
-  "familyName": "User",
-  "genderCode": "Z",
-  "noc": "USA"
-}
-
-### Validation: NOC too short
-POST {{host}}/api/participants
-Content-Type: application/json
-
-{
-  "participantId": "9999997",
-  "type": "Athlete",
-  "givenName": "Test",
-  "familyName": "User",
-  "genderCode": "M",
-  "noc": "US"
+  "organisation": "USA"
 }
 
 ### Conflict: duplicate participant
-# Run after creating participant 1234567
 POST {{host}}/api/participants
 Content-Type: application/json
 
@@ -141,5 +97,5 @@ Content-Type: application/json
   "givenName": "Another",
   "familyName": "Person",
   "genderCode": "M",
-  "noc": "USA"
+  "organisation": "USA"
 }

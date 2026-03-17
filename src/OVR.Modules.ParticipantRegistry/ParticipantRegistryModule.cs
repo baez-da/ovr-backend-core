@@ -28,8 +28,8 @@ public static class ParticipantRegistryModule
         group.MapGet("/{id}", GetParticipantEndpoint.Handle)
             .WithName("GetParticipant");
 
-        group.MapGet("/by-noc/{noc}", ListParticipantsByEventEndpoint.Handle)
-            .WithName("ListParticipantsByNoc");
+        group.MapGet("/by-organisation/{organisation}", ListParticipantsByEventEndpoint.Handle)
+            .WithName("ListParticipantsByOrganisation");
 
         return app;
     }

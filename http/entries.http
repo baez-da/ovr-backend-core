@@ -1,0 +1,80 @@
+### Create Entry - Individual athlete in Swimming 400m Freestyle
+POST {{host}}/api/entries
+Content-Type: application/json
+
+{
+  "participantId": "1234567",
+  "eventRsc": "SWMW400MFR------------",
+  "competitorType": "Individual",
+  "organisation": "USA"
+}
+
+### Create Entry - Team entry in Judo Mixed Team
+POST {{host}}/api/entries
+Content-Type: application/json
+
+{
+  "participantId": "2345678",
+  "eventRsc": "JUDXTEAM--------------",
+  "competitorType": "Team",
+  "organisation": "JAM",
+  "category": "Mixed",
+  "teamId": "JUDXTEAM------JAM01"
+}
+
+### Get Entry by ID
+GET {{host}}/api/entries/1234567_SWMW400MFR----------------------------
+Accept: application/json
+
+### Get Entry (not found)
+GET {{host}}/api/entries/nonexistent_entry
+Accept: application/json
+
+### List Entries by RSC prefix (event level - all entries for SWM W 400MFR)
+GET {{host}}/api/entries/by-rsc/SWMW400MFR
+Accept: application/json
+
+### List Entries by RSC prefix (discipline level - all SWM entries)
+GET {{host}}/api/entries/by-rsc/SWM
+Accept: application/json
+
+### Change Entry Status - Activate
+PATCH {{host}}/api/entries/1234567_SWMW400MFR----------------------------/status
+Content-Type: application/json
+
+{
+  "newStatus": "Active"
+}
+
+### Change Entry Status - Invalid transition (Active -> Entered)
+PATCH {{host}}/api/entries/1234567_SWMW400MFR----------------------------/status
+Content-Type: application/json
+
+{
+  "newStatus": "Entered"
+}
+
+### Withdraw Entry
+POST {{host}}/api/entries/1234567_SWMW400MFR----------------------------/withdraw
+
+### Validation: missing participantId
+POST {{host}}/api/entries
+Content-Type: application/json
+
+{
+  "participantId": "",
+  "eventRsc": "SWMW400MFR------------",
+  "competitorType": "Individual",
+  "organisation": "USA"
+}
+
+### Validation: invalid competitorType
+POST {{host}}/api/entries
+Content-Type: application/json
+
+{
+  "participantId": "9999999",
+  "eventRsc": "SWMW400MFR------------",
+  "competitorType": "InvalidType",
+  "organisation": "USA"
+}

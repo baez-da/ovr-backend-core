@@ -22,8 +22,8 @@ public sealed class CreateParticipantHandler(
         var participantId = ParticipantId.Create(request.ParticipantId);
         var type = Enum.Parse<ParticipantType>(request.Type, ignoreCase: true);
         var gender = Gender.FromCode(request.GenderCode);
-        var noc = Noc.Create(request.Noc);
-        var description = Description.Create(request.GivenName, request.FamilyName, gender, request.BirthDate, noc);
+        var organisation = Organisation.Create(request.Organisation);
+        var description = Description.Create(request.GivenName, request.FamilyName, gender, request.BirthDate, organisation);
 
         var participant = Participant.Create(participantId, type, description);
 

@@ -6,5 +6,7 @@ public enum EntryStatus
     Withdrawn,
     DidNotStart,
     Active,
-    Replaced
+    Replaced,
+    Disqualified,
+    Suspended
 }
