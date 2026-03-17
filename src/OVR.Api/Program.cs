@@ -18,15 +18,17 @@ using Serilog;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
-    .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
     .Enrich.FromLogContext()
     .WriteTo.Console()
-    .CreateLogger();
+    .CreateBootstrapLogger();
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-    builder.Host.UseSerilog();
+    builder.Host.UseSerilog((context, services, configuration) => configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext());
 
     // MongoDB
     builder.Services.AddOptions<MongoDbOptions>()

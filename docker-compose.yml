@@ -2,12 +2,28 @@ services:
   mongodb:
     image: mongo:8
     container_name: ovr-mongodb
+    profiles: [ "db" ]
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - ovr-mongo-data:/data/db
     environment:
       MONGO_INITDB_DATABASE: ovr
 
+  seq:
+    image: datalust/seq:2025
+    container_name: ovr-seq
+    profiles: [ "logging" ]
+    ports:
+      - "5341:5341"
+      - "8081:80"
+    volumes:
+      - ovr-seq-data:/data
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_ADMINPASSWORD: ""
+      SEQ_FIRSTRUN_NOAUTHENTICATION: "true"
+
 volumes:
   ovr-mongo-data:
+  ovr-seq-data:

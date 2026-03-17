@@ -3,6 +3,7 @@
   <ItemGroup>
     <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.Seq" />
     <PackageReference Include="MongoDB.Driver" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
   </ItemGroup>
