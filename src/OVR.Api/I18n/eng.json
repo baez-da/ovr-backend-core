@@ -1,0 +1,34 @@
+{
+  "Entry.NotFound": "Entry with ID '{{id}}' was not found.",
+  "Entry.AlreadyExists": "Entry for participant '{{participantId}}' in event '{{eventRsc}}' already exists.",
+  "Entry.InvalidStatusTransition": "Cannot transition entry status from '{{from}}' to '{{to}}'.",
+
+  "Participant.NotFound": "Participant with ID '{{id}}' was not found.",
+  "Participant.AlreadyExists": "Participant with ID '{{id}}' already exists.",
+
+  "CoachAssignment.NotFound": "Coach assignment with ID '{{id}}' was not found.",
+  "CoachAssignment.AlreadyExists": "Coach assignment for participant '{{participantId}}' in event '{{eventRsc}}' already exists.",
+  "CoachAssignment.InvalidStatusTransition": "Cannot transition coach assignment status from '{{from}}' to '{{to}}'.",
+
+  "OfficialAssignment.NotFound": "Official assignment with ID '{{id}}' was not found.",
+  "OfficialAssignment.AlreadyExists": "Official assignment for participant '{{participantId}}' in unit '{{unitRsc}}' already exists.",
+  "OfficialAssignment.InvalidStatusTransition": "Cannot transition assignment status from '{{from}}' to '{{to}}'.",
+
+  "Validation.NotEmptyValidator": "'{{propertyName}}' must not be empty.",
+  "Validation.NotNullValidator": "'{{propertyName}}' is required.",
+  "Validation.MinimumLengthValidator": "'{{propertyName}}' must be at least {{MinLength}} characters.",
+  "Validation.MaximumLengthValidator": "'{{propertyName}}' must not exceed {{MaxLength}} characters.",
+  "Validation.ExactLengthValidator": "'{{propertyName}}' must be exactly {{MaxLength}} characters.",
+  "Validation.PredicateValidator": "'{{propertyName}}' has an invalid value.",
+
+  "Fields.ParticipantId": "Participant ID",
+  "Fields.EventRsc": "Event RSC",
+  "Fields.UnitRsc": "Unit RSC",
+  "Fields.CompetitorType": "Competitor Type",
+  "Fields.Organisation": "Organisation",
+  "Fields.Type": "Type",
+  "Fields.GivenName": "Given Name",
+  "Fields.FamilyName": "Family Name",
+  "Fields.GenderCode": "Gender Code",
+  "Fields.Function": "Function"
+}

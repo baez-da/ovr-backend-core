@@ -10,10 +10,11 @@ public static class ChangeEntryStatusEndpoint
         string id,
         ChangeEntryStatusRequest request,
         ISender sender,
-        CancellationToken ct)
+        CancellationToken ct,
+        HttpContext httpContext)
     {
         var result = await sender.Send(new ChangeEntryStatusCommand(id, request.NewStatus), ct);
-        return result.ToApiResult();
+        return result.ToApiResult(httpContext);
     }
 }
 

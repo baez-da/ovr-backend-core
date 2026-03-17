@@ -9,9 +9,10 @@ public static class ListParticipantsByEventEndpoint
     public static async Task<IResult> Handle(
         string organisation,
         ISender sender,
-        CancellationToken ct)
+        CancellationToken ct,
+        HttpContext httpContext)
     {
         var result = await sender.Send(new ListParticipantsByEventQuery(organisation), ct);
-        return result.ToApiResult();
+        return result.ToApiResult(httpContext);
     }
 }

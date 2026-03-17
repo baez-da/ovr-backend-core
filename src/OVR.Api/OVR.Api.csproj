@@ -9,6 +9,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="I18n\*.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\OVR.SharedKernel\OVR.SharedKernel.csproj" />
     <ProjectReference Include="..\OVR.Modules.ParticipantRegistry\OVR.Modules.ParticipantRegistry.csproj" />
     <ProjectReference Include="..\OVR.Modules.TeamComposition\OVR.Modules.TeamComposition.csproj" />

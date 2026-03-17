@@ -1,0 +1,34 @@
+{
+  "Entry.NotFound": "No se encontró la inscripción con ID '{{id}}'.",
+  "Entry.AlreadyExists": "Ya existe una inscripción para el participante '{{participantId}}' en el evento '{{eventRsc}}'.",
+  "Entry.InvalidStatusTransition": "No se puede cambiar el estado de la inscripción de '{{from}}' a '{{to}}'.",
+
+  "Participant.NotFound": "No se encontró el participante con ID '{{id}}'.",
+  "Participant.AlreadyExists": "El participante con ID '{{id}}' ya existe.",
+
+  "CoachAssignment.NotFound": "No se encontró la asignación de coach con ID '{{id}}'.",
+  "CoachAssignment.AlreadyExists": "Ya existe una asignación de coach para el participante '{{participantId}}' en el evento '{{eventRsc}}'.",
+  "CoachAssignment.InvalidStatusTransition": "No se puede cambiar el estado de la asignación de coach de '{{from}}' a '{{to}}'.",
+
+  "OfficialAssignment.NotFound": "No se encontró la asignación de oficial con ID '{{id}}'.",
+  "OfficialAssignment.AlreadyExists": "Ya existe una asignación de oficial para el participante '{{participantId}}' en la unidad '{{unitRsc}}'.",
+  "OfficialAssignment.InvalidStatusTransition": "No se puede cambiar el estado de la asignación de '{{from}}' a '{{to}}'.",
+
+  "Validation.NotEmptyValidator": "'{{propertyName}}' no puede estar vacío.",
+  "Validation.NotNullValidator": "'{{propertyName}}' es requerido.",
+  "Validation.MinimumLengthValidator": "'{{propertyName}}' debe tener al menos {{MinLength}} caracteres.",
+  "Validation.MaximumLengthValidator": "'{{propertyName}}' no debe exceder {{MaxLength}} caracteres.",
+  "Validation.ExactLengthValidator": "'{{propertyName}}' debe tener exactamente {{MaxLength}} caracteres.",
+  "Validation.PredicateValidator": "'{{propertyName}}' tiene un valor inválido.",
+
+  "Fields.ParticipantId": "ID del participante",
+  "Fields.EventRsc": "RSC del evento",
+  "Fields.UnitRsc": "RSC de la unidad",
+  "Fields.CompetitorType": "Tipo de competidor",
+  "Fields.Organisation": "Organización",
+  "Fields.Type": "Tipo",
+  "Fields.GivenName": "Nombre",
+  "Fields.FamilyName": "Apellido",
+  "Fields.GenderCode": "Código de género",
+  "Fields.Function": "Función"
+}

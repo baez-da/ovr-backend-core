@@ -9,9 +9,10 @@ public static class ListEntriesByRscEndpoint
     public static async Task<IResult> Handle(
         string rscPrefix,
         ISender sender,
-        CancellationToken ct)
+        CancellationToken ct,
+        HttpContext httpContext)
     {
         var result = await sender.Send(new ListEntriesByRscQuery(rscPrefix), ct);
-        return result.ToApiResult();
+        return result.ToApiResult(httpContext);
     }
 }

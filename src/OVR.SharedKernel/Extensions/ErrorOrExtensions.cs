@@ -1,32 +1,73 @@
 using ErrorOr;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using OVR.SharedKernel.I18n;
 
 namespace OVR.SharedKernel.Extensions;
 
 public static class ErrorOrExtensions
 {
-    public static IResult ToApiResult<T>(this ErrorOr<T> result) =>
+    public static IResult ToApiResult<T>(this ErrorOr<T> result, HttpContext httpContext) =>
         result.Match(
-            value => Results.Ok(value),
-            errors => ToApiError(errors));
+            value => TypedResults.Ok(value),
+            errors => ToApiError(errors, httpContext));
 
-    public static IResult ToCreatedResult<T>(this ErrorOr<T> result, string uri) =>
+    public static IResult ToCreatedResult<T>(this ErrorOr<T> result, string uri, HttpContext httpContext) =>
         result.Match(
-            value => Results.Created(uri, value),
-            errors => ToApiError(errors));
+            value => TypedResults.Created(uri, value),
+            errors => ToApiError(errors, httpContext));
 
-    private static IResult ToApiError(List<Error> errors)
+    private static IResult ToApiError(List<Error> errors, HttpContext httpContext)
     {
+        var translator = httpContext.RequestServices.GetService<ITranslationService>();
+        var language = LanguageDetector.DetectLanguage(httpContext);
         var firstError = errors[0];
-        return firstError.Type switch
+
+        var (statusCode, title, type) = MapErrorType(firstError.Type);
+
+        var translatedErrors = errors.Select(e => new
         {
-            ErrorType.Validation => Results.ValidationProblem(
-                errors.ToDictionary(e => e.Code, e => new[] { e.Description })),
-            ErrorType.NotFound => Results.NotFound(new { firstError.Code, firstError.Description }),
-            ErrorType.Conflict => Results.Conflict(new { firstError.Code, firstError.Description }),
-            ErrorType.Unauthorized => Results.Unauthorized(),
-            _ => Results.Problem(statusCode: 500, title: firstError.Description)
+            code = e.Code,
+            detail = TranslateError(e, language, translator)
+        }).ToArray();
+
+        var problemDetails = new ProblemDetails
+        {
+            Type = type,
+            Title = title,
+            Status = statusCode,
+            Detail = translatedErrors[0].detail,
         };
+
+        problemDetails.Extensions["errorCode"] = firstError.Code;
+        problemDetails.Extensions["errors"] = translatedErrors;
+
+        return TypedResults.Problem(problemDetails);
     }
+
+    private static string TranslateError(Error error, string language, ITranslationService? translator)
+    {
+        if (translator is null)
+            return error.Description;
+
+        return translator.Translate(error.Code, language, error.Description, error.Metadata);
+    }
+
+    private static (int StatusCode, string Title, string Type) MapErrorType(ErrorType errorType) =>
+        errorType switch
+        {
+            ErrorType.Validation => (StatusCodes.Status400BadRequest, "Validation Error",
+                "https://tools.ietf.org/html/rfc9110#section-15.5.1"),
+            ErrorType.NotFound => (StatusCodes.Status404NotFound, "Not Found",
+                "https://tools.ietf.org/html/rfc9110#section-15.5.5"),
+            ErrorType.Conflict => (StatusCodes.Status409Conflict, "Conflict",
+                "https://tools.ietf.org/html/rfc9110#section-15.5.10"),
+            ErrorType.Unauthorized => (StatusCodes.Status401Unauthorized, "Unauthorized",
+                "https://tools.ietf.org/html/rfc9110#section-15.5.2"),
+            ErrorType.Forbidden => (StatusCodes.Status403Forbidden, "Forbidden",
+                "https://tools.ietf.org/html/rfc9110#section-15.5.4"),
+            _ => (StatusCodes.Status500InternalServerError, "Internal Server Error",
+                "https://tools.ietf.org/html/rfc9110#section-15.6.1")
+        };
 }

@@ -9,9 +9,10 @@ public static class GetEntryEndpoint
     public static async Task<IResult> Handle(
         string id,
         ISender sender,
-        CancellationToken ct)
+        CancellationToken ct,
+        HttpContext httpContext)
     {
         var result = await sender.Send(new GetEntryQuery(id), ct);
-        return result.ToApiResult();
+        return result.ToApiResult(httpContext);
     }
 }

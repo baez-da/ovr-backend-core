@@ -14,6 +14,7 @@ using OVR.Modules.Progression;
 using OVR.Modules.Reporting;
 using OVR.Modules.DataDistribution;
 using OVR.SharedKernel.Behaviors;
+using OVR.SharedKernel.I18n;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -77,6 +78,15 @@ try
         typeof(OfficialAssignmentModule).Assembly,
         typeof(CoachAssignmentModule).Assembly
     ]);
+
+    // i18n
+    builder.Services.AddSingleton<ITranslationService>(sp =>
+    {
+        var env = sp.GetRequiredService<IWebHostEnvironment>();
+        var i18nPath = Path.Combine(env.ContentRootPath, "I18n");
+        var logger = sp.GetRequiredService<ILogger<JsonTranslationService>>();
+        return new JsonTranslationService(i18nPath, logger);
+    });
 
     // Core services
     builder.Services.AddProblemDetails();

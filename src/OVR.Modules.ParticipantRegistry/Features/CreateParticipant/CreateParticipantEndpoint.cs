@@ -9,9 +9,10 @@ public static class CreateParticipantEndpoint
     public static async Task<IResult> Handle(
         CreateParticipantCommand command,
         ISender sender,
-        CancellationToken ct)
+        CancellationToken ct,
+        HttpContext httpContext)
     {
         var result = await sender.Send(command, ct);
-        return result.ToCreatedResult($"/api/participants/{command.ParticipantId}");
+        return result.ToCreatedResult($"/api/participants/{command.ParticipantId}", httpContext);
     }
 }
