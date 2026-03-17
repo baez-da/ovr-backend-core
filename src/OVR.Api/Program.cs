@@ -69,7 +69,12 @@ try
     });
 
     // FluentValidation
-    builder.Services.AddValidatorsFromAssembly(typeof(ParticipantRegistryModule).Assembly);
+    builder.Services.AddValidatorsFromAssemblies([
+        typeof(ParticipantRegistryModule).Assembly,
+        typeof(EntriesModule).Assembly,
+        typeof(OfficialAssignmentModule).Assembly,
+        typeof(CoachAssignmentModule).Assembly
+    ]);
 
     // Core services
     builder.Services.AddProblemDetails();
