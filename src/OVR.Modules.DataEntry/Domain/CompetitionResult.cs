@@ -24,7 +24,7 @@ public sealed class CompetitionResult : AggregateRoot<string>
 
     public void TransitionTo(ResultStatus newStatus)
     {
-        // Validate state transitions
+        // Validate state transitions. It may not be necessary to validate state transitions strictly, but it's important to track them.
         var valid = (Status, newStatus) switch
         {
             (ResultStatus.StartList, ResultStatus.Live) => true,
