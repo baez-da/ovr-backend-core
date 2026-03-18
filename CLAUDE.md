@@ -65,6 +65,21 @@ Request → `LoggingBehavior` → `ValidationBehavior` → Handler
 
 Los validators se ejecutan automáticamente antes del handler. No validar manualmente en handlers lo que FluentValidation ya cubre.
 
+### Niveles de validación
+
+Hay 3 niveles con responsabilidades distintas. No mezclarlos.
+
+| Nivel | Responsable | Pregunta que responde | Ejemplo |
+|-------|------------|----------------------|---------|
+| **1. Entrada** | `FluentValidation` (Validator del slice) | ¿El request tiene forma válida para intentar el caso de uso? | Campo vacío, formato email, longitud máxima, rango |
+| **2. Aplicación** | Handler (consulta repositorios) | ¿El contexto permite ejecutar esta operación? | Recurso no existe, duplicado, carrera cerrada |
+| **3. Dominio** | Agregado / Entity (invariantes internas) | ¿Las reglas del negocio lo permiten? | Transición de estado inválida, categoría incompatible con edad, cupo excedido |
+
+- **Nivel 1** retorna `ValidationException` → `400 Bad Request` (automático vía pipeline behavior).
+- **Nivel 2 y 3** retornan `ErrorOr<T>` con errores tipados (`Error.NotFound`, `Error.Conflict`, `Error.Validation`) → status code según `ErrorType`.
+- Las reglas de dominio (nivel 3) deben vivir **dentro del agregado**, no en el handler. Si el dato puede llegar por API, evento, job o importación, la invariante debe protegerse igual.
+- No usar FluentValidation para reglas que requieren consultar estado (BD, otros servicios). Eso es nivel 2 o 3.
+
 ## Comandos
 
 ```bash
