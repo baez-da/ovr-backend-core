@@ -41,4 +41,19 @@ public class NameNormalizationTests
         var result = NameNormalization.ToLimitedMixedCase(input);
         result.Should().Be(expected);
     }
+
+    [Theory]
+    [InlineData("JOHN", "John")]
+    [InlineData("ANNE-MARIE", "Anne-Marie")]
+    [InlineData("A'HERN", "A'Hern")]
+    [InlineData("MCBAIN", "McBain")]
+    [InlineData("DE SILVA", "de Silva")]
+    [InlineData("JOSE LUIS", "Jose Luis")]
+    [InlineData("O'CONNOR", "O'Connor")]
+    [InlineData("", "")]
+    public void ToMixedCase_ShouldApplyOdfRules(string input, string expected)
+    {
+        var result = NameNormalization.ToMixedCase(input);
+        result.Should().Be(expected);
+    }
 }

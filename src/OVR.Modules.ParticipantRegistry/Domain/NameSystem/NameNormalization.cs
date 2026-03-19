@@ -110,4 +110,64 @@ public static class NameNormalization
 
         return word.ToUpperInvariant();
     }
+
+    /// <summary>
+    /// Applies ODF Section 6.2 "mixed case" rules for GivenName.
+    /// Particles → lowercase; apostrophe → preserve prefix + title case after;
+    /// Mc prefix → McXxx; everything else → Title case.
+    /// </summary>
+    public static string ToMixedCase(string name)
+    {
+        if (name.Length == 0)
+            return name;
+
+        var spaceParts = name.Split(' ');
+        var resultParts = new List<string>(spaceParts.Length);
+
+        foreach (var spacePart in spaceParts)
+        {
+            var hyphenParts = spacePart.Split('-');
+            var hyphenResults = new List<string>(hyphenParts.Length);
+
+            foreach (var word in hyphenParts)
+            {
+                hyphenResults.Add(ApplyMixedCaseWord(word));
+            }
+
+            resultParts.Add(string.Join("-", hyphenResults));
+        }
+
+        return string.Join(" ", resultParts);
+    }
+
+    private static string ApplyMixedCaseWord(string word)
+    {
+        if (word.Length == 0)
+            return word;
+
+        if (Particles.Contains(word))
+            return word.ToLowerInvariant();
+
+        // Apostrophe after first character
+        var apostropheIndex = word.IndexOf('\'', 1);
+        if (apostropheIndex > 0 && apostropheIndex < word.Length - 1)
+        {
+            var before = word[..(apostropheIndex + 1)]; // includes apostrophe
+            var after = word[(apostropheIndex + 1)..];
+            // Uppercase first letter after apostrophe, lowercase rest
+            var afterFormatted = char.ToUpperInvariant(after[0]) + after[1..].ToLowerInvariant();
+            return before + afterFormatted;
+        }
+
+        // Mc prefix (case-insensitive, length >= 3)
+        if (word.Length >= 3 && word[..2].Equals("mc", StringComparison.OrdinalIgnoreCase))
+        {
+            var rest = word[2..];
+            var restFormatted = char.ToUpperInvariant(rest[0]) + rest[1..].ToLowerInvariant();
+            return "Mc" + restFormatted;
+        }
+
+        // Title case
+        return char.ToUpperInvariant(word[0]) + word[1..].ToLowerInvariant();
+    }
 }
