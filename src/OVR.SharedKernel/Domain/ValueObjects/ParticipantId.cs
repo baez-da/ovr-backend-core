@@ -8,6 +8,8 @@ public sealed class ParticipantId : ValueObject
 
     private ParticipantId(string value) => Value = value;
 
+    public static ParticipantId Generate() => new($"LOC-{Guid.NewGuid()}");
+
     public static ParticipantId Create(string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
