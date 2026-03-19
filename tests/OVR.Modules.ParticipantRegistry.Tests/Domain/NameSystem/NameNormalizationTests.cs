@@ -24,4 +24,21 @@ public class NameNormalizationTests
         var result = NameNormalization.ToAscii(input);
         result.Should().Be(expected);
     }
+
+    [Theory]
+    [InlineData("JONES", "JONES")]
+    [InlineData("MCBAIN", "McBAIN")]
+    [InlineData("mcbain", "McBAIN")]
+    [InlineData("DE SOUZA", "de SOUZA")]
+    [InlineData("VAN DER BERG", "van der BERG")]
+    [InlineData("PARRIS-WASHINGTON", "PARRIS-WASHINGTON")]
+    [InlineData("MCPHERSON", "McPHERSON")]
+    [InlineData("LA FONTAINE", "la FONTAINE")]
+    [InlineData("VANDER WAALS", "vander WAALS")]
+    [InlineData("DOS SANTOS", "dos SANTOS")]
+    public void ToLimitedMixedCase_ShouldApplyOdfRules(string input, string expected)
+    {
+        var result = NameNormalization.ToLimitedMixedCase(input);
+        result.Should().Be(expected);
+    }
 }

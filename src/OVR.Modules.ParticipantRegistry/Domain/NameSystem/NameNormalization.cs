@@ -62,4 +62,52 @@ public static class NameNormalization
         }
         return sb.ToString();
     }
+
+    private static readonly HashSet<string> Particles = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "da", "de", "dei", "del", "den", "der", "di", "dos",
+        "du", "la", "le", "los", "ter", "van", "vander", "von"
+    };
+
+    /// <summary>
+    /// Applies ODF Section 6.2 "limited mixed case" rules for FamilyName.
+    /// Particles → lowercase; Mc prefix → McUPPER; everything else → UPPERCASE.
+    /// </summary>
+    public static string ToLimitedMixedCase(string name)
+    {
+        if (name.Length == 0)
+            return name;
+
+        var spaceParts = name.Split(' ');
+        var resultParts = new List<string>(spaceParts.Length);
+
+        foreach (var spacePart in spaceParts)
+        {
+            var hyphenParts = spacePart.Split('-');
+            var hyphenResults = new List<string>(hyphenParts.Length);
+
+            foreach (var word in hyphenParts)
+            {
+                hyphenResults.Add(ApplyLimitedMixedCaseWord(word));
+            }
+
+            resultParts.Add(string.Join("-", hyphenResults));
+        }
+
+        return string.Join(" ", resultParts);
+    }
+
+    private static string ApplyLimitedMixedCaseWord(string word)
+    {
+        if (word.Length == 0)
+            return word;
+
+        if (Particles.Contains(word))
+            return word.ToLowerInvariant();
+
+        if (word.Length >= 3 && word[..2].Equals("mc", StringComparison.OrdinalIgnoreCase))
+            return "Mc" + word[2..].ToUpperInvariant();
+
+        return word.ToUpperInvariant();
+    }
 }
