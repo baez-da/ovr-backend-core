@@ -13,6 +13,7 @@ using OVR.Modules.DataEntry;
 using OVR.Modules.Progression;
 using OVR.Modules.Reporting;
 using OVR.Modules.DataDistribution;
+using OVR.Modules.CommonCodes;
 using OVR.SharedKernel.Behaviors;
 using OVR.SharedKernel.I18n;
 using Serilog;
@@ -65,7 +66,8 @@ try
             typeof(DataEntryModule).Assembly,
             typeof(ProgressionModule).Assembly,
             typeof(ReportingModule).Assembly,
-            typeof(DataDistributionModule).Assembly);
+            typeof(DataDistributionModule).Assembly,
+            typeof(CommonCodesModule).Assembly);
 
         cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
         cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
@@ -76,7 +78,8 @@ try
         typeof(ParticipantRegistryModule).Assembly,
         typeof(EntriesModule).Assembly,
         typeof(OfficialAssignmentModule).Assembly,
-        typeof(CoachAssignmentModule).Assembly
+        typeof(CoachAssignmentModule).Assembly,
+        typeof(CommonCodesModule).Assembly
     ]);
 
     // i18n
@@ -105,6 +108,7 @@ try
     builder.Services.AddProgressionModule();
     builder.Services.AddReportingModule();
     builder.Services.AddDataDistributionModule();
+    builder.Services.AddCommonCodesModule();
 
     var app = builder.Build();
 
@@ -127,6 +131,7 @@ try
     app.MapProgressionEndpoints();
     app.MapReportingEndpoints();
     app.MapDataDistributionEndpoints();
+    app.MapCommonCodesEndpoints();
 
     app.Run();
 }

@@ -50,6 +50,7 @@ OVR.Modules.{Name}/
 | Progression | Avance entre fases (quién clasifica) |
 | Reporting | Generación de PDFs |
 | DataDistribution | Distribución de mensajes ODF |
+| CommonCodes | Catálogos de datos de referencia ODF: importación Excel, consulta, validación cross-módulo |
 | Ingestion | ACL para datos externos (GMS, T&S) con WAL |
 
 ### Comunicación entre módulos

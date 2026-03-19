@@ -25,6 +25,7 @@
     <ProjectReference Include="..\OVR.Modules.Progression\OVR.Modules.Progression.csproj" />
     <ProjectReference Include="..\OVR.Modules.Reporting\OVR.Modules.Reporting.csproj" />
     <ProjectReference Include="..\OVR.Modules.DataDistribution\OVR.Modules.DataDistribution.csproj" />
+    <ProjectReference Include="..\OVR.Modules.CommonCodes\OVR.Modules.CommonCodes.csproj" />
     <ProjectReference Include="..\OVR.Ingestion\OVR.Ingestion.csproj" />
   </ItemGroup>
 
