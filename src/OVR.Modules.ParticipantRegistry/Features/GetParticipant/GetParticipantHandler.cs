@@ -24,7 +24,13 @@ public sealed class GetParticipantHandler(IParticipantRepository repository)
             participant.Description.BirthDate,
             participant.Description.Organisation.Code,
             participant.PrintName,
+            participant.PrintInitialName,
             participant.TvName,
+            participant.TvInitialName,
+            participant.TvFamilyName,
+            participant.PscbName,
+            participant.PscbShortName,
+            participant.PscbLongName,
             participant.CreatedAt,
             participant.UpdatedAt);
     }

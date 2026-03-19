@@ -14,6 +14,12 @@ public sealed record ParticipantResponse(
     DateOnly? BirthDate,
     string Organisation,
     string PrintName,
+    string PrintInitialName,
     string TvName,
+    string TvInitialName,
+    string TvFamilyName,
+    string PscbName,
+    string PscbShortName,
+    string PscbLongName,
     DateTime CreatedAt,
     DateTime? UpdatedAt);

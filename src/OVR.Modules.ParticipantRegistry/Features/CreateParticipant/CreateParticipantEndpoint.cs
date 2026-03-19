@@ -13,6 +13,8 @@ public static class CreateParticipantEndpoint
         HttpContext httpContext)
     {
         var result = await sender.Send(command, ct);
-        return result.ToCreatedResult($"/api/participants/{command.ParticipantId}", httpContext);
+        return result.ToCreatedResult(
+            result.IsError ? string.Empty : $"/api/participants/{result.Value.Id}",
+            httpContext);
     }
 }

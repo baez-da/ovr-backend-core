@@ -23,7 +23,13 @@ public sealed class ListParticipantsByEventHandler(IParticipantRepository reposi
             p.Description.BirthDate,
             p.Description.Organisation.Code,
             p.PrintName,
+            p.PrintInitialName,
             p.TvName,
+            p.TvInitialName,
+            p.TvFamilyName,
+            p.PscbName,
+            p.PscbShortName,
+            p.PscbLongName,
             p.CreatedAt,
             p.UpdatedAt)).ToList();
 
