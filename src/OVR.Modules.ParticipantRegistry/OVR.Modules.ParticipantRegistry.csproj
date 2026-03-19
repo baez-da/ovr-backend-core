@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OVR.SharedKernel\OVR.SharedKernel.csproj" />
+    <ProjectReference Include="..\OVR.Modules.CommonCodes\OVR.Modules.CommonCodes.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
 {
   "Participant.NotFound": "No se encontró el participante con ID '{{id}}'.",
-  "Participant.AlreadyExists": "El participante con ID '{{id}}' ya existe."
+  "Participant.InvalidOrganisation": "El código de organización '{{code}}' no es un código de delegación válido."
 }

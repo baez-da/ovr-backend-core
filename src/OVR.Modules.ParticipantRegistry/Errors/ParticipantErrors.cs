@@ -8,6 +8,10 @@ public static class ParticipantErrors
         Error.NotFound("Participant.NotFound", $"Participant with ID '{id}' was not found.",
             new Dictionary<string, object> { ["id"] = id });
 
+    public static Error InvalidOrganisation(string code) =>
+        Error.Validation("Participant.InvalidOrganisation", $"Organisation '{code}' does not exist in CommonCodes.",
+            new Dictionary<string, object> { ["code"] = code });
+
     public static Error AlreadyExists(string id) =>
         Error.Conflict("Participant.AlreadyExists", $"Participant with ID '{id}' already exists.",
             new Dictionary<string, object> { ["id"] = id });
