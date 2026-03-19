@@ -5,28 +5,22 @@
   <ItemGroup>
     <!-- Web framework -->
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
-
     <!-- CQRS / Mediator -->
     <PackageVersion Include="MediatR" Version="12.4.1" />
-
     <!-- Validation -->
     <PackageVersion Include="FluentValidation" Version="11.11.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
-
     <!-- Result pattern -->
     <PackageVersion Include="ErrorOr" Version="2.0.1" />
-
     <!-- MongoDB -->
     <PackageVersion Include="MongoDB.Driver" Version="3.4.0" />
-
     <!-- Excel -->
     <PackageVersion Include="ClosedXML" Version="0.104.2" />
-
     <!-- Logging -->
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.13.11" />
     <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageVersion Include="Serilog.Sinks.Seq" Version="9.0.0" />
-
     <!-- Testing -->
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />

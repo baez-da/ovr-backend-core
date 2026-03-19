@@ -16,6 +16,7 @@ using OVR.Modules.DataDistribution;
 using OVR.Modules.CommonCodes;
 using OVR.SharedKernel.Behaviors;
 using OVR.SharedKernel.I18n;
+using Scalar.AspNetCore;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -117,6 +118,16 @@ try
     app.UseSerilogRequestLogging();
 
     app.MapOpenApi();
+
+    if (builder.Configuration.GetValue("OpenApi:EnableUi", false))
+    {
+        app.MapScalarApiReference(options =>
+        {
+            options.Title = "OVR Backend Core API";
+            options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+        });
+    }
+
     app.MapGet("/", () => TypedResults.Ok(new { Name = "OVR Backend Core", Version = "0.1.0" }));
 
     // Module endpoints

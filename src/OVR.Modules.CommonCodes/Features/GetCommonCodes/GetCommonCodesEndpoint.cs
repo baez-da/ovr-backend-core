@@ -18,14 +18,14 @@ public static class GetCommonCodesEndpoint
     }
 
     private static async Task<IResult> Handle(
-        string type,
+        string? type,
         string? languages,
         ISender sender,
         HttpContext httpContext,
         CancellationToken ct)
     {
         var langArray = languages?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        var query = new GetCommonCodesQuery(type, langArray);
+        var query = new GetCommonCodesQuery(type ?? string.Empty, langArray);
         var result = await sender.Send(query, ct);
 
         return result.ToApiResult(httpContext);
