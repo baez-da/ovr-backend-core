@@ -1,0 +1,5 @@
+{
+  "Entry.NotFound": "Inscrição com ID '{{id}}' não foi encontrada.",
+  "Entry.AlreadyExists": "Já existe uma inscrição para o participante '{{participantId}}' no evento '{{eventRsc}}'.",
+  "Entry.InvalidStatusTransition": "Não é possível alterar o estado da inscrição de '{{from}}' para '{{to}}'."
+}

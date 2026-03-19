@@ -15,4 +15,8 @@
     <ProjectReference Include="..\OVR.SharedKernel\OVR.SharedKernel.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="I18n\**" Link="I18n.OfficialAssignment\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

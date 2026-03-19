@@ -112,10 +112,13 @@ dotnet run --project src/OVR.Api
 
 - **Formato de errores**: Todos los errores retornan ProblemDetails RFC 9457 con `errorCode`, `detail` y `errors[]`.
 - **Idiomas soportados**: `eng` (default), `spa`, `por`. Detección: header `Language` > `Accept-Language` > default.
-- **Archivos de traducción**: `src/OVR.Api/I18n/{lang}.json` — estructura plana `{ "ErrorCode": "mensaje con {{param}}" }`.
-- **Agregar traducción de error de negocio**: (1) definir error con `Metadata` en `Errors/{Module}Errors.cs`, (2) agregar key `{Module}.{ErrorName}` en los 3 JSON.
-- **Agregar traducción de validación**: agregar key `Validation.{FluentValidationErrorCode}` (ej: `NotEmptyValidator`) en los 3 JSON.
-- **Agregar traducción de campo**: agregar key `Fields.{PropertyName}` en los 3 JSON. Traduce tanto la key del diccionario de errores como el `{{propertyName}}` dentro del mensaje.
+- **Archivos de traducción**: Estructura plana `{ "ErrorCode": "mensaje con {{param}}" }` distribuida por módulo:
+  - **Globales** (`src/OVR.Api/I18n/{lang}.json`): traducciones compartidas (`Validation.*`, `Fields.*`).
+  - **Por módulo** (`src/OVR.Modules.{Name}/I18n/{lang}.json`): errores de negocio del módulo (`{Module}.*`).
+- **Agregar traducción de error de negocio**: (1) definir error con `Metadata` en `Errors/{Module}Errors.cs`, (2) agregar key `{Module}.{ErrorName}` en los 3 JSON **del módulo**.
+- **Agregar traducción de validación**: agregar key `Validation.{FluentValidationErrorCode}` (ej: `NotEmptyValidator`) en los 3 JSON **globales**.
+- **Agregar traducción de campo**: agregar key `Fields.{PropertyName}` en los 3 JSON **globales**.
+- **Nuevo módulo con i18n**: crear `I18n/{eng,spa,por}.json` en el módulo y agregar en `.csproj`: `<Content Include="I18n\**" Link="I18n.{Name}\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />`.
 - **Endpoints**: Todos pasan `HttpContext` a `.ToApiResult(httpContext)` / `.ToCreatedResult(uri, httpContext)`.
 
 ## Referencia

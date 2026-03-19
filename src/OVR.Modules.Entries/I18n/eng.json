@@ -1,0 +1,5 @@
+{
+  "Entry.NotFound": "Entry with ID '{{id}}' was not found.",
+  "Entry.AlreadyExists": "Entry for participant '{{participantId}}' in event '{{eventRsc}}' already exists.",
+  "Entry.InvalidStatusTransition": "Cannot transition entry status from '{{from}}' to '{{to}}'."
+}

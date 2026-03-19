@@ -9,10 +9,14 @@ public sealed partial class JsonTranslationService : ITranslationService
     private readonly Dictionary<string, Dictionary<string, string>> _translations = new(StringComparer.OrdinalIgnoreCase);
     private readonly ILogger<JsonTranslationService> _logger;
 
-    public JsonTranslationService(string basePath, ILogger<JsonTranslationService> logger)
+    public JsonTranslationService(IEnumerable<string> translationPaths, ILogger<JsonTranslationService> logger)
     {
         _logger = logger;
-        LoadTranslations(basePath);
+
+        foreach (var path in translationPaths)
+            LoadTranslations(path);
+
+        DetectMissingLanguages();
     }
 
     public string Translate(string errorCode, string language, string fallback,
@@ -68,16 +72,50 @@ public sealed partial class JsonTranslationService : ITranslationService
             {
                 var json = File.ReadAllText(file);
                 var dict = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-                if (dict is not null)
+                if (dict is null)
+                    continue;
+
+                if (!_translations.TryGetValue(lang, out var langDict))
                 {
-                    _translations[lang] = new Dictionary<string, string>(dict, StringComparer.OrdinalIgnoreCase);
-                    _logger.LogInformation("Loaded {Count} translations for language '{Lang}'", dict.Count, lang);
+                    langDict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                    _translations[lang] = langDict;
                 }
+
+                foreach (var (key, value) in dict)
+                {
+                    if (!langDict.TryAdd(key, value))
+                        _logger.LogWarning(
+                            "Duplicate translation key '{Key}' for language '{Lang}' in {File} — keeping first value",
+                            key, lang, file);
+                }
+
+                _logger.LogInformation("Loaded {Count} translations for language '{Lang}' from {Path}",
+                    dict.Count, lang, basePath);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to load translations from {File}", file);
             }
+        }
+    }
+
+    private void DetectMissingLanguages()
+    {
+        if (_translations.Count <= 1)
+            return;
+
+        var allKeys = _translations
+            .SelectMany(t => t.Value.Keys)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        foreach (var (lang, dict) in _translations)
+        {
+            var missing = allKeys.Where(k => !dict.ContainsKey(k)).ToList();
+            if (missing.Count > 0)
+                _logger.LogWarning(
+                    "Language '{Lang}' is missing {Count} translation(s): {Keys}",
+                    lang, missing.Count, string.Join(", ", missing));
         }
     }
 

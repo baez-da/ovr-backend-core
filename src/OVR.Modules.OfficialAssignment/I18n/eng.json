@@ -1,0 +1,5 @@
+{
+  "OfficialAssignment.NotFound": "Official assignment with ID '{{id}}' was not found.",
+  "OfficialAssignment.AlreadyExists": "Official assignment for participant '{{participantId}}' in unit '{{unitRsc}}' already exists.",
+  "OfficialAssignment.InvalidStatusTransition": "Cannot transition assignment status from '{{from}}' to '{{to}}'."
+}

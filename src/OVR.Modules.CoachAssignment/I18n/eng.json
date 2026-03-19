@@ -1,0 +1,5 @@
+{
+  "CoachAssignment.NotFound": "Coach assignment with ID '{{id}}' was not found.",
+  "CoachAssignment.AlreadyExists": "Coach assignment for participant '{{participantId}}' in event '{{eventRsc}}' already exists.",
+  "CoachAssignment.InvalidStatusTransition": "Cannot transition coach assignment status from '{{from}}' to '{{to}}'."
+}

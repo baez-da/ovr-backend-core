@@ -83,13 +83,18 @@ try
         typeof(CommonCodesModule).Assembly
     ]);
 
-    // i18n
+    // i18n — global primero, luego módulos (auto-discovery de I18n.* en output dir)
     builder.Services.AddSingleton<ITranslationService>(sp =>
     {
         var env = sp.GetRequiredService<IWebHostEnvironment>();
-        var i18nPath = Path.Combine(env.ContentRootPath, "I18n");
         var logger = sp.GetRequiredService<ILogger<JsonTranslationService>>();
-        return new JsonTranslationService(i18nPath, logger);
+
+        var globalPath = Path.Combine(env.ContentRootPath, "I18n");
+        var modulePaths = Directory.Exists(AppContext.BaseDirectory)
+            ? Directory.GetDirectories(AppContext.BaseDirectory, "I18n.*")
+            : [];
+
+        return new JsonTranslationService([globalPath, .. modulePaths], logger);
     });
 
     // Core services

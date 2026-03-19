@@ -1,0 +1,4 @@
+{
+  "Participant.NotFound": "No se encontró el participante con ID '{{id}}'.",
+  "Participant.AlreadyExists": "El participante con ID '{{id}}' ya existe."
+}

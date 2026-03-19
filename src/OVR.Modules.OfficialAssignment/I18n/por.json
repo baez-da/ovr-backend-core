@@ -1,0 +1,5 @@
+{
+  "OfficialAssignment.NotFound": "Atribuição de oficial com ID '{{id}}' não foi encontrada.",
+  "OfficialAssignment.AlreadyExists": "Já existe uma atribuição de oficial para o participante '{{participantId}}' na unidade '{{unitRsc}}'.",
+  "OfficialAssignment.InvalidStatusTransition": "Não é possível alterar o estado da atribuição de '{{from}}' para '{{to}}'."
+}
