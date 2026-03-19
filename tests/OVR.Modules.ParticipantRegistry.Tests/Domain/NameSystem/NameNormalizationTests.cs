@@ -56,4 +56,15 @@ public class NameNormalizationTests
         var result = NameNormalization.ToMixedCase(input);
         result.Should().Be(expected);
     }
+
+    [Theory]
+    [InlineData("SMITH", 18, "SMITH")]
+    [InlineData("KOOPEREN-SCHMORANZER", 18, "KOOPEREN-SCHMORAN.")]
+    [InlineData("AB", 2, "AB")]
+    [InlineData("ABC", 2, "A.")]
+    public void Truncate_ShouldTruncateWithDot(string input, int maxLength, string expected)
+    {
+        var result = NameNormalization.Truncate(input, maxLength);
+        result.Should().Be(expected);
+    }
 }

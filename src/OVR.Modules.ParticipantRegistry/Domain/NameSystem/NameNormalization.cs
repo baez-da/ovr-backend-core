@@ -170,4 +170,16 @@ public static class NameNormalization
         // Title case
         return char.ToUpperInvariant(word[0]) + word[1..].ToLowerInvariant();
     }
+
+    /// <summary>
+    /// Truncates a name to maxLength characters. If truncation is needed,
+    /// the last character is replaced with a dot per ODF rules.
+    /// </summary>
+    public static string Truncate(string name, int maxLength)
+    {
+        if (name.Length <= maxLength)
+            return name;
+
+        return name[..(maxLength - 1)] + ".";
+    }
 }
