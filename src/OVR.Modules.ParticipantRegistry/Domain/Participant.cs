@@ -1,7 +1,6 @@
 using OVR.SharedKernel.Domain.Events.Integration;
 using OVR.SharedKernel.Domain.Primitives;
 using OVR.SharedKernel.Domain.ValueObjects;
-using OVR.Modules.ParticipantRegistry.Domain.NameSystem;
 
 namespace OVR.Modules.ParticipantRegistry.Domain;
 
@@ -12,28 +11,49 @@ public sealed class Participant : AggregateRoot<string>
     public Description Description { get; private set; } = null!;
     public ExtendedDescription ExtendedDescription { get; private set; } = new();
     public string PrintName { get; private set; } = string.Empty;
+    public string PrintInitialName { get; private set; } = string.Empty;
     public string TvName { get; private set; } = string.Empty;
+    public string TvInitialName { get; private set; } = string.Empty;
+    public string TvFamilyName { get; private set; } = string.Empty;
+    public string PscbName { get; private set; } = string.Empty;
+    public string PscbShortName { get; private set; } = string.Empty;
+    public string PscbLongName { get; private set; } = string.Empty;
     public DateTime CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
 
-    private Participant() { } // For MongoDB deserialization
+    private Participant() { }
 
     public static Participant Create(
-        ParticipantId participantId,
         ParticipantType type,
-        Description description)
+        Description description,
+        ExtendedDescription? extendedDescription,
+        string printName,
+        string printInitialName,
+        string tvName,
+        string tvInitialName,
+        string tvFamilyName,
+        string pscbName,
+        string pscbShortName,
+        string pscbLongName)
     {
+        var participantId = ParticipantId.Generate();
         var participant = new Participant
         {
             Id = participantId.Value,
             ParticipantId = participantId,
             Type = type,
             Description = description,
+            ExtendedDescription = extendedDescription ?? new ExtendedDescription(),
+            PrintName = printName,
+            PrintInitialName = printInitialName,
+            TvName = tvName,
+            TvInitialName = tvInitialName,
+            TvFamilyName = tvFamilyName,
+            PscbName = pscbName,
+            PscbShortName = pscbShortName,
+            PscbLongName = pscbLongName,
             CreatedAt = DateTime.UtcNow
         };
-
-        participant.PrintName = NameRules.BuildPrintName(description.FamilyName, description.GivenName);
-        participant.TvName = NameRules.BuildTvName(description.FamilyName, description.GivenName);
 
         participant.RaiseDomainEvent(new ParticipantCreatedEvent(
             participantId.Value,
@@ -43,16 +63,19 @@ public sealed class Participant : AggregateRoot<string>
         return participant;
     }
 
-    /// <summary>
-    /// Reconstitutes a Participant from persistence or external systems. No domain events raised.
-    /// </summary>
     public static Participant Hydrate(
         ParticipantId participantId,
         ParticipantType type,
         Description description,
-        string printName,
-        string tvName,
         ExtendedDescription? extendedDescription,
+        string printName,
+        string printInitialName,
+        string tvName,
+        string tvInitialName,
+        string tvFamilyName,
+        string pscbName,
+        string pscbShortName,
+        string pscbLongName,
         DateTime createdAt,
         DateTime? updatedAt)
     {
@@ -62,19 +85,17 @@ public sealed class Participant : AggregateRoot<string>
             ParticipantId = participantId,
             Type = type,
             Description = description,
-            PrintName = printName,
-            TvName = tvName,
             ExtendedDescription = extendedDescription ?? new ExtendedDescription(),
+            PrintName = printName,
+            PrintInitialName = printInitialName,
+            TvName = tvName,
+            TvInitialName = tvInitialName,
+            TvFamilyName = tvFamilyName,
+            PscbName = pscbName,
+            PscbShortName = pscbShortName,
+            PscbLongName = pscbLongName,
             CreatedAt = createdAt,
             UpdatedAt = updatedAt
         };
-    }
-
-    public void UpdateDescription(Description newDescription)
-    {
-        Description = newDescription;
-        PrintName = NameRules.BuildPrintName(newDescription.FamilyName, newDescription.GivenName);
-        TvName = NameRules.BuildTvName(newDescription.FamilyName, newDescription.GivenName);
-        UpdatedAt = DateTime.UtcNow;
     }
 }

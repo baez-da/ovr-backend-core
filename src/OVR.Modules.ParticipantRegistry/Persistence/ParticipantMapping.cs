@@ -15,7 +15,13 @@ internal static class ParticipantMapping
         BirthDate = participant.Description.BirthDate,
         Organisation = participant.Description.Organisation.Code,
         PrintName = participant.PrintName,
+        PrintInitialName = participant.PrintInitialName,
         TvName = participant.TvName,
+        TvInitialName = participant.TvInitialName,
+        TvFamilyName = participant.TvFamilyName,
+        PscbName = participant.PscbName,
+        PscbShortName = participant.PscbShortName,
+        PscbLongName = participant.PscbLongName,
         ExtendedDescription = new Dictionary<string, string>(participant.ExtendedDescription.Properties),
         CreatedAt = participant.CreatedAt,
         UpdatedAt = participant.UpdatedAt
@@ -34,8 +40,9 @@ internal static class ParticipantMapping
             extendedDescription.Set(kvp.Key, kvp.Value);
 
         return Participant.Hydrate(
-            participantId, type, description,
-            doc.PrintName, doc.TvName, extendedDescription,
+            participantId, type, description, extendedDescription,
+            doc.PrintName, doc.PrintInitialName, doc.TvName, doc.TvInitialName,
+            doc.TvFamilyName, doc.PscbName, doc.PscbShortName, doc.PscbLongName,
             doc.CreatedAt, doc.UpdatedAt);
     }
 }

@@ -19,17 +19,19 @@ public sealed class CreateParticipantHandler(
         if (existing is not null)
             return Errors.ParticipantErrors.AlreadyExists(request.ParticipantId);
 
-        var participantId = ParticipantId.Create(request.ParticipantId);
         var type = Enum.Parse<ParticipantType>(request.Type, ignoreCase: true);
         var gender = Gender.FromCode(request.GenderCode);
         var organisation = Organisation.Create(request.Organisation);
         var description = Description.Create(request.GivenName, request.FamilyName, gender, request.BirthDate, organisation);
 
-        var participant = Participant.Create(participantId, type, description);
+        // TODO(Task 11): replace placeholder name fields with proper OdfNameBuilder output
+        var participant = Participant.Create(
+            type, description, null,
+            string.Empty, string.Empty, string.Empty, string.Empty,
+            string.Empty, string.Empty, string.Empty, string.Empty);
 
         await repository.AddAsync(participant, cancellationToken);
 
-        // Dispatch domain events
         foreach (var domainEvent in participant.DomainEvents)
         {
             await publisher.Publish(domainEvent, cancellationToken);

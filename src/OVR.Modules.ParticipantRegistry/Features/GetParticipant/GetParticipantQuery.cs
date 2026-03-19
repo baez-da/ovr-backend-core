@@ -8,7 +8,7 @@ public sealed record GetParticipantQuery(string ParticipantId) : IRequest<ErrorO
 public sealed record ParticipantResponse(
     string Id,
     string Type,
-    string GivenName,
+    string? GivenName,
     string FamilyName,
     string GenderCode,
     DateOnly? BirthDate,
