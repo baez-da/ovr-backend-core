@@ -20,18 +20,18 @@ public sealed class CreateParticipantHandler(
         CancellationToken cancellationToken)
     {
         // Level 2: validate Organisation exists in CommonCodes
-        var organisationExists = await commonCodeReader.ExistsAsync("delegation", request.Organisation, cancellationToken);
+        var organisationExists = await commonCodeReader.ExistsAsync(CommonCodeTypes.Organisation, request.Organisation, cancellationToken);
         if (!organisationExists)
             return Errors.ParticipantErrors.InvalidOrganisation(request.Organisation);
 
         // Level 2: validate each function's discipline and function code
         foreach (var fn in request.Functions)
         {
-            var discExists = await commonCodeReader.ExistsAsync("discipline", fn.DisciplineCode, cancellationToken);
+            var discExists = await commonCodeReader.ExistsAsync(CommonCodeTypes.Discipline, fn.DisciplineCode, cancellationToken);
             if (!discExists)
                 return Errors.ParticipantErrors.InvalidDiscipline(fn.DisciplineCode);
 
-            var fnExists = await commonCodeReader.ExistsAsync("discipline_function", fn.FunctionId, cancellationToken);
+            var fnExists = await commonCodeReader.ExistsAsync(CommonCodeTypes.DisciplineFunction, fn.FunctionId, cancellationToken);
             if (!fnExists)
                 return Errors.ParticipantErrors.InvalidFunction(fn.FunctionId);
         }

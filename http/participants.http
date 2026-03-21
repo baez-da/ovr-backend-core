@@ -2,18 +2,23 @@
 GET {{host}}/
 Accept: application/json
 
+### ===========================================
+### ATHLETES
+### ===========================================
+
 ### Create Participant - Athlete (Swimming, USA)
 POST {{host}}/api/participants
 Content-Type: application/json
 
 {
-  "participantId": "1234567",
-  "type": "Athlete",
   "givenName": "Katie",
   "familyName": "Ledecky",
   "genderCode": "F",
   "birthDate": "1997-03-17",
-  "organisation": "USA"
+  "organisation": "USA",
+  "functions": [
+    { "functionId": "ATH", "disciplineCode": "SWM", "isMain": true }
+  ]
 }
 
 ### Create Participant - Athlete (Track & Field, Jamaica)
@@ -21,45 +26,182 @@ POST {{host}}/api/participants
 Content-Type: application/json
 
 {
-  "participantId": "2345678",
-  "type": "Athlete",
   "givenName": "Shelly-Ann",
   "familyName": "Fraser-Pryce",
   "genderCode": "F",
   "birthDate": "1986-12-27",
-  "organisation": "JAM"
+  "organisation": "JAM",
+  "functions": [
+    { "functionId": "ATH", "disciplineCode": "ATH", "isMain": true }
+  ]
 }
 
-### Create Participant - Team Official
+### Create Participant - Athlete with single name (Football, Brazil)
 POST {{host}}/api/participants
 Content-Type: application/json
 
 {
-  "participantId": "9000001",
-  "type": "TeamOfficial",
+  "givenName": null,
+  "familyName": "Pele",
+  "genderCode": "M",
+  "birthDate": "1940-10-23",
+  "organisation": "BRA",
+  "functions": [
+    { "functionId": "ATH", "disciplineCode": "FBL", "isMain": true }
+  ]
+}
+
+### Create Participant - Athlete with accented name (Gymnastics, Spain)
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "givenName": "María",
+  "familyName": "López",
+  "genderCode": "F",
+  "birthDate": "2000-05-10",
+  "organisation": "ESP",
+  "functions": [
+    { "functionId": "ATH", "disciplineCode": "GAR", "isMain": true }
+  ]
+}
+
+### Create Participant - Athlete with Mc prefix (Swimming, Australia)
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "givenName": "Liz",
+  "familyName": "McPherson",
+  "genderCode": "F",
+  "birthDate": "1995-08-14",
+  "organisation": "AUS",
+  "functions": [
+    { "functionId": "ATH", "disciplineCode": "SWM", "isMain": true }
+  ]
+}
+
+### Create Participant - Asian athlete (TV name switching, Japan)
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "givenName": "Yuki",
+  "familyName": "Tanaka",
+  "genderCode": "M",
+  "birthDate": "1998-03-22",
+  "organisation": "JPN",
+  "functions": [
+    { "functionId": "ATH", "disciplineCode": "SWM", "isMain": true }
+  ]
+}
+
+### Create Participant - Particle surname (Marathon, Australia)
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "givenName": "Robert",
+  "familyName": "de Castella",
+  "genderCode": "M",
+  "birthDate": "1957-02-27",
+  "organisation": "AUS",
+  "functions": [
+    { "functionId": "ATH", "disciplineCode": "ATH", "isMain": true }
+  ]
+}
+
+### ===========================================
+### COACHES & TEAM OFFICIALS
+### ===========================================
+
+### Create Participant - Coach (Volleyball, Spain)
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
   "givenName": "Carlos",
   "familyName": "Rodriguez",
   "genderCode": "M",
   "birthDate": "1975-06-15",
-  "organisation": "ESP"
+  "organisation": "ESP",
+  "functions": [
+    { "functionId": "COACH", "disciplineCode": "VVO", "isMain": true }
+  ]
 }
 
-### Create Participant - Technical Official
+### Create Participant - Coach + Team Manager (small delegation, Costa Rica)
 POST {{host}}/api/participants
 Content-Type: application/json
 
 {
-  "participantId": "8000001",
-  "type": "TechnicalOfficial",
+  "givenName": "Ana",
+  "familyName": "Martinez",
+  "genderCode": "F",
+  "birthDate": "1980-09-20",
+  "organisation": "CRC",
+  "functions": [
+    { "functionId": "COACH", "disciplineCode": "VVO", "isMain": true },
+    { "functionId": "TM_MGR", "disciplineCode": "VVO", "isMain": false }
+  ]
+}
+
+### Create Participant - Coach in two disciplines (Volleyball + Beach Volleyball)
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "givenName": "Elena",
+  "familyName": "Rodriguez",
+  "genderCode": "F",
+  "birthDate": "1990-06-10",
+  "organisation": "ESP",
+  "functions": [
+    { "functionId": "COACH", "disciplineCode": "VVO", "isMain": true },
+    { "functionId": "AST_COA", "disciplineCode": "BVO", "isMain": true }
+  ]
+}
+
+### ===========================================
+### TECHNICAL OFFICIALS (Judges, Referees)
+### ===========================================
+
+### Create Participant - Boxing Referee (Costa Rica) — like Maria Fernanda COTO
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "givenName": "Maria Fernanda",
+  "familyName": "Coto",
+  "genderCode": "F",
+  "birthDate": "1985-03-15",
+  "organisation": "CRC",
+  "functions": [
+    { "functionId": "RE", "disciplineCode": "BOX", "isMain": true }
+  ]
+}
+
+### Create Participant - Gymnastics Judge with multiple functions
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
   "givenName": "Hans",
   "familyName": "Mueller",
   "genderCode": "M",
-  "birthDate": null,
-  "organisation": "GER"
+  "organisation": "GER",
+  "functions": [
+    { "functionId": "D1", "disciplineCode": "GAR", "isMain": true },
+    { "functionId": "PR", "disciplineCode": "GAR", "isMain": false }
+  ]
 }
 
-### Get Participant by ID
-GET {{host}}/api/participants/1234567
+### ===========================================
+### QUERIES
+### ===========================================
+
+### Get Participant by ID (replace with actual LOC- id from create response)
+GET {{host}}/api/participants/LOC-replace-with-actual-id
 Accept: application/json
 
 ### Get Participant (not found)
@@ -70,32 +212,124 @@ Accept: application/json
 GET {{host}}/api/participants/by-organisation/USA
 Accept: application/json
 
-### List Participants by Organisation - Jamaica
-GET {{host}}/api/participants/by-organisation/JAM
+### List Participants by Organisation - Costa Rica
+GET {{host}}/api/participants/by-organisation/CRC
 Accept: application/json
 
-### Validation: invalid type
+### List Participants by Organisation - Spain
+GET {{host}}/api/participants/by-organisation/ESP
+Accept: application/json
+
+### ===========================================
+### LOCALIZED RESPONSES
+### ===========================================
+
+### Get Participant in Spanish
+GET {{host}}/api/participants/LOC-replace-with-actual-id
+Accept: application/json
+Language: spa
+
+### Get Participant in Portuguese
+GET {{host}}/api/participants/LOC-replace-with-actual-id
+Accept: application/json
+Language: por
+
+### ===========================================
+### VALIDATION ERRORS
+### ===========================================
+
+### Validation: empty functions
 POST {{host}}/api/participants
 Content-Type: application/json
 
 {
-  "participantId": "9999999",
-  "type": "InvalidType",
   "givenName": "Test",
   "familyName": "User",
   "genderCode": "M",
-  "organisation": "USA"
+  "organisation": "USA",
+  "functions": []
 }
 
-### Conflict: duplicate participant
+### Validation: function without functionId
 POST {{host}}/api/participants
 Content-Type: application/json
 
 {
-  "participantId": "1234567",
-  "type": "Athlete",
-  "givenName": "Another",
-  "familyName": "Person",
+  "givenName": "Test",
+  "familyName": "User",
   "genderCode": "M",
-  "organisation": "USA"
+  "organisation": "USA",
+  "functions": [
+    { "functionId": "", "disciplineCode": "SWM", "isMain": true }
+  ]
+}
+
+### Validation: invalid organisation (not in CommonCodes)
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "givenName": "Test",
+  "familyName": "User",
+  "genderCode": "M",
+  "organisation": "ZZZ",
+  "functions": [
+    { "functionId": "ATH", "disciplineCode": "SWM", "isMain": true }
+  ]
+}
+
+### Validation: invalid function code (not in CommonCodes)
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "givenName": "Test",
+  "familyName": "User",
+  "genderCode": "M",
+  "organisation": "USA",
+  "functions": [
+    { "functionId": "INVALID_FN", "disciplineCode": "SWM", "isMain": true }
+  ]
+}
+
+### Validation: invalid discipline code (not in CommonCodes)
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "givenName": "Test",
+  "familyName": "User",
+  "genderCode": "M",
+  "organisation": "USA",
+  "functions": [
+    { "functionId": "ATH", "disciplineCode": "ZZZZZ", "isMain": true }
+  ]
+}
+
+### Validation: missing familyName
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "givenName": "Test",
+  "familyName": "",
+  "genderCode": "M",
+  "organisation": "USA",
+  "functions": [
+    { "functionId": "ATH", "disciplineCode": "SWM", "isMain": true }
+  ]
+}
+
+### Validation: invalid gender
+POST {{host}}/api/participants
+Content-Type: application/json
+
+{
+  "givenName": "Test",
+  "familyName": "User",
+  "genderCode": "Z",
+  "organisation": "USA",
+  "functions": [
+    { "functionId": "ATH", "disciplineCode": "SWM", "isMain": true }
+  ]
 }
