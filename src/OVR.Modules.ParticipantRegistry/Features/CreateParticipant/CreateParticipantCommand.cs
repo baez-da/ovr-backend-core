@@ -4,12 +4,14 @@ using MediatR;
 namespace OVR.Modules.ParticipantRegistry.Features.CreateParticipant;
 
 public sealed record CreateParticipantCommand(
-    string Type,
     string? GivenName,
     string FamilyName,
     string GenderCode,
     DateOnly? BirthDate,
-    string Organisation) : IRequest<ErrorOr<CreateParticipantResponse>>;
+    string Organisation,
+    List<FunctionDto> Functions) : IRequest<ErrorOr<CreateParticipantResponse>>;
+
+public sealed record FunctionDto(string FunctionId, string DisciplineCode, bool IsMain);
 
 public sealed record CreateParticipantResponse(
     string Id,
@@ -21,4 +23,5 @@ public sealed record CreateParticipantResponse(
     string PscbName,
     string PscbShortName,
     string PscbLongName,
+    List<FunctionDto> Functions,
     DateTime CreatedAt);

@@ -16,12 +16,12 @@ public sealed class ListParticipantsByEventHandler(IParticipantRepository reposi
 
         var responses = participants.Select(p => new ParticipantResponse(
             p.Id,
-            p.Type.ToString(),
             p.Description.GivenName,
             p.Description.FamilyName,
             p.Description.Gender.Value,
             p.Description.BirthDate,
             p.Description.Organisation.Code,
+            p.Functions.Select(f => new FunctionResponse(f.FunctionId, f.DisciplineCode, f.IsMain)).ToList(),
             p.PrintName,
             p.PrintInitialName,
             p.TvName,

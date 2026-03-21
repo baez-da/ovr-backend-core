@@ -24,11 +24,26 @@ public sealed class CreateParticipantHandler(
         if (!organisationExists)
             return Errors.ParticipantErrors.InvalidOrganisation(request.Organisation);
 
+        // Level 2: validate each function's discipline and function code
+        foreach (var fn in request.Functions)
+        {
+            var discExists = await commonCodeReader.ExistsAsync("discipline", fn.DisciplineCode, cancellationToken);
+            if (!discExists)
+                return Errors.ParticipantErrors.InvalidDiscipline(fn.DisciplineCode);
+
+            var fnExists = await commonCodeReader.ExistsAsync("discipline_function", fn.FunctionId, cancellationToken);
+            if (!fnExists)
+                return Errors.ParticipantErrors.InvalidFunction(fn.FunctionId);
+        }
+
         // Build value objects
-        var type = Enum.Parse<ParticipantType>(request.Type, ignoreCase: true);
         var gender = Gender.FromCode(request.GenderCode);
         var organisation = Organisation.Create(request.Organisation);
         var description = Description.Create(request.GivenName, request.FamilyName, gender, request.BirthDate, organisation);
+
+        var functions = request.Functions
+            .Select(f => ParticipantFunction.Create(f.FunctionId, f.DisciplineCode, f.IsMain))
+            .ToList();
 
         // Build names via domain service
         var printName = nameBuilder.BuildPrintName(request.FamilyName, request.GivenName);
@@ -42,28 +57,22 @@ public sealed class CreateParticipantHandler(
 
         // Create aggregate (generates ID internally)
         var participant = Participant.Create(
-            type, description, extendedDescription: null,
+            description, extendedDescription: null, functions,
             printName, printInitialName, tvName, tvInitialName,
             tvFamilyName, pscbName, pscbShortName, pscbLongName);
 
         await repository.AddAsync(participant, cancellationToken);
 
         foreach (var domainEvent in participant.DomainEvents)
-        {
             await publisher.Publish(domainEvent, cancellationToken);
-        }
         participant.ClearDomainEvents();
 
         return new CreateParticipantResponse(
             participant.Id,
-            participant.PrintName,
-            participant.PrintInitialName,
-            participant.TvName,
-            participant.TvInitialName,
-            participant.TvFamilyName,
-            participant.PscbName,
-            participant.PscbShortName,
-            participant.PscbLongName,
+            participant.PrintName, participant.PrintInitialName,
+            participant.TvName, participant.TvInitialName, participant.TvFamilyName,
+            participant.PscbName, participant.PscbShortName, participant.PscbLongName,
+            participant.Functions.Select(f => new FunctionDto(f.FunctionId, f.DisciplineCode, f.IsMain)).ToList(),
             participant.CreatedAt);
     }
 }

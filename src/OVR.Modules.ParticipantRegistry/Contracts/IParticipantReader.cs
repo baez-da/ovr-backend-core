@@ -6,7 +6,9 @@ public interface IParticipantReader
 }
 
 public sealed record ParticipantSummary(
-    string Id,
-    string PrintName,
-    string Organisation,
-    string Type);
+    string Id, string? GivenName, string FamilyName,
+    string PrintName, string TvName, string TvFamilyName,
+    string OrganisationCode, string GenderCode,
+    IReadOnlyList<ParticipantFunctionSummary> Functions);
+
+public sealed record ParticipantFunctionSummary(string FunctionId, string DisciplineCode, bool IsMain);

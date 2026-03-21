@@ -17,12 +17,12 @@ public sealed class GetParticipantHandler(IParticipantRepository repository)
 
         return new ParticipantResponse(
             participant.Id,
-            participant.Type.ToString(),
             participant.Description.GivenName,
             participant.Description.FamilyName,
             participant.Description.Gender.Value,
             participant.Description.BirthDate,
             participant.Description.Organisation.Code,
+            participant.Functions.Select(f => new FunctionResponse(f.FunctionId, f.DisciplineCode, f.IsMain)).ToList(),
             participant.PrintName,
             participant.PrintInitialName,
             participant.TvName,

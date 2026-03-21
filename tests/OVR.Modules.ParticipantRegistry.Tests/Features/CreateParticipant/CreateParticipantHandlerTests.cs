@@ -21,13 +21,24 @@ public class CreateParticipantHandlerTests
         _handler = new CreateParticipantHandler(_repository, _publisher, _commonCodeReader, _nameBuilder);
     }
 
-    private static CreateParticipantCommand ValidCommand(string? givenName = "John", string organisation = "USA") =>
-        new("Athlete", givenName, "Smith", "M", null, organisation);
+    private static List<FunctionDto> DefaultFunctions() =>
+        [new("ATH", "SWM", true)];
+
+    private CreateParticipantCommand ValidCommand(
+        string? givenName = "John", string organisation = "USA", List<FunctionDto>? functions = null) =>
+        new(givenName, "Smith", "M", null, organisation, functions ?? DefaultFunctions());
+
+    private void SetupValidCommonCodes(string organisation = "USA")
+    {
+        _commonCodeReader.ExistsAsync("delegation", organisation, Arg.Any<CancellationToken>()).Returns(true);
+        _commonCodeReader.ExistsAsync("discipline", Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(true);
+        _commonCodeReader.ExistsAsync("discipline_function", Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(true);
+    }
 
     [Fact]
     public async Task Handle_ValidCommand_ShouldCreateParticipantWithLocPrefix()
     {
-        _commonCodeReader.ExistsAsync("delegation", "USA", Arg.Any<CancellationToken>()).Returns(true);
+        SetupValidCommonCodes();
 
         var result = await _handler.Handle(ValidCommand(), CancellationToken.None);
 
@@ -35,6 +46,7 @@ public class CreateParticipantHandlerTests
         result.Value.Id.Should().StartWith("LOC-");
         result.Value.PrintName.Should().Be("SMITH John");
         result.Value.TvName.Should().Be("John SMITH");
+        result.Value.Functions.Should().ContainSingle(f => f.FunctionId == "ATH" && f.IsMain);
         await _repository.Received(1).AddAsync(Arg.Any<OVR.Modules.ParticipantRegistry.Domain.Participant>(), Arg.Any<CancellationToken>());
     }
 
@@ -51,9 +63,36 @@ public class CreateParticipantHandlerTests
     }
 
     [Fact]
+    public async Task Handle_InvalidFunction_ShouldReturnError()
+    {
+        _commonCodeReader.ExistsAsync("delegation", "USA", Arg.Any<CancellationToken>()).Returns(true);
+        _commonCodeReader.ExistsAsync("discipline", "SWM", Arg.Any<CancellationToken>()).Returns(true);
+        _commonCodeReader.ExistsAsync("discipline_function", "INVALID", Arg.Any<CancellationToken>()).Returns(false);
+
+        var functions = new List<FunctionDto> { new("INVALID", "SWM", true) };
+        var result = await _handler.Handle(ValidCommand(functions: functions), CancellationToken.None);
+
+        result.IsError.Should().BeTrue();
+        result.FirstError.Code.Should().Be("Participant.InvalidFunction");
+    }
+
+    [Fact]
+    public async Task Handle_InvalidDiscipline_ShouldReturnError()
+    {
+        _commonCodeReader.ExistsAsync("delegation", "USA", Arg.Any<CancellationToken>()).Returns(true);
+        _commonCodeReader.ExistsAsync("discipline", "ZZZ", Arg.Any<CancellationToken>()).Returns(false);
+
+        var functions = new List<FunctionDto> { new("ATH", "ZZZ", true) };
+        var result = await _handler.Handle(ValidCommand(functions: functions), CancellationToken.None);
+
+        result.IsError.Should().BeTrue();
+        result.FirstError.Code.Should().Be("Participant.InvalidDiscipline");
+    }
+
+    [Fact]
     public async Task Handle_NullGivenName_ShouldCreateSingleNameParticipant()
     {
-        _commonCodeReader.ExistsAsync("delegation", "BRA", Arg.Any<CancellationToken>()).Returns(true);
+        SetupValidCommonCodes("BRA");
 
         var result = await _handler.Handle(ValidCommand(givenName: null, organisation: "BRA"), CancellationToken.None);
 
@@ -63,9 +102,25 @@ public class CreateParticipantHandlerTests
     }
 
     [Fact]
+    public async Task Handle_MultipleFunctions_ShouldCreateParticipant()
+    {
+        SetupValidCommonCodes();
+
+        var functions = new List<FunctionDto>
+        {
+            new("COACH", "VVO", true),
+            new("TM_MGR", "VVO", false)
+        };
+        var result = await _handler.Handle(ValidCommand(functions: functions), CancellationToken.None);
+
+        result.IsError.Should().BeFalse();
+        result.Value.Functions.Should().HaveCount(2);
+    }
+
+    [Fact]
     public async Task Handle_ShouldDispatchDomainEvents()
     {
-        _commonCodeReader.ExistsAsync("delegation", "USA", Arg.Any<CancellationToken>()).Returns(true);
+        SetupValidCommonCodes();
 
         await _handler.Handle(ValidCommand(), CancellationToken.None);
 
@@ -75,7 +130,7 @@ public class CreateParticipantHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnAllEightNames()
     {
-        _commonCodeReader.ExistsAsync("delegation", "USA", Arg.Any<CancellationToken>()).Returns(true);
+        SetupValidCommonCodes();
 
         var result = await _handler.Handle(ValidCommand(), CancellationToken.None);
 

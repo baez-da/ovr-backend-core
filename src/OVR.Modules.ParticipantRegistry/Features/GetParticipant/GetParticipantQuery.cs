@@ -7,12 +7,12 @@ public sealed record GetParticipantQuery(string ParticipantId) : IRequest<ErrorO
 
 public sealed record ParticipantResponse(
     string Id,
-    string Type,
     string? GivenName,
     string FamilyName,
     string GenderCode,
     DateOnly? BirthDate,
     string Organisation,
+    List<FunctionResponse> Functions,
     string PrintName,
     string PrintInitialName,
     string TvName,
@@ -23,3 +23,8 @@ public sealed record ParticipantResponse(
     string PscbLongName,
     DateTime CreatedAt,
     DateTime? UpdatedAt);
+
+public sealed record FunctionResponse(
+    string FunctionId,
+    string DisciplineCode,
+    bool IsMain);
