@@ -8,7 +8,12 @@ internal static class ParticipantMapping
     public static ParticipantDocument ToDocument(Participant participant) => new()
     {
         Id = participant.Id,
-        Type = participant.Type.ToString(),
+        Functions = participant.Functions.Select(f => new ParticipantFunctionDocument
+        {
+            FunctionId = f.FunctionId,
+            DisciplineCode = f.DisciplineCode,
+            IsMain = f.IsMain
+        }).ToList(),
         GivenName = participant.Description.GivenName,
         FamilyName = participant.Description.FamilyName,
         GenderCode = participant.Description.Gender.Value,
@@ -30,17 +35,20 @@ internal static class ParticipantMapping
     public static Participant ToDomain(ParticipantDocument doc)
     {
         var participantId = ParticipantId.Create(doc.Id);
-        var type = Enum.Parse<ParticipantType>(doc.Type, ignoreCase: true);
         var gender = Gender.FromCode(doc.GenderCode);
         var organisation = Organisation.Create(doc.Organisation);
         var description = Description.Create(doc.GivenName, doc.FamilyName, gender, doc.BirthDate, organisation);
+
+        var functions = doc.Functions
+            .Select(f => ParticipantFunction.Create(f.FunctionId, f.DisciplineCode, f.IsMain))
+            .ToList();
 
         var extendedDescription = new ExtendedDescription();
         foreach (var kvp in doc.ExtendedDescription)
             extendedDescription.Set(kvp.Key, kvp.Value);
 
         return Participant.Hydrate(
-            participantId, type, description, extendedDescription,
+            participantId, description, extendedDescription, functions,
             doc.PrintName, doc.PrintInitialName, doc.TvName, doc.TvInitialName,
             doc.TvFamilyName, doc.PscbName, doc.PscbShortName, doc.PscbLongName,
             doc.CreatedAt, doc.UpdatedAt);

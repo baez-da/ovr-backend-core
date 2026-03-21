@@ -1,4 +1,6 @@
 {
   "Participant.NotFound": "Participant with ID '{{id}}' was not found.",
-  "Participant.InvalidOrganisation": "Organisation code '{{code}}' is not a valid delegation code."
+  "Participant.InvalidOrganisation": "Organisation code '{{code}}' is not a valid delegation code.",
+  "Participant.InvalidFunction": "Function '{{functionId}}' is not a valid discipline function code.",
+  "Participant.InvalidDiscipline": "Discipline '{{disciplineCode}}' is not a valid discipline code."
 }

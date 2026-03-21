@@ -7,9 +7,9 @@ namespace OVR.Modules.ParticipantRegistry.Domain;
 public sealed class Participant : AggregateRoot<string>
 {
     public ParticipantId ParticipantId { get; private set; } = null!;
-    public ParticipantType Type { get; private set; }
     public Description Description { get; private set; } = null!;
     public ExtendedDescription ExtendedDescription { get; private set; } = new();
+    public IReadOnlyList<ParticipantFunction> Functions { get; private set; } = [];
     public string PrintName { get; private set; } = string.Empty;
     public string PrintInitialName { get; private set; } = string.Empty;
     public string TvName { get; private set; } = string.Empty;
@@ -24,9 +24,9 @@ public sealed class Participant : AggregateRoot<string>
     private Participant() { }
 
     public static Participant Create(
-        ParticipantType type,
         Description description,
         ExtendedDescription? extendedDescription,
+        IReadOnlyList<ParticipantFunction> functions,
         string printName,
         string printInitialName,
         string tvName,
@@ -36,14 +36,16 @@ public sealed class Participant : AggregateRoot<string>
         string pscbShortName,
         string pscbLongName)
     {
+        ValidateFunctions(functions);
+
         var participantId = ParticipantId.Generate();
         var participant = new Participant
         {
             Id = participantId.Value,
             ParticipantId = participantId,
-            Type = type,
             Description = description,
             ExtendedDescription = extendedDescription ?? new ExtendedDescription(),
+            Functions = functions.ToList(),
             PrintName = printName,
             PrintInitialName = printInitialName,
             TvName = tvName,
@@ -55,9 +57,10 @@ public sealed class Participant : AggregateRoot<string>
             CreatedAt = DateTime.UtcNow
         };
 
+        var mainFunctionIds = functions.Where(f => f.IsMain).Select(f => f.FunctionId).ToList();
         participant.RaiseDomainEvent(new ParticipantCreatedEvent(
             participantId.Value,
-            type.ToString(),
+            mainFunctionIds,
             description.Organisation.Code));
 
         return participant;
@@ -65,9 +68,9 @@ public sealed class Participant : AggregateRoot<string>
 
     public static Participant Hydrate(
         ParticipantId participantId,
-        ParticipantType type,
         Description description,
         ExtendedDescription? extendedDescription,
+        IReadOnlyList<ParticipantFunction> functions,
         string printName,
         string printInitialName,
         string tvName,
@@ -83,9 +86,9 @@ public sealed class Participant : AggregateRoot<string>
         {
             Id = participantId.Value,
             ParticipantId = participantId,
-            Type = type,
             Description = description,
             ExtendedDescription = extendedDescription ?? new ExtendedDescription(),
+            Functions = functions.ToList(),
             PrintName = printName,
             PrintInitialName = printInitialName,
             TvName = tvName,
@@ -97,5 +100,24 @@ public sealed class Participant : AggregateRoot<string>
             CreatedAt = createdAt,
             UpdatedAt = updatedAt
         };
+    }
+
+    private static void ValidateFunctions(IReadOnlyList<ParticipantFunction> functions)
+    {
+        if (functions.Count == 0)
+            throw new ArgumentException("At least one function is required.");
+
+        var disciplines = functions.Select(f => f.DisciplineCode).Distinct();
+        foreach (var discipline in disciplines)
+        {
+            var mainCount = functions.Count(f => f.DisciplineCode == discipline && f.IsMain);
+            if (mainCount != 1)
+                throw new ArgumentException(
+                    $"Exactly one main function required per discipline. Discipline '{discipline}' has {mainCount}.");
+        }
+
+        var hasDuplicates = functions.GroupBy(f => (f.FunctionId, f.DisciplineCode)).Any(g => g.Count() > 1);
+        if (hasDuplicates)
+            throw new ArgumentException("Duplicate function+discipline combination found.");
     }
 }

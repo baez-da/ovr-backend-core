@@ -1,4 +1,6 @@
 {
   "Participant.NotFound": "No se encontró el participante con ID '{{id}}'.",
-  "Participant.InvalidOrganisation": "El código de organización '{{code}}' no es un código de delegación válido."
+  "Participant.InvalidOrganisation": "El código de organización '{{code}}' no es un código de delegación válido.",
+  "Participant.InvalidFunction": "La función '{{functionId}}' no es un código de función de disciplina válido.",
+  "Participant.InvalidDiscipline": "La disciplina '{{disciplineCode}}' no es un código de disciplina válido."
 }

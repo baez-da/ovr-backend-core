@@ -6,7 +6,7 @@ public sealed class ParticipantDocument
 {
     [BsonId]
     public string Id { get; set; } = string.Empty;
-    public string Type { get; set; } = string.Empty;
+    public List<ParticipantFunctionDocument> Functions { get; set; } = [];
     public string? GivenName { get; set; }
     public string FamilyName { get; set; } = string.Empty;
     public string GenderCode { get; set; } = string.Empty;
@@ -23,4 +23,11 @@ public sealed class ParticipantDocument
     public Dictionary<string, string> ExtendedDescription { get; set; } = [];
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+}
+
+public sealed class ParticipantFunctionDocument
+{
+    public string FunctionId { get; set; } = string.Empty;
+    public string DisciplineCode { get; set; } = string.Empty;
+    public bool IsMain { get; set; }
 }

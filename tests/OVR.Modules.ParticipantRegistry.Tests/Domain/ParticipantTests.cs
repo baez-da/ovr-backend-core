@@ -9,11 +9,26 @@ public class ParticipantTests
     private static readonly Description TestDescription =
         Description.Create("John", "Smith", Gender.FromCode("M"), null, Organisation.Create("USA"));
 
+    private static readonly List<ParticipantFunction> SingleFunction =
+        [ParticipantFunction.Create("ATH", "SWM", true)];
+
+    private static readonly List<ParticipantFunction> MultipleFunctionsSameDiscipline =
+    [
+        ParticipantFunction.Create("COACH", "VVO", true),
+        ParticipantFunction.Create("TM_MGR", "VVO", false)
+    ];
+
+    private static readonly List<ParticipantFunction> MultipleDisciplines =
+    [
+        ParticipantFunction.Create("COACH", "VVO", true),
+        ParticipantFunction.Create("UMPIRE", "BVO", true)
+    ];
+
     [Fact]
     public void Create_ShouldGenerateIdWithLocPrefix()
     {
         var participant = Participant.Create(
-            ParticipantType.Athlete, TestDescription, null,
+            TestDescription, null, SingleFunction,
             "SMITH John", "SMITH J", "John SMITH", "J. SMITH",
             "SMITH", "SMITH John", "SMITH J", "SMITH John");
 
@@ -25,7 +40,7 @@ public class ParticipantTests
     public void Create_ShouldRaiseParticipantCreatedEvent()
     {
         var participant = Participant.Create(
-            ParticipantType.Athlete, TestDescription, null,
+            TestDescription, null, SingleFunction,
             "SMITH John", "SMITH J", "John SMITH", "J. SMITH",
             "SMITH", "SMITH John", "SMITH J", "SMITH John");
 
@@ -33,10 +48,102 @@ public class ParticipantTests
     }
 
     [Fact]
+    public void Create_ShouldStoreFunctions()
+    {
+        var participant = Participant.Create(
+            TestDescription, null, MultipleFunctionsSameDiscipline,
+            "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl");
+
+        participant.Functions.Should().HaveCount(2);
+        participant.Functions.Should().Contain(f => f.FunctionId == "COACH" && f.IsMain);
+        participant.Functions.Should().Contain(f => f.FunctionId == "TM_MGR" && !f.IsMain);
+    }
+
+    [Fact]
+    public void Create_MultipleDisciplines_ShouldSucceed()
+    {
+        var participant = Participant.Create(
+            TestDescription, null, MultipleDisciplines,
+            "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl");
+
+        participant.Functions.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public void Create_EmptyFunctions_ShouldThrow()
+    {
+        var act = () => Participant.Create(
+            TestDescription, null, [],
+            "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl");
+
+        act.Should().Throw<ArgumentException>().WithMessage("*At least one*");
+    }
+
+    [Fact]
+    public void Create_TwoMainInSameDiscipline_ShouldThrow()
+    {
+        var functions = new List<ParticipantFunction>
+        {
+            ParticipantFunction.Create("COACH", "VVO", true),
+            ParticipantFunction.Create("TM_MGR", "VVO", true)
+        };
+
+        var act = () => Participant.Create(
+            TestDescription, null, functions,
+            "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl");
+
+        act.Should().Throw<ArgumentException>().WithMessage("*Exactly one main*");
+    }
+
+    [Fact]
+    public void Create_NoMainInDiscipline_ShouldThrow()
+    {
+        var functions = new List<ParticipantFunction>
+        {
+            ParticipantFunction.Create("COACH", "VVO", false)
+        };
+
+        var act = () => Participant.Create(
+            TestDescription, null, functions,
+            "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl");
+
+        act.Should().Throw<ArgumentException>().WithMessage("*Exactly one main*");
+    }
+
+    [Fact]
+    public void Create_DuplicateFunctionDiscipline_ShouldThrow()
+    {
+        var functions = new List<ParticipantFunction>
+        {
+            ParticipantFunction.Create("COACH", "VVO", true),
+            ParticipantFunction.Create("COACH", "VVO", false)
+        };
+
+        var act = () => Participant.Create(
+            TestDescription, null, functions,
+            "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl");
+
+        act.Should().Throw<ArgumentException>().WithMessage("*Duplicate*");
+    }
+
+    [Fact]
+    public void Hydrate_ShouldAcceptAnyIdAndNotRaiseEvents()
+    {
+        var id = ParticipantId.Create("GMS-12345");
+        var participant = Participant.Hydrate(
+            id, TestDescription, null, SingleFunction,
+            "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl",
+            DateTime.UtcNow, null);
+
+        participant.Id.Should().Be("GMS-12345");
+        participant.DomainEvents.Should().BeEmpty();
+    }
+
+    [Fact]
     public void Create_ShouldStoreAllEightNames()
     {
         var participant = Participant.Create(
-            ParticipantType.Athlete, TestDescription, null,
+            TestDescription, null, SingleFunction,
             "printName", "printInitialName", "tvName", "tvInitialName",
             "tvFamilyName", "pscbName", "pscbShortName", "pscbLongName");
 
@@ -48,18 +155,5 @@ public class ParticipantTests
         participant.PscbName.Should().Be("pscbName");
         participant.PscbShortName.Should().Be("pscbShortName");
         participant.PscbLongName.Should().Be("pscbLongName");
-    }
-
-    [Fact]
-    public void Hydrate_ShouldAcceptAnyIdAndNotRaiseEvents()
-    {
-        var id = ParticipantId.Create("GMS-12345");
-        var participant = Participant.Hydrate(
-            id, ParticipantType.Athlete, TestDescription, null,
-            "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl",
-            DateTime.UtcNow, null);
-
-        participant.Id.Should().Be("GMS-12345");
-        participant.DomainEvents.Should().BeEmpty();
     }
 }
