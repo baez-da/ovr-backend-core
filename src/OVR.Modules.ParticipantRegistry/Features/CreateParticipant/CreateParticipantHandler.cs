@@ -59,7 +59,8 @@ public sealed class CreateParticipantHandler(
         var participant = Participant.Create(
             description, extendedDescription: null, functions,
             printName, printInitialName, tvName, tvInitialName,
-            tvFamilyName, pscbName, pscbShortName, pscbLongName);
+            tvFamilyName, pscbName, pscbShortName, pscbLongName,
+            request.PhotoUrl);
 
         await repository.AddAsync(participant, cancellationToken);
 
@@ -73,6 +74,7 @@ public sealed class CreateParticipantHandler(
             participant.TvName, participant.TvInitialName, participant.TvFamilyName,
             participant.PscbName, participant.PscbShortName, participant.PscbLongName,
             participant.Functions.Select(f => new FunctionDto(f.FunctionId, f.DisciplineCode, f.IsMain)).ToList(),
-            participant.CreatedAt);
+            participant.CreatedAt,
+            participant.PhotoUrl);
     }
 }

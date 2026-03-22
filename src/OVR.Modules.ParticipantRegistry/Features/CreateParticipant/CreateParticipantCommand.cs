@@ -9,7 +9,8 @@ public sealed record CreateParticipantCommand(
     string GenderCode,
     DateOnly? BirthDate,
     string Organisation,
-    List<FunctionDto> Functions) : IRequest<ErrorOr<CreateParticipantResponse>>;
+    List<FunctionDto> Functions,
+    string? PhotoUrl = null) : IRequest<ErrorOr<CreateParticipantResponse>>;
 
 public sealed record FunctionDto(string FunctionId, string DisciplineCode, bool IsMain);
 
@@ -24,4 +25,5 @@ public sealed record CreateParticipantResponse(
     string PscbShortName,
     string PscbLongName,
     List<FunctionDto> Functions,
-    DateTime CreatedAt);
+    DateTime CreatedAt,
+    string? PhotoUrl = null);

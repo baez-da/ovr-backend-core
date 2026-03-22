@@ -22,7 +22,8 @@ public sealed record ParticipantResponse(
     string PscbShortName,
     string PscbLongName,
     DateTime CreatedAt,
-    DateTime? UpdatedAt);
+    DateTime? UpdatedAt,
+    string? PhotoUrl = null);
 
 public sealed record FunctionResponse(
     string FunctionId,

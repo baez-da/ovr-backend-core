@@ -18,6 +18,7 @@ public sealed class Participant : AggregateRoot<string>
     public string PscbName { get; private set; } = string.Empty;
     public string PscbShortName { get; private set; } = string.Empty;
     public string PscbLongName { get; private set; } = string.Empty;
+    public string? PhotoUrl { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
 
@@ -34,7 +35,8 @@ public sealed class Participant : AggregateRoot<string>
         string tvFamilyName,
         string pscbName,
         string pscbShortName,
-        string pscbLongName)
+        string pscbLongName,
+        string? photoUrl = null)
     {
         ValidateFunctions(functions);
 
@@ -54,6 +56,7 @@ public sealed class Participant : AggregateRoot<string>
             PscbName = pscbName,
             PscbShortName = pscbShortName,
             PscbLongName = pscbLongName,
+            PhotoUrl = photoUrl,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -80,7 +83,8 @@ public sealed class Participant : AggregateRoot<string>
         string pscbShortName,
         string pscbLongName,
         DateTime createdAt,
-        DateTime? updatedAt)
+        DateTime? updatedAt,
+        string? photoUrl = null)
     {
         return new Participant
         {
@@ -97,6 +101,7 @@ public sealed class Participant : AggregateRoot<string>
             PscbName = pscbName,
             PscbShortName = pscbShortName,
             PscbLongName = pscbLongName,
+            PhotoUrl = photoUrl,
             CreatedAt = createdAt,
             UpdatedAt = updatedAt
         };

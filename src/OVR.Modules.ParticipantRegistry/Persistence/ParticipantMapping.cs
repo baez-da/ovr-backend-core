@@ -27,6 +27,7 @@ internal static class ParticipantMapping
         PscbName = participant.PscbName,
         PscbShortName = participant.PscbShortName,
         PscbLongName = participant.PscbLongName,
+        PhotoUrl = participant.PhotoUrl,
         ExtendedDescription = new Dictionary<string, string>(participant.ExtendedDescription.Properties),
         CreatedAt = participant.CreatedAt,
         UpdatedAt = participant.UpdatedAt
@@ -51,6 +52,6 @@ internal static class ParticipantMapping
             participantId, description, extendedDescription, functions,
             doc.PrintName, doc.PrintInitialName, doc.TvName, doc.TvInitialName,
             doc.TvFamilyName, doc.PscbName, doc.PscbShortName, doc.PscbLongName,
-            doc.CreatedAt, doc.UpdatedAt);
+            doc.CreatedAt, doc.UpdatedAt, doc.PhotoUrl);
     }
 }

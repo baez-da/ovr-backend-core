@@ -32,6 +32,7 @@ public sealed class GetParticipantHandler(IParticipantRepository repository)
             participant.PscbShortName,
             participant.PscbLongName,
             participant.CreatedAt,
-            participant.UpdatedAt);
+            participant.UpdatedAt,
+            participant.PhotoUrl);
     }
 }

@@ -20,6 +20,7 @@ public sealed class ParticipantDocument
     public string PscbName { get; set; } = string.Empty;
     public string PscbShortName { get; set; } = string.Empty;
     public string PscbLongName { get; set; } = string.Empty;
+    public string? PhotoUrl { get; set; }
     public Dictionary<string, string> ExtendedDescription { get; set; } = [];
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }

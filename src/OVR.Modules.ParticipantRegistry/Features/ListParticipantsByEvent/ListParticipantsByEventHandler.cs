@@ -31,7 +31,8 @@ public sealed class ListParticipantsByEventHandler(IParticipantRepository reposi
             p.PscbShortName,
             p.PscbLongName,
             p.CreatedAt,
-            p.UpdatedAt)).ToList();
+            p.UpdatedAt,
+            p.PhotoUrl)).ToList();
 
         return responses;
     }
