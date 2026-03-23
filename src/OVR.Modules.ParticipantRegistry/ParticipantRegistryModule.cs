@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using OVR.Modules.ParticipantRegistry.Contracts;
 using OVR.Modules.ParticipantRegistry.Domain.NameSystem;
 using OVR.Modules.ParticipantRegistry.Features.CreateParticipant;
 using OVR.Modules.ParticipantRegistry.Features.GetParticipant;
 using OVR.Modules.ParticipantRegistry.Features.ListParticipantsByEvent;
 using OVR.Modules.ParticipantRegistry.Persistence;
+using OVR.Modules.ParticipantRegistry.Services;
 
 namespace OVR.Modules.ParticipantRegistry;
 
@@ -16,6 +18,8 @@ public static class ParticipantRegistryModule
     {
         services.AddScoped<IParticipantRepository, MongoParticipantRepository>();
         services.AddSingleton<INameBuilder, OdfNameBuilder>();
+        services.AddScoped<ParticipantEnricher>();
+        services.AddScoped<IParticipantReader, ParticipantReaderService>();
         return services;
     }
 

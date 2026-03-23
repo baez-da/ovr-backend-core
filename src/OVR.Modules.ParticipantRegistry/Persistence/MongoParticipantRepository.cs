@@ -20,6 +20,13 @@ internal sealed class MongoParticipantRepository(IMongoDatabase database) : IPar
         return docs.Select(ParticipantMapping.ToDomain).ToList();
     }
 
+    public async Task<IReadOnlyList<Participant>> GetByIdsAsync(IReadOnlyList<string> ids, CancellationToken ct = default)
+    {
+        var filter = Builders<ParticipantDocument>.Filter.In(d => d.Id, ids);
+        var docs = await Collection.Find(filter).ToListAsync(ct);
+        return docs.Select(ParticipantMapping.ToDomain).ToList();
+    }
+
     public async Task AddAsync(Participant participant, CancellationToken ct = default)
     {
         var doc = ParticipantMapping.ToDocument(participant);

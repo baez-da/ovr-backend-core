@@ -1,17 +1,20 @@
 using ErrorOr;
 using MediatR;
+using OVR.SharedKernel.Contracts;
 
 namespace OVR.Modules.ParticipantRegistry.Features.GetParticipant;
 
-public sealed record GetParticipantQuery(string ParticipantId) : IRequest<ErrorOr<ParticipantResponse>>;
+public sealed record GetParticipantQuery(
+    string ParticipantId,
+    string Language) : IRequest<ErrorOr<ParticipantResponse>>;
 
 public sealed record ParticipantResponse(
     string Id,
     string? GivenName,
     string FamilyName,
-    string GenderCode,
     DateOnly? BirthDate,
-    string Organisation,
+    LocalizedCode Organisation,
+    LocalizedCode Gender,
     List<FunctionResponse> Functions,
     string PrintName,
     string PrintInitialName,
@@ -21,11 +24,11 @@ public sealed record ParticipantResponse(
     string PscbName,
     string PscbShortName,
     string PscbLongName,
+    string? PhotoUrl,
     DateTime CreatedAt,
-    DateTime? UpdatedAt,
-    string? PhotoUrl = null);
+    DateTime? UpdatedAt);
 
 public sealed record FunctionResponse(
-    string FunctionId,
-    string DisciplineCode,
+    LocalizedCode Function,
+    LocalizedCode Discipline,
     bool IsMain);
