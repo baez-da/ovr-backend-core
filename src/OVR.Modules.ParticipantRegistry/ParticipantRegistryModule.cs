@@ -6,7 +6,7 @@ using OVR.Modules.ParticipantRegistry.Contracts;
 using OVR.Modules.ParticipantRegistry.Domain.NameSystem;
 using OVR.Modules.ParticipantRegistry.Features.CreateParticipant;
 using OVR.Modules.ParticipantRegistry.Features.GetParticipant;
-using OVR.Modules.ParticipantRegistry.Features.ListParticipantsByEvent;
+using OVR.Modules.ParticipantRegistry.Features.ListParticipantsByOrganisation;
 using OVR.Modules.ParticipantRegistry.Persistence;
 using OVR.Modules.ParticipantRegistry.Services;
 

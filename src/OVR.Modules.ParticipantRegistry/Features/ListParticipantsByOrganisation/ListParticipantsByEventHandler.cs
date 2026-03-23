@@ -5,15 +5,15 @@ using OVR.Modules.ParticipantRegistry.Features.GetParticipant;
 using OVR.Modules.ParticipantRegistry.Persistence;
 using OVR.Modules.ParticipantRegistry.Services;
 
-namespace OVR.Modules.ParticipantRegistry.Features.ListParticipantsByEvent;
+namespace OVR.Modules.ParticipantRegistry.Features.ListParticipantsByOrganisation;
 
 public sealed class ListParticipantsByEventHandler(
     IParticipantRepository repository,
     ParticipantEnricher enricher)
-    : IRequestHandler<ListParticipantsByEventQuery, ErrorOr<IReadOnlyList<ParticipantResponse>>>
+    : IRequestHandler<ListParticipantsByOrganisationQuery, ErrorOr<IReadOnlyList<ParticipantResponse>>>
 {
     public async Task<ErrorOr<IReadOnlyList<ParticipantResponse>>> Handle(
-        ListParticipantsByEventQuery request, CancellationToken cancellationToken)
+        ListParticipantsByOrganisationQuery request, CancellationToken cancellationToken)
     {
         var participants = await repository.FindByOrganisationAsync(request.Organisation, cancellationToken);
         var responses = new List<ParticipantResponse>(participants.Count);
