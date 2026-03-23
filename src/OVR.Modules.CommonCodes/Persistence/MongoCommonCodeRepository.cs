@@ -29,6 +29,12 @@ internal sealed class MongoCommonCodeRepository(IMongoDatabase database)
         return await Collection.Find(d => d.Id == id).AnyAsync(ct);
     }
 
+    public async Task<IReadOnlyList<string>> GetDistinctTypesAsync(CancellationToken ct)
+    {
+        var types = await Collection.DistinctAsync(d => d.Type, Builders<CommonCodeDocument>.Filter.Empty, cancellationToken: ct);
+        return await types.ToListAsync(ct);
+    }
+
     public async Task UpsertManyAsync(IReadOnlyList<CommonCodeDocument> documents, CancellationToken ct)
     {
         if (documents.Count == 0) return;

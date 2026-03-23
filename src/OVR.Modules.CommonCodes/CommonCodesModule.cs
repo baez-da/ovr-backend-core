@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OVR.Modules.CommonCodes.Contracts;
 using OVR.Modules.CommonCodes.Features.GetCommonCodes;
 using OVR.Modules.CommonCodes.Features.ImportFromExcel;
+using OVR.Modules.CommonCodes.Features.ListCommonCodeTypes;
 using OVR.Modules.CommonCodes.Persistence;
 
 namespace OVR.Modules.CommonCodes;
@@ -20,6 +21,7 @@ public static class CommonCodesModule
     {
         app.MapImportFromExcelEndpoint();
         app.MapGetCommonCodesEndpoint();
+        app.MapListCommonCodeTypesEndpoint();
         return app;
     }
 }
