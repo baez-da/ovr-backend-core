@@ -19,17 +19,17 @@ public sealed class GetParticipantHandler(
             return Errors.ParticipantErrors.NotFound(request.ParticipantId);
 
         var org = await enricher.EnrichCodeAsync(
-            CommonCodeTypes.Organisation, participant.Description.Organisation.Code, request.Language, cancellationToken);
+            CommonCodeTypes.Organisation, participant.BiographicData.Organisation.Code, request.Language, cancellationToken);
         var gender = await enricher.EnrichCodeAsync(
-            CommonCodeTypes.PersonGender, participant.Description.Gender.Value, request.Language, cancellationToken);
+            CommonCodeTypes.PersonGender, participant.BiographicData.Gender.Value, request.Language, cancellationToken);
         var functions = await enricher.EnrichFunctionsAsync(
             participant.Functions, request.Language, cancellationToken);
 
         return new ParticipantResponse(
             participant.Id,
-            participant.Description.GivenName,
-            participant.Description.FamilyName,
-            participant.Description.BirthDate,
+            participant.BiographicData.GivenName,
+            participant.BiographicData.FamilyName,
+            participant.BiographicData.BirthDate,
             org, gender, functions,
             participant.PrintName, participant.PrintInitialName,
             participant.TvName, participant.TvInitialName, participant.TvFamilyName,

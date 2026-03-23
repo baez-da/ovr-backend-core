@@ -7,7 +7,7 @@ namespace OVR.Modules.ParticipantRegistry.Domain;
 public sealed class Participant : AggregateRoot<string>
 {
     public ParticipantId ParticipantId { get; private set; } = null!;
-    public Description Description { get; private set; } = null!;
+    public BiographicData BiographicData { get; private set; } = null!;
     public ExtendedDescription ExtendedDescription { get; private set; } = new();
     public IReadOnlyList<ParticipantFunction> Functions { get; private set; } = [];
     public string PrintName { get; private set; } = string.Empty;
@@ -25,7 +25,7 @@ public sealed class Participant : AggregateRoot<string>
     private Participant() { }
 
     public static Participant Create(
-        Description description,
+        BiographicData biographicData,
         ExtendedDescription? extendedDescription,
         IReadOnlyList<ParticipantFunction> functions,
         string printName,
@@ -45,7 +45,7 @@ public sealed class Participant : AggregateRoot<string>
         {
             Id = participantId.Value,
             ParticipantId = participantId,
-            Description = description,
+            BiographicData = biographicData,
             ExtendedDescription = extendedDescription ?? new ExtendedDescription(),
             Functions = functions.ToList(),
             PrintName = printName,
@@ -64,14 +64,14 @@ public sealed class Participant : AggregateRoot<string>
         participant.RaiseDomainEvent(new ParticipantCreatedEvent(
             participantId.Value,
             mainFunctionIds,
-            description.Organisation.Code));
+            biographicData.Organisation.Code));
 
         return participant;
     }
 
     public static Participant Hydrate(
         ParticipantId participantId,
-        Description description,
+        BiographicData biographicData,
         ExtendedDescription? extendedDescription,
         IReadOnlyList<ParticipantFunction> functions,
         string printName,
@@ -90,7 +90,7 @@ public sealed class Participant : AggregateRoot<string>
         {
             Id = participantId.Value,
             ParticipantId = participantId,
-            Description = description,
+            BiographicData = biographicData,
             ExtendedDescription = extendedDescription ?? new ExtendedDescription(),
             Functions = functions.ToList(),
             PrintName = printName,

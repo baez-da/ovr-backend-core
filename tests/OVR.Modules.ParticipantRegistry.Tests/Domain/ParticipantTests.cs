@@ -6,8 +6,8 @@ namespace OVR.Modules.ParticipantRegistry.Tests.Domain;
 
 public class ParticipantTests
 {
-    private static readonly Description TestDescription =
-        Description.Create("John", "Smith", Gender.FromCode("M"), null, Organisation.Create("USA"));
+    private static readonly BiographicData TestBiographicData =
+        BiographicData.Create("John", "Smith", Gender.FromCode("M"), null, Organisation.Create("USA"));
 
     private static readonly List<ParticipantFunction> SingleFunction =
         [ParticipantFunction.Create("ATH", "SWM", true)];
@@ -28,7 +28,7 @@ public class ParticipantTests
     public void Create_ShouldGenerateIdWithLocPrefix()
     {
         var participant = Participant.Create(
-            TestDescription, null, SingleFunction,
+            TestBiographicData, null, SingleFunction,
             "SMITH John", "SMITH J", "John SMITH", "J. SMITH",
             "SMITH", "SMITH John", "SMITH J", "SMITH John");
 
@@ -40,7 +40,7 @@ public class ParticipantTests
     public void Create_ShouldRaiseParticipantCreatedEvent()
     {
         var participant = Participant.Create(
-            TestDescription, null, SingleFunction,
+            TestBiographicData, null, SingleFunction,
             "SMITH John", "SMITH J", "John SMITH", "J. SMITH",
             "SMITH", "SMITH John", "SMITH J", "SMITH John");
 
@@ -51,7 +51,7 @@ public class ParticipantTests
     public void Create_ShouldStoreFunctions()
     {
         var participant = Participant.Create(
-            TestDescription, null, MultipleFunctionsSameDiscipline,
+            TestBiographicData, null, MultipleFunctionsSameDiscipline,
             "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl");
 
         participant.Functions.Should().HaveCount(2);
@@ -63,7 +63,7 @@ public class ParticipantTests
     public void Create_MultipleDisciplines_ShouldSucceed()
     {
         var participant = Participant.Create(
-            TestDescription, null, MultipleDisciplines,
+            TestBiographicData, null, MultipleDisciplines,
             "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl");
 
         participant.Functions.Should().HaveCount(2);
@@ -73,7 +73,7 @@ public class ParticipantTests
     public void Create_EmptyFunctions_ShouldThrow()
     {
         var act = () => Participant.Create(
-            TestDescription, null, [],
+            TestBiographicData, null, [],
             "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl");
 
         act.Should().Throw<ArgumentException>().WithMessage("*At least one*");
@@ -89,7 +89,7 @@ public class ParticipantTests
         };
 
         var act = () => Participant.Create(
-            TestDescription, null, functions,
+            TestBiographicData, null, functions,
             "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl");
 
         act.Should().Throw<ArgumentException>().WithMessage("*Exactly one main*");
@@ -104,7 +104,7 @@ public class ParticipantTests
         };
 
         var act = () => Participant.Create(
-            TestDescription, null, functions,
+            TestBiographicData, null, functions,
             "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl");
 
         act.Should().Throw<ArgumentException>().WithMessage("*Exactly one main*");
@@ -120,7 +120,7 @@ public class ParticipantTests
         };
 
         var act = () => Participant.Create(
-            TestDescription, null, functions,
+            TestBiographicData, null, functions,
             "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl");
 
         act.Should().Throw<ArgumentException>().WithMessage("*Duplicate*");
@@ -131,7 +131,7 @@ public class ParticipantTests
     {
         var id = ParticipantId.Create("GMS-12345");
         var participant = Participant.Hydrate(
-            id, TestDescription, null, SingleFunction,
+            id, TestBiographicData, null, SingleFunction,
             "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl",
             DateTime.UtcNow, null);
 
@@ -143,7 +143,7 @@ public class ParticipantTests
     public void Create_ShouldStoreAllEightNames()
     {
         var participant = Participant.Create(
-            TestDescription, null, SingleFunction,
+            TestBiographicData, null, SingleFunction,
             "printName", "printInitialName", "tvName", "tvInitialName",
             "tvFamilyName", "pscbName", "pscbShortName", "pscbLongName");
 

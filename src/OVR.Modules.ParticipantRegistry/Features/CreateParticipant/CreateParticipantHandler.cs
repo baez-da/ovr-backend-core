@@ -39,7 +39,7 @@ public sealed class CreateParticipantHandler(
         // Build value objects
         var gender = Gender.FromCode(request.GenderCode);
         var organisation = Organisation.Create(request.Organisation);
-        var description = Description.Create(request.GivenName, request.FamilyName, gender, request.BirthDate, organisation);
+        var biographicData = BiographicData.Create(request.GivenName, request.FamilyName, gender, request.BirthDate, organisation);
 
         var functions = request.Functions
             .Select(f => ParticipantFunction.Create(f.FunctionId, f.DisciplineCode, f.IsMain))
@@ -57,7 +57,7 @@ public sealed class CreateParticipantHandler(
 
         // Create aggregate (generates ID internally)
         var participant = Participant.Create(
-            description, extendedDescription: null, functions,
+            biographicData, extendedDescription: null, functions,
             printName, printInitialName, tvName, tvInitialName,
             tvFamilyName, pscbName, pscbShortName, pscbLongName,
             request.PhotoUrl);

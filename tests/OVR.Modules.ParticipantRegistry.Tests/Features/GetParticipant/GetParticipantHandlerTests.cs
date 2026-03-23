@@ -24,10 +24,10 @@ public class GetParticipantHandlerTests
     private static Participant CreateTestParticipant(string id = "LOC-001")
     {
         var participantId = ParticipantId.Create(id);
-        var description = Description.Create("John", "Smith", Gender.FromCode("M"), null, Organisation.Create("USA"));
+        var biographicData = BiographicData.Create("John", "Smith", Gender.FromCode("M"), null, Organisation.Create("USA"));
         var functions = new List<ParticipantFunction> { ParticipantFunction.Create("ATH", "SWM", true) };
         return Participant.Hydrate(
-            participantId, description, null, functions,
+            participantId, biographicData, null, functions,
             "SMITH John", "SMITH J", "John SMITH", "J. SMITH",
             "SMITH", "SMITH John", "SMITH J", "SMITH John",
             DateTime.UtcNow, null, "https://example.com/photo.jpg");

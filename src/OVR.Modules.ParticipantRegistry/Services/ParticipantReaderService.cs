@@ -32,9 +32,9 @@ public sealed class ParticipantReaderService(
         Participant p, string language, CancellationToken ct)
     {
         var org = await enricher.EnrichCodeAsync(
-            CommonCodes.Contracts.CommonCodeTypes.Organisation, p.Description.Organisation.Code, language, ct);
+            CommonCodes.Contracts.CommonCodeTypes.Organisation, p.BiographicData.Organisation.Code, language, ct);
         var gender = await enricher.EnrichCodeAsync(
-            CommonCodes.Contracts.CommonCodeTypes.PersonGender, p.Description.Gender.Value, language, ct);
+            CommonCodes.Contracts.CommonCodeTypes.PersonGender, p.BiographicData.Gender.Value, language, ct);
         var functionResponses = await enricher.EnrichFunctionsAsync(p.Functions, language, ct);
 
         var functions = functionResponses
@@ -42,7 +42,7 @@ public sealed class ParticipantReaderService(
             .ToList();
 
         return new ParticipantSummary(
-            p.Id, p.Description.GivenName, p.Description.FamilyName,
+            p.Id, p.BiographicData.GivenName, p.BiographicData.FamilyName,
             p.PrintName, p.TvName, p.TvFamilyName,
             org, gender, functions, p.PhotoUrl);
     }

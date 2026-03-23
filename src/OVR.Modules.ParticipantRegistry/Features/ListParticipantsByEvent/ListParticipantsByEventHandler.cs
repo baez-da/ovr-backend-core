@@ -21,15 +21,15 @@ public sealed class ListParticipantsByEventHandler(
         foreach (var p in participants)
         {
             var org = await enricher.EnrichCodeAsync(
-                CommonCodeTypes.Organisation, p.Description.Organisation.Code, request.Language, cancellationToken);
+                CommonCodeTypes.Organisation, p.BiographicData.Organisation.Code, request.Language, cancellationToken);
             var gender = await enricher.EnrichCodeAsync(
-                CommonCodeTypes.PersonGender, p.Description.Gender.Value, request.Language, cancellationToken);
+                CommonCodeTypes.PersonGender, p.BiographicData.Gender.Value, request.Language, cancellationToken);
             var functions = await enricher.EnrichFunctionsAsync(
                 p.Functions, request.Language, cancellationToken);
 
             responses.Add(new ParticipantResponse(
-                p.Id, p.Description.GivenName, p.Description.FamilyName,
-                p.Description.BirthDate, org, gender, functions,
+                p.Id, p.BiographicData.GivenName, p.BiographicData.FamilyName,
+                p.BiographicData.BirthDate, org, gender, functions,
                 p.PrintName, p.PrintInitialName,
                 p.TvName, p.TvInitialName, p.TvFamilyName,
                 p.PscbName, p.PscbShortName, p.PscbLongName,

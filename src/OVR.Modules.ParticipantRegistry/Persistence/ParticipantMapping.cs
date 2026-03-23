@@ -14,11 +14,11 @@ internal static class ParticipantMapping
             DisciplineCode = f.DisciplineCode,
             IsMain = f.IsMain
         }).ToList(),
-        GivenName = participant.Description.GivenName,
-        FamilyName = participant.Description.FamilyName,
-        GenderCode = participant.Description.Gender.Value,
-        BirthDate = participant.Description.BirthDate,
-        Organisation = participant.Description.Organisation.Code,
+        GivenName = participant.BiographicData.GivenName,
+        FamilyName = participant.BiographicData.FamilyName,
+        GenderCode = participant.BiographicData.Gender.Value,
+        BirthDate = participant.BiographicData.BirthDate,
+        Organisation = participant.BiographicData.Organisation.Code,
         PrintName = participant.PrintName,
         PrintInitialName = participant.PrintInitialName,
         TvName = participant.TvName,
@@ -38,7 +38,7 @@ internal static class ParticipantMapping
         var participantId = ParticipantId.Create(doc.Id);
         var gender = Gender.FromCode(doc.GenderCode);
         var organisation = Organisation.Create(doc.Organisation);
-        var description = Description.Create(doc.GivenName, doc.FamilyName, gender, doc.BirthDate, organisation);
+        var biographicData = BiographicData.Create(doc.GivenName, doc.FamilyName, gender, doc.BirthDate, organisation);
 
         var functions = doc.Functions
             .Select(f => ParticipantFunction.Create(f.FunctionId, f.DisciplineCode, f.IsMain))
@@ -49,7 +49,7 @@ internal static class ParticipantMapping
             extendedDescription.Set(kvp.Key, kvp.Value);
 
         return Participant.Hydrate(
-            participantId, description, extendedDescription, functions,
+            participantId, biographicData, extendedDescription, functions,
             doc.PrintName, doc.PrintInitialName, doc.TvName, doc.TvInitialName,
             doc.TvFamilyName, doc.PscbName, doc.PscbShortName, doc.PscbLongName,
             doc.CreatedAt, doc.UpdatedAt, doc.PhotoUrl);
