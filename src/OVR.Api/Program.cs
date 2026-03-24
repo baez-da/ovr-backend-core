@@ -80,7 +80,8 @@ try
         typeof(EntriesModule).Assembly,
         typeof(OfficialAssignmentModule).Assembly,
         typeof(CoachAssignmentModule).Assembly,
-        typeof(CommonCodesModule).Assembly
+        typeof(CommonCodesModule).Assembly,
+        typeof(ReportingModule).Assembly
     ]);
 
     // i18n — global primero, luego módulos (auto-discovery de I18n.* en output dir)
@@ -133,7 +134,7 @@ try
         });
     }
 
-    app.MapGet("/", () => TypedResults.Ok(new { Name = "OVR Backend Core", Version = "0.1.0" }));
+    app.MapGet("/", () => TypedResults.Redirect("/scalar/v1"));
 
     // Module endpoints
     app.MapParticipantRegistryEndpoints();
