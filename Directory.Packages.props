@@ -16,6 +16,10 @@
     <PackageVersion Include="MongoDB.Driver" Version="3.4.0" />
     <!-- Excel -->
     <PackageVersion Include="ClosedXML" Version="0.104.2" />
+    <!-- Templating -->
+    <PackageVersion Include="Scriban" Version="7.0.3" />
+    <!-- Headless browser / PDF -->
+    <PackageVersion Include="Microsoft.Playwright" Version="1.52.0" />
     <!-- Logging -->
     <PackageVersion Include="Scalar.AspNetCore" Version="2.13.11" />
     <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />

@@ -11,14 +11,14 @@ public static class ErrorOrExtensions
     public static IResult ToApiResult<T>(this ErrorOr<T> result, HttpContext httpContext) =>
         result.Match(
             value => TypedResults.Ok(value),
-            errors => ToApiError(errors, httpContext));
+            errors => errors.ToApiError(httpContext));
 
     public static IResult ToCreatedResult<T>(this ErrorOr<T> result, string uri, HttpContext httpContext) =>
         result.Match(
             value => TypedResults.Created(uri, value),
-            errors => ToApiError(errors, httpContext));
+            errors => errors.ToApiError(httpContext));
 
-    private static IResult ToApiError(List<Error> errors, HttpContext httpContext)
+    public static IResult ToApiError(this List<Error> errors, HttpContext httpContext)
     {
         var translator = httpContext.RequestServices.GetService<ITranslationService>();
         var language = LanguageDetector.DetectLanguage(httpContext);

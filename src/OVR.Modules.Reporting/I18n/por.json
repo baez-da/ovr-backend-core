@@ -1,0 +1,8 @@
+﻿{
+  "Reporting.TemplateNotFound": "Nenhum modelo encontrado para '{{orisCode}}' (disciplina: {{discipline}}).",
+  "Reporting.DataProviderNotFound": "Nenhum provedor de dados encontrado para '{{orisCode}}' (disciplina: {{discipline}}).",
+  "Reporting.LayoutNotFound": "Nenhum componente de layout '{{component}}' encontrado.",
+  "Reporting.ReportNotFound": "Nenhum relatório publicado encontrado para RSC '{{rsc}}' com código ORIS '{{orisCode}}'.",
+  "Reporting.S3UploadFailed": "Falha ao enviar relatório para o armazenamento: {{reason}}.",
+  "Reporting.PdfGenerationFailed": "Falha na geração do PDF: {{reason}}."
+}

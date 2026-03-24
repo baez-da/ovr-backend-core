@@ -1,0 +1,31 @@
+### ===========================================
+### REPORTING
+### ===========================================
+
+### 1. Seed templates from disk into MongoDB
+POST {{host}}/api/reports/templates/seed
+Accept: application/json
+
+###
+
+### 2. Preview report — C51 Start List (Swimming Women, Heat 1)
+### RSC format: [DIS][G][Event 18chars][Phase 4chars][Unit 6chars][SubUnit 2chars] = 34 chars
+### SWMW200MFL----------HEAT0001----
+POST {{host}}/api/reports/preview
+Content-Type: application/json
+
+{
+  "rsc": "SWMW200MFL----------HEAT0001----",
+  "orisCode": "C51"
+}
+
+###
+
+### 3. Preview report — C51 Start List (Athletics Men)
+POST {{host}}/api/reports/preview
+Content-Type: application/json
+
+{
+  "rsc": "ATLM100M------------HEAT0001----",
+  "orisCode": "C51"
+}

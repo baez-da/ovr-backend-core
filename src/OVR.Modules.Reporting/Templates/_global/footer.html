@@ -1,0 +1,11 @@
+﻿<div style="width: 100%; font-family: Arial, sans-serif; font-size: 8px; padding: 4px 16px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #ccc; box-sizing: border-box; color: #555;">
+  <div>
+    {{ if footer.official_text }}{{ footer.official_text }}{{ end }}
+  </div>
+  <div style="text-align: center;">
+    <span class="pageNumber"></span> / <span class="totalPages"></span>
+  </div>
+  <div style="text-align: right;">
+    Generated: {{ footer.generated_at }}
+  </div>
+</div>
