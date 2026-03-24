@@ -1,0 +1,17 @@
+﻿<div style="width: 100%; font-family: Arial, sans-serif; font-size: 9px; padding: 4px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ccc; box-sizing: border-box;">
+  <div style="display: flex; align-items: center; gap: 8px;">
+    {{ if header.logo_url }}
+    <img src="{{ header.logo_url }}" style="height: 32px;" alt="Logo" />
+    {{ end }}
+    <div>
+      <div style="font-weight: bold; font-size: 10px;">{{ header.venue_name }}</div>
+    </div>
+  </div>
+  <div style="text-align: center;">
+    <div style="font-weight: bold; font-size: 11px;">{{ header.event_name }}</div>
+    <div style="color: #555;">{{ header.phase_name }}</div>
+  </div>
+  <div style="text-align: right; color: #555;">
+    <div>{{ header.date }}</div>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+﻿{
+  "Reporting.TemplateNotFound": "No se encontró plantilla para '{{orisCode}}' (disciplina: {{discipline}}).",
+  "Reporting.DataProviderNotFound": "No se encontró proveedor de datos para '{{orisCode}}' (disciplina: {{discipline}}).",
+  "Reporting.LayoutNotFound": "No se encontró el componente de diseño '{{component}}'.",
+  "Reporting.ReportNotFound": "No se encontró reporte publicado para RSC '{{rsc}}' con código ORIS '{{orisCode}}'.",
+  "Reporting.S3UploadFailed": "Error al subir el reporte al almacenamiento: {{reason}}.",
+  "Reporting.PdfGenerationFailed": "La generación del PDF falló: {{reason}}."
+}

@@ -1,0 +1,8 @@
+﻿{
+  "Reporting.TemplateNotFound": "No template found for '{{orisCode}}' (discipline: {{discipline}}).",
+  "Reporting.DataProviderNotFound": "No data provider found for '{{orisCode}}' (discipline: {{discipline}}).",
+  "Reporting.LayoutNotFound": "No layout component '{{component}}' found.",
+  "Reporting.ReportNotFound": "No published report found for RSC '{{rsc}}' with ORIS code '{{orisCode}}'.",
+  "Reporting.S3UploadFailed": "Failed to upload report to storage: {{reason}}.",
+  "Reporting.PdfGenerationFailed": "PDF generation failed: {{reason}}."
+}
