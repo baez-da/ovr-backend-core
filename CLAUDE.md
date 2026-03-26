@@ -50,13 +50,14 @@ OVR.Modules.{Name}/
 | Progression | Avance entre fases (quién clasifica) |
 | Reporting | Generación de PDFs |
 | DataDistribution | Distribución de mensajes ODF |
-| CommonCodes | Catálogos de datos de referencia ODF: importación Excel, consulta, validación cross-módulo |
+| CommonCodes | Catálogos de datos de referencia ODF: importación Excel, caché in-memory, bulk endpoint, validación cross-módulo |
 | Ingestion | ACL para datos externos (GMS, T&S) con WAL |
 
 ### Comunicación entre módulos
 
 - **Domain events** vía MediatR `IPublisher` (pub/sub desacoplado)
 - **Contracts** (`IParticipantReader`, etc.) para queries directas entre módulos
+- **`ICommonCodeCache`** para validación y resolución de common codes sin I/O (ver sección Common Codes)
 - **SharedKernel** para value objects compartidos (RSC, ParticipantId, Gender, Organisation)
 - Los eventos de integración están en `SharedKernel/Domain/Events/Integration/`
 
@@ -107,6 +108,54 @@ dotnet run --project src/OVR.Api
 - **ErrorOr**: Usar para retornos de handlers en vez de excepciones para errores de negocio esperados. Excepciones solo para errores inesperados.
 - **Central Package Management**: Versiones de paquetes en `Directory.Packages.props`. No especificar versiones en `.csproj` individuales.
 - **TreatWarningsAsErrors** está habilitado globalmente.
+- **Common codes como vocabulario compartido**: Los responses de API y contratos inter-módulo devuelven solo códigos (`"POL"`, `"ATH"`, `"SWM"`), nunca descripciones localizadas. Los clientes resuelven descripciones contra su caché local. No enriquecer responses con nombres traducidos.
+- **Nombres de campos CC**: Toda la comunicación es por códigos, así que los sufijos `Code` e `Id` son redundantes. Usar el nombre simple: `function` (no `functionId`), `discipline` (no `disciplineCode`), `gender` (no `genderCode`), `organisation` (no `organisationCode`). Aplica a propiedades de dominio, DTOs, commands, documents y JSON de API.
+
+## Common Codes (`ICommonCodeCache`)
+
+Los Common Codes son catálogos de referencia multilingües (países, disciplinas, funciones, etc.) que siguen el patrón ODF `DT_CODES`. Se cargan **una sola vez en memoria** al inicio y se invalidan por evento.
+
+### Caché in-memory
+
+- **Contrato**: `ICommonCodeCache` (SharedKernel) — lookups síncronos, cero I/O.
+- **Implementación**: `CommonCodeCacheService` — singleton, `IHostedService`, hidrata al inicio desde MongoDB.
+- **Invalidación**: `INotificationHandler<CommonCodesReimportedEvent>` — recarga solo el tipo afectado cuando se reimportan codes.
+- **Uso inter-módulo**: `cache.Exists(type, code)` para validación, `cache.GetDescription(type, code, lang)` para resolución.
+
+### Bulk endpoint para clientes
+
+```
+GET /api/common-codes/bulk?types=COUNTRY,DISCIPLINE&languages=eng,spa
+```
+
+- Devuelve múltiples tipos en una respuesta con versión por tipo y ETag global.
+- `If-None-Match` → `304 Not Modified` si no cambió (cero payload).
+- El cliente sincroniza su diccionario local una vez y resuelve códigos sin consultar el backend.
+
+### Cómo usar en un módulo
+
+```csharp
+// Validación (nivel 2, en handler)
+if (!cache.Exists(CommonCodeTypes.Organisation, request.Organisation))
+    return Errors.InvalidOrganisation(request.Organisation);
+```
+
+### Obtener descripciones localizadas (cuando se necesite)
+
+La mayoría de los módulos **no necesitan resolver descripciones** — devuelven el código y el consumidor resuelve. Pero hay casos legítimos donde el backend necesita el texto (ej: reportes PDF con dos idiomas):
+
+```csharp
+// Resolución in-memory (síncrona, sin I/O)
+var primary   = cache.GetDescription("COUNTRY", "POL", "eng"); // "Poland"
+var secondary = cache.GetDescription("COUNTRY", "POL", "spa"); // "Polonia"
+
+// Retorna null si el código o idioma no existe — manejar con fallback si aplica
+var name = cache.GetDescription("DISCIPLINE", code, lang) ?? code;
+```
+
+**No** usar esto para enriquecer responses de API. Los endpoints devuelven solo el código; el frontend resuelve localmente vía el bulk endpoint.
+
+No usar `ICommonCodeReader` (eliminado). No hacer queries a MongoDB para resolver codes.
 
 ## i18n y Errores de API
 
