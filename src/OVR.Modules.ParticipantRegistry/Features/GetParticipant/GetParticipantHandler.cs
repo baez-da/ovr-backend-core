@@ -1,14 +1,10 @@
 using ErrorOr;
 using MediatR;
-using OVR.Modules.CommonCodes.Contracts;
 using OVR.Modules.ParticipantRegistry.Persistence;
-using OVR.Modules.ParticipantRegistry.Services;
 
 namespace OVR.Modules.ParticipantRegistry.Features.GetParticipant;
 
-public sealed class GetParticipantHandler(
-    IParticipantRepository repository,
-    ParticipantEnricher enricher)
+public sealed class GetParticipantHandler(IParticipantRepository repository)
     : IRequestHandler<GetParticipantQuery, ErrorOr<ParticipantResponse>>
 {
     public async Task<ErrorOr<ParticipantResponse>> Handle(
@@ -18,19 +14,15 @@ public sealed class GetParticipantHandler(
         if (participant is null)
             return Errors.ParticipantErrors.NotFound(request.ParticipantId);
 
-        var org = await enricher.EnrichCodeAsync(
-            CommonCodeTypes.Organisation, participant.BiographicData.Organisation.Code, request.Language, cancellationToken);
-        var gender = await enricher.EnrichCodeAsync(
-            CommonCodeTypes.PersonGender, participant.BiographicData.Gender.Value, request.Language, cancellationToken);
-        var functions = await enricher.EnrichFunctionsAsync(
-            participant.Functions, request.Language, cancellationToken);
-
         return new ParticipantResponse(
             participant.Id,
             participant.BiographicData.GivenName,
             participant.BiographicData.FamilyName,
             participant.BiographicData.BirthDate,
-            org, gender, functions,
+            participant.BiographicData.Organisation.Code,
+            participant.BiographicData.Gender.Value,
+            participant.Functions.Select(f =>
+                new FunctionResponse(f.FunctionId, f.DisciplineCode, f.IsMain)).ToList(),
             participant.PrintName, participant.PrintInitialName,
             participant.TvName, participant.TvInitialName, participant.TvFamilyName,
             participant.PscbName, participant.PscbShortName, participant.PscbLongName,

@@ -5,6 +5,7 @@ using OVR.Modules.CommonCodes.Contracts;
 using OVR.Modules.ParticipantRegistry.Domain.NameSystem;
 using OVR.Modules.ParticipantRegistry.Features.CreateParticipant;
 using OVR.Modules.ParticipantRegistry.Persistence;
+using OVR.SharedKernel.Contracts;
 
 namespace OVR.Modules.ParticipantRegistry.Tests.Features.CreateParticipant;
 
@@ -12,13 +13,13 @@ public class CreateParticipantHandlerTests
 {
     private readonly IParticipantRepository _repository = Substitute.For<IParticipantRepository>();
     private readonly IPublisher _publisher = Substitute.For<IPublisher>();
-    private readonly ICommonCodeReader _commonCodeReader = Substitute.For<ICommonCodeReader>();
+    private readonly ICommonCodeCache _commonCodeCache = Substitute.For<ICommonCodeCache>();
     private readonly INameBuilder _nameBuilder = new OdfNameBuilder();
     private readonly CreateParticipantHandler _handler;
 
     public CreateParticipantHandlerTests()
     {
-        _handler = new CreateParticipantHandler(_repository, _publisher, _commonCodeReader, _nameBuilder);
+        _handler = new CreateParticipantHandler(_repository, _publisher, _commonCodeCache, _nameBuilder);
     }
 
     private static List<FunctionDto> DefaultFunctions() =>
@@ -30,9 +31,9 @@ public class CreateParticipantHandlerTests
 
     private void SetupValidCommonCodes(string organisation = "USA")
     {
-        _commonCodeReader.ExistsAsync(CommonCodeTypes.Organisation, organisation, Arg.Any<CancellationToken>()).Returns(true);
-        _commonCodeReader.ExistsAsync(CommonCodeTypes.Discipline, Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(true);
-        _commonCodeReader.ExistsAsync(CommonCodeTypes.DisciplineFunction, Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(true);
+        _commonCodeCache.Exists(CommonCodeTypes.Organisation, organisation).Returns(true);
+        _commonCodeCache.Exists(CommonCodeTypes.Discipline, Arg.Any<string>()).Returns(true);
+        _commonCodeCache.Exists(CommonCodeTypes.DisciplineFunction, Arg.Any<string>()).Returns(true);
     }
 
     [Fact]
@@ -53,7 +54,7 @@ public class CreateParticipantHandlerTests
     [Fact]
     public async Task Handle_InvalidOrganisation_ShouldReturnError()
     {
-        _commonCodeReader.ExistsAsync(CommonCodeTypes.Organisation, "ZZZ", Arg.Any<CancellationToken>()).Returns(false);
+        _commonCodeCache.Exists(CommonCodeTypes.Organisation, "ZZZ").Returns(false);
 
         var result = await _handler.Handle(ValidCommand(organisation: "ZZZ"), CancellationToken.None);
 
@@ -65,9 +66,9 @@ public class CreateParticipantHandlerTests
     [Fact]
     public async Task Handle_InvalidFunction_ShouldReturnError()
     {
-        _commonCodeReader.ExistsAsync(CommonCodeTypes.Organisation, "USA", Arg.Any<CancellationToken>()).Returns(true);
-        _commonCodeReader.ExistsAsync(CommonCodeTypes.Discipline, "SWM", Arg.Any<CancellationToken>()).Returns(true);
-        _commonCodeReader.ExistsAsync(CommonCodeTypes.DisciplineFunction, "INVALID", Arg.Any<CancellationToken>()).Returns(false);
+        _commonCodeCache.Exists(CommonCodeTypes.Organisation, "USA").Returns(true);
+        _commonCodeCache.Exists(CommonCodeTypes.Discipline, "SWM").Returns(true);
+        _commonCodeCache.Exists(CommonCodeTypes.DisciplineFunction, "INVALID").Returns(false);
 
         var functions = new List<FunctionDto> { new("INVALID", "SWM", true) };
         var result = await _handler.Handle(ValidCommand(functions: functions), CancellationToken.None);
@@ -79,8 +80,8 @@ public class CreateParticipantHandlerTests
     [Fact]
     public async Task Handle_InvalidDiscipline_ShouldReturnError()
     {
-        _commonCodeReader.ExistsAsync(CommonCodeTypes.Organisation, "USA", Arg.Any<CancellationToken>()).Returns(true);
-        _commonCodeReader.ExistsAsync(CommonCodeTypes.Discipline, "ZZZ", Arg.Any<CancellationToken>()).Returns(false);
+        _commonCodeCache.Exists(CommonCodeTypes.Organisation, "USA").Returns(true);
+        _commonCodeCache.Exists(CommonCodeTypes.Discipline, "ZZZ").Returns(false);
 
         var functions = new List<FunctionDto> { new("ATH", "ZZZ", true) };
         var result = await _handler.Handle(ValidCommand(functions: functions), CancellationToken.None);

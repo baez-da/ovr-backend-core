@@ -18,7 +18,6 @@ public static class ParticipantRegistryModule
     {
         services.AddScoped<IParticipantRepository, MongoParticipantRepository>();
         services.AddSingleton<INameBuilder, OdfNameBuilder>();
-        services.AddScoped<ParticipantEnricher>();
         services.AddScoped<IParticipantReader, ParticipantReaderService>();
         return services;
     }
