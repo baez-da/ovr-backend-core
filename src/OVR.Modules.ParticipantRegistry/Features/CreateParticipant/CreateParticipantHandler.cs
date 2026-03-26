@@ -25,19 +25,19 @@ public sealed class CreateParticipantHandler(
 
         foreach (var fn in request.Functions)
         {
-            if (!commonCodeCache.Exists(CommonCodeTypes.Discipline, fn.DisciplineCode))
-                return Errors.ParticipantErrors.InvalidDiscipline(fn.DisciplineCode);
+            if (!commonCodeCache.Exists(CommonCodeTypes.Discipline, fn.Discipline))
+                return Errors.ParticipantErrors.InvalidDiscipline(fn.Discipline);
 
-            if (!commonCodeCache.Exists(CommonCodeTypes.DisciplineFunction, fn.FunctionId))
-                return Errors.ParticipantErrors.InvalidFunction(fn.FunctionId);
+            if (!commonCodeCache.Exists(CommonCodeTypes.DisciplineFunction, fn.Function))
+                return Errors.ParticipantErrors.InvalidFunction(fn.Function);
         }
 
-        var gender = Gender.FromCode(request.GenderCode);
+        var gender = Gender.FromCode(request.Gender);
         var organisation = Organisation.Create(request.Organisation);
         var biographicData = BiographicData.Create(request.GivenName, request.FamilyName, gender, request.BirthDate, organisation);
 
         var functions = request.Functions
-            .Select(f => ParticipantFunction.Create(f.FunctionId, f.DisciplineCode, f.IsMain))
+            .Select(f => ParticipantFunction.Create(f.Function, f.Discipline, f.IsMain))
             .ToList();
 
         var printName = nameBuilder.BuildPrintName(request.FamilyName, request.GivenName);
@@ -66,7 +66,7 @@ public sealed class CreateParticipantHandler(
             participant.PrintName, participant.PrintInitialName,
             participant.TvName, participant.TvInitialName, participant.TvFamilyName,
             participant.PscbName, participant.PscbShortName, participant.PscbLongName,
-            participant.Functions.Select(f => new FunctionDto(f.FunctionId, f.DisciplineCode, f.IsMain)).ToList(),
+            participant.Functions.Select(f => new FunctionDto(f.Function, f.Discipline, f.IsMain)).ToList(),
             participant.CreatedAt,
             participant.PhotoUrl);
     }

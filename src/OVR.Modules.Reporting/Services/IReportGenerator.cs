@@ -5,7 +5,7 @@ namespace OVR.Modules.Reporting.Services;
 public record ReportMetadata(
     string Rsc,
     string OrisCode,
-    string? DisciplineCode,
+    string? Discipline,
     int Version,
     string DataHash,
     DateTime GeneratedAt);

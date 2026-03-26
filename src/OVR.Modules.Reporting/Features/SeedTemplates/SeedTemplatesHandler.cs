@@ -43,7 +43,7 @@ public sealed class SeedTemplatesHandler(
                     var doc = new ReportLayoutDocument
                     {
                         Component = component,
-                        DisciplineCode = null,
+                        Discipline = null,
                         ChampionshipCode = null,
                         Content = content,
                         UpdatedAt = now
@@ -65,7 +65,7 @@ public sealed class SeedTemplatesHandler(
                     var doc = new ReportTemplateDocument
                     {
                         OrisCode = orisCode,
-                        DisciplineCode = null,
+                        Discipline = null,
                         ChampionshipCode = null,
                         Content = content,
                         UpdatedAt = now

@@ -10,13 +10,13 @@ internal static class ParticipantMapping
         Id = participant.Id,
         Functions = participant.Functions.Select(f => new ParticipantFunctionDocument
         {
-            FunctionId = f.FunctionId,
-            DisciplineCode = f.DisciplineCode,
+            Function = f.Function,
+            Discipline = f.Discipline,
             IsMain = f.IsMain
         }).ToList(),
         GivenName = participant.BiographicData.GivenName,
         FamilyName = participant.BiographicData.FamilyName,
-        GenderCode = participant.BiographicData.Gender.Value,
+        Gender = participant.BiographicData.Gender.Value,
         BirthDate = participant.BiographicData.BirthDate,
         Organisation = participant.BiographicData.Organisation.Code,
         PrintName = participant.PrintName,
@@ -36,12 +36,12 @@ internal static class ParticipantMapping
     public static Participant ToDomain(ParticipantDocument doc)
     {
         var participantId = ParticipantId.Create(doc.Id);
-        var gender = Gender.FromCode(doc.GenderCode);
+        var gender = Gender.FromCode(doc.Gender);
         var organisation = Organisation.Create(doc.Organisation);
         var biographicData = BiographicData.Create(doc.GivenName, doc.FamilyName, gender, doc.BirthDate, organisation);
 
         var functions = doc.Functions
-            .Select(f => ParticipantFunction.Create(f.FunctionId, f.DisciplineCode, f.IsMain))
+            .Select(f => ParticipantFunction.Create(f.Function, f.Discipline, f.IsMain))
             .ToList();
 
         var extendedDescription = new ExtendedDescription();

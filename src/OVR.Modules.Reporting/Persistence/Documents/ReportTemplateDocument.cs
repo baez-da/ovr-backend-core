@@ -10,7 +10,7 @@ public sealed class ReportTemplateDocument
     public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
     public string OrisCode { get; set; } = string.Empty;
-    public string? DisciplineCode { get; set; }
+    public string? Discipline { get; set; }
     public string? ChampionshipCode { get; set; }
     public string Content { get; set; } = string.Empty;
     public DateTime UpdatedAt { get; set; }

@@ -40,7 +40,7 @@ public class TemplateResolverTests
     {
         var disciplineTemplate = new ReportTemplateDocument
         {
-            OrisCode = "ATH-RESULTS", DisciplineCode = "ATH", Content = "<discipline-body/>"
+            OrisCode = "ATH-RESULTS", Discipline = "ATH", Content = "<discipline-body/>"
         };
 
         _templateRepo.FindAsync("ATH-RESULTS", "ATH", Arg.Any<CancellationToken>())
@@ -57,7 +57,7 @@ public class TemplateResolverTests
     {
         var genericTemplate = new ReportTemplateDocument
         {
-            OrisCode = "ATH-RESULTS", DisciplineCode = null, Content = "<generic-body/>"
+            OrisCode = "ATH-RESULTS", Discipline = null, Content = "<generic-body/>"
         };
 
         // Discipline-specific returns null

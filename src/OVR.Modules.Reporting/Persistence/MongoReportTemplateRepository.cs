@@ -8,11 +8,11 @@ internal sealed class MongoReportTemplateRepository(IMongoDatabase database) : I
     private IMongoCollection<ReportTemplateDocument> Collection =>
         database.GetCollection<ReportTemplateDocument>("reporting_templates");
 
-    public async Task<ReportTemplateDocument?> FindAsync(string orisCode, string? disciplineCode, CancellationToken ct)
+    public async Task<ReportTemplateDocument?> FindAsync(string orisCode, string? discipline, CancellationToken ct)
     {
         var filter = Builders<ReportTemplateDocument>.Filter.Eq(d => d.OrisCode, orisCode);
-        if (disciplineCode is not null)
-            filter &= Builders<ReportTemplateDocument>.Filter.Eq(d => d.DisciplineCode, disciplineCode);
+        if (discipline is not null)
+            filter &= Builders<ReportTemplateDocument>.Filter.Eq(d => d.Discipline, discipline);
 
         return await Collection.Find(filter).FirstOrDefaultAsync(ct);
     }
@@ -25,7 +25,7 @@ internal sealed class MongoReportTemplateRepository(IMongoDatabase database) : I
     public async Task UpsertAsync(ReportTemplateDocument doc, CancellationToken ct)
     {
         var filter = Builders<ReportTemplateDocument>.Filter.Eq(d => d.OrisCode, doc.OrisCode)
-            & Builders<ReportTemplateDocument>.Filter.Eq(d => d.DisciplineCode, doc.DisciplineCode)
+            & Builders<ReportTemplateDocument>.Filter.Eq(d => d.Discipline, doc.Discipline)
             & Builders<ReportTemplateDocument>.Filter.Eq(d => d.ChampionshipCode, doc.ChampionshipCode);
         await Collection.ReplaceOneAsync(filter, doc, new ReplaceOptions { IsUpsert = true }, ct);
     }

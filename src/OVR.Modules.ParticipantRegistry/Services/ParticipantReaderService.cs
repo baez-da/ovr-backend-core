@@ -28,6 +28,6 @@ public sealed class ParticipantReaderService(
             p.PrintName, p.TvName, p.TvFamilyName,
             p.BiographicData.Organisation.Code,
             p.BiographicData.Gender.Value,
-            p.Functions.Select(f => new FunctionSummary(f.FunctionId, f.DisciplineCode, f.IsMain)).ToList(),
+            p.Functions.Select(f => new FunctionSummary(f.Function, f.Discipline, f.IsMain)).ToList(),
             p.PhotoUrl);
 }

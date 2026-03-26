@@ -22,22 +22,22 @@ internal sealed class TemplateResolver : ITemplateResolver
     }
 
     public async Task<ErrorOr<ResolvedTemplates>> ResolveAsync(
-        string? disciplineCode, string orisCode, CancellationToken ct = default)
+        string? discipline, string orisCode, CancellationToken ct = default)
     {
         // Try discipline-specific first, then generic (null discipline)
         ReportTemplateDocument? templateDoc = null;
-        if (disciplineCode is not null)
-            templateDoc = await _templateRepo.FindAsync(orisCode, disciplineCode, ct);
+        if (discipline is not null)
+            templateDoc = await _templateRepo.FindAsync(orisCode, discipline, ct);
 
         templateDoc ??= await _templateRepo.FindAsync(orisCode, null, ct);
 
         if (templateDoc is null)
-            return ReportingErrors.TemplateNotFound(orisCode, disciplineCode);
+            return ReportingErrors.TemplateNotFound(orisCode, discipline);
 
         // Resolve layouts and partials in parallel
-        var headerTask = ResolveLayoutAsync("header", disciplineCode, ct);
-        var footerTask = ResolveLayoutAsync("footer", disciplineCode, ct);
-        var styleTask = ResolveLayoutAsync("style", disciplineCode, ct);
+        var headerTask = ResolveLayoutAsync("header", discipline, ct);
+        var footerTask = ResolveLayoutAsync("footer", discipline, ct);
+        var styleTask = ResolveLayoutAsync("style", discipline, ct);
         var partialsTask = _partialRepo.GetAllAsync(ct);
 
         await Task.WhenAll(headerTask, footerTask, styleTask, partialsTask);
@@ -65,11 +65,11 @@ internal sealed class TemplateResolver : ITemplateResolver
     }
 
     private async Task<ReportLayoutDocument?> ResolveLayoutAsync(
-        string component, string? disciplineCode, CancellationToken ct)
+        string component, string? discipline, CancellationToken ct)
     {
         ReportLayoutDocument? doc = null;
-        if (disciplineCode is not null)
-            doc = await _layoutRepo.FindAsync(component, disciplineCode, ct);
+        if (discipline is not null)
+            doc = await _layoutRepo.FindAsync(component, discipline, ct);
 
         doc ??= await _layoutRepo.FindAsync(component, null, ct);
         return doc;

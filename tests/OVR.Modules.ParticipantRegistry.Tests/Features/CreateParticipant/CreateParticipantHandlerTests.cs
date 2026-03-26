@@ -47,7 +47,7 @@ public class CreateParticipantHandlerTests
         result.Value.Id.Should().StartWith("LOC-");
         result.Value.PrintName.Should().Be("SMITH John");
         result.Value.TvName.Should().Be("John SMITH");
-        result.Value.Functions.Should().ContainSingle(f => f.FunctionId == "ATH" && f.IsMain);
+        result.Value.Functions.Should().ContainSingle(f => f.Function == "ATH" && f.IsMain);
         await _repository.Received(1).AddAsync(Arg.Any<OVR.Modules.ParticipantRegistry.Domain.Participant>(), Arg.Any<CancellationToken>());
     }
 

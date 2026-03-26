@@ -60,7 +60,7 @@ public sealed class Participant : AggregateRoot<string>
             CreatedAt = DateTime.UtcNow
         };
 
-        var mainFunctionIds = functions.Where(f => f.IsMain).Select(f => f.FunctionId).ToList();
+        var mainFunctionIds = functions.Where(f => f.IsMain).Select(f => f.Function).ToList();
         participant.RaiseDomainEvent(new ParticipantCreatedEvent(
             participantId.Value,
             mainFunctionIds,
@@ -112,16 +112,16 @@ public sealed class Participant : AggregateRoot<string>
         if (functions.Count == 0)
             throw new ArgumentException("At least one function is required.");
 
-        var disciplines = functions.Select(f => f.DisciplineCode).Distinct();
+        var disciplines = functions.Select(f => f.Discipline).Distinct();
         foreach (var discipline in disciplines)
         {
-            var mainCount = functions.Count(f => f.DisciplineCode == discipline && f.IsMain);
+            var mainCount = functions.Count(f => f.Discipline == discipline && f.IsMain);
             if (mainCount != 1)
                 throw new ArgumentException(
                     $"Exactly one main function required per discipline. Discipline '{discipline}' has {mainCount}.");
         }
 
-        var hasDuplicates = functions.GroupBy(f => (f.FunctionId, f.DisciplineCode)).Any(g => g.Count() > 1);
+        var hasDuplicates = functions.GroupBy(f => (f.Function, f.Discipline)).Any(g => g.Count() > 1);
         if (hasDuplicates)
             throw new ArgumentException("Duplicate function+discipline combination found.");
     }

@@ -42,7 +42,7 @@ public class ReportGeneratorTests
     public ReportGeneratorTests()
     {
         _dataProvider.OrisCode.Returns("ATH-RESULTS");
-        _dataProvider.DisciplineCode.Returns((string?)null);
+        _dataProvider.Discipline.Returns((string?)null);
 
         _factory = new DataProviderFactory([_dataProvider]);
 
@@ -81,7 +81,7 @@ public class ReportGeneratorTests
         result.Value.Pdf.Should().NotBeEmpty();
         result.Value.Metadata.Rsc.Should().Be(ValidRsc);
         result.Value.Metadata.OrisCode.Should().Be("ATH-RESULTS");
-        result.Value.Metadata.DisciplineCode.Should().Be("ATH");
+        result.Value.Metadata.Discipline.Should().Be("ATH");
     }
 
     [Fact]
@@ -193,7 +193,7 @@ public class ReportGeneratorTests
         var result = await _sut.GenerateAsync(ValidRsc, "ATH-RESULTS", new ReportDataOptions("eng"), CancellationToken.None);
 
         result.IsError.Should().BeFalse();
-        result.Value.Metadata.DisciplineCode.Should().Be("ATH");
+        result.Value.Metadata.Discipline.Should().Be("ATH");
     }
 
     private static string ComputeHash(object data)

@@ -15,14 +15,14 @@ public sealed class DataProviderFactory
         _providers = providers;
     }
 
-    public ErrorOr<DataProviderResult> Resolve(string? disciplineCode, string orisCode)
+    public ErrorOr<DataProviderResult> Resolve(string? discipline, string orisCode)
     {
         // Try discipline-specific first
-        if (disciplineCode is not null)
+        if (discipline is not null)
         {
             var disciplineProvider = _providers.FirstOrDefault(p =>
                 p.OrisCode == orisCode &&
-                p.DisciplineCode == disciplineCode);
+                p.Discipline == discipline);
 
             if (disciplineProvider is not null)
                 return new DataProviderResult(disciplineProvider);
@@ -31,11 +31,11 @@ public sealed class DataProviderFactory
         // Fallback to generic (null discipline)
         var genericProvider = _providers.FirstOrDefault(p =>
             p.OrisCode == orisCode &&
-            p.DisciplineCode is null);
+            p.Discipline is null);
 
         if (genericProvider is not null)
             return new DataProviderResult(genericProvider);
 
-        return ReportingErrors.DataProviderNotFound(orisCode, disciplineCode);
+        return ReportingErrors.DataProviderNotFound(orisCode, discipline);
     }
 }

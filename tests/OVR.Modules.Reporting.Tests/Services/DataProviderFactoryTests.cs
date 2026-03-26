@@ -6,11 +6,11 @@ namespace OVR.Modules.Reporting.Tests.Services;
 
 public class DataProviderFactoryTests
 {
-    private static IReportDataProvider MakeProvider(string orisCode, string? disciplineCode)
+    private static IReportDataProvider MakeProvider(string orisCode, string? discipline)
     {
         var provider = Substitute.For<IReportDataProvider>();
         provider.OrisCode.Returns(orisCode);
-        provider.DisciplineCode.Returns(disciplineCode);
+        provider.Discipline.Returns(discipline);
         return provider;
     }
 

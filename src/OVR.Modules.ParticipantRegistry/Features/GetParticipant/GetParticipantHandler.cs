@@ -22,7 +22,7 @@ public sealed class GetParticipantHandler(IParticipantRepository repository)
             participant.BiographicData.Organisation.Code,
             participant.BiographicData.Gender.Value,
             participant.Functions.Select(f =>
-                new FunctionResponse(f.FunctionId, f.DisciplineCode, f.IsMain)).ToList(),
+                new FunctionResponse(f.Function, f.Discipline, f.IsMain)).ToList(),
             participant.PrintName, participant.PrintInitialName,
             participant.TvName, participant.TvInitialName, participant.TvFamilyName,
             participant.PscbName, participant.PscbShortName, participant.PscbLongName,

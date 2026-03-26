@@ -4,28 +4,28 @@ namespace OVR.Modules.ParticipantRegistry.Domain;
 
 public sealed class ParticipantFunction : ValueObject
 {
-    public string FunctionId { get; }
-    public string DisciplineCode { get; }
+    public string Function { get; }
+    public string Discipline { get; }
     public bool IsMain { get; }
 
-    private ParticipantFunction(string functionId, string disciplineCode, bool isMain)
+    private ParticipantFunction(string function, string discipline, bool isMain)
     {
-        FunctionId = functionId;
-        DisciplineCode = disciplineCode;
+        Function = function;
+        Discipline = discipline;
         IsMain = isMain;
     }
 
-    public static ParticipantFunction Create(string functionId, string disciplineCode, bool isMain)
+    public static ParticipantFunction Create(string function, string discipline, bool isMain)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(functionId);
-        ArgumentException.ThrowIfNullOrWhiteSpace(disciplineCode);
-        return new ParticipantFunction(functionId.Trim(), disciplineCode.Trim(), isMain);
+        ArgumentException.ThrowIfNullOrWhiteSpace(function);
+        ArgumentException.ThrowIfNullOrWhiteSpace(discipline);
+        return new ParticipantFunction(function.Trim(), discipline.Trim(), isMain);
     }
 
     protected override IEnumerable<object?> GetEqualityComponents()
     {
-        yield return FunctionId;
-        yield return DisciplineCode;
-        // IsMain is NOT part of identity — two functions with same FunctionId+DisciplineCode are equal regardless of IsMain
+        yield return Function;
+        yield return Discipline;
+        // IsMain is NOT part of identity — two functions with same Function+Discipline are equal regardless of IsMain
     }
 }

@@ -11,7 +11,7 @@ public sealed class ReportRecordDocument
 
     public string Rsc { get; set; } = string.Empty;
     public string OrisCode { get; set; } = string.Empty;
-    public string? DisciplineCode { get; set; }
+    public string? Discipline { get; set; }
     public int Version { get; set; }
     public string DataHash { get; set; } = string.Empty;
     public string S3Key { get; set; } = string.Empty;

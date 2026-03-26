@@ -55,8 +55,8 @@ public class ParticipantTests
             "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl");
 
         participant.Functions.Should().HaveCount(2);
-        participant.Functions.Should().Contain(f => f.FunctionId == "COACH" && f.IsMain);
-        participant.Functions.Should().Contain(f => f.FunctionId == "TM_MGR" && !f.IsMain);
+        participant.Functions.Should().Contain(f => f.Function == "COACH" && f.IsMain);
+        participant.Functions.Should().Contain(f => f.Function == "TM_MGR" && !f.IsMain);
     }
 
     [Fact]

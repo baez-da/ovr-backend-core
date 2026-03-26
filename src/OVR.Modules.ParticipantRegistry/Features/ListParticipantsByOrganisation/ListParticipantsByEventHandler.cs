@@ -18,7 +18,7 @@ public sealed class ListParticipantsByEventHandler(IParticipantRepository reposi
             p.BiographicData.Organisation.Code,
             p.BiographicData.Gender.Value,
             p.Functions.Select(f =>
-                new FunctionResponse(f.FunctionId, f.DisciplineCode, f.IsMain)).ToList(),
+                new FunctionResponse(f.Function, f.Discipline, f.IsMain)).ToList(),
             p.PrintName, p.PrintInitialName,
             p.TvName, p.TvInitialName, p.TvFamilyName,
             p.PscbName, p.PscbShortName, p.PscbLongName,

@@ -41,7 +41,7 @@ public sealed class PublishReportHandler(
         {
             Rsc = request.Rsc,
             OrisCode = request.OrisCode,
-            DisciplineCode = report.Metadata.DisciplineCode,
+            Discipline = report.Metadata.Discipline,
             Version = report.Metadata.Version,
             DataHash = report.Metadata.DataHash,
             S3Key = s3Key,

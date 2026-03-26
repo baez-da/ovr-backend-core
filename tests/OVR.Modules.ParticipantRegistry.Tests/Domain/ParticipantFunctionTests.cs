@@ -9,8 +9,8 @@ public class ParticipantFunctionTests
     public void Create_WithValidValues_ShouldSucceed()
     {
         var fn = ParticipantFunction.Create("COACH", "VVO", true);
-        fn.FunctionId.Should().Be("COACH");
-        fn.DisciplineCode.Should().Be("VVO");
+        fn.Function.Should().Be("COACH");
+        fn.Discipline.Should().Be("VVO");
         fn.IsMain.Should().BeTrue();
     }
 
@@ -18,19 +18,19 @@ public class ParticipantFunctionTests
     public void Create_ShouldTrimValues()
     {
         var fn = ParticipantFunction.Create("  COACH  ", "  VVO  ", false);
-        fn.FunctionId.Should().Be("COACH");
-        fn.DisciplineCode.Should().Be("VVO");
+        fn.Function.Should().Be("COACH");
+        fn.Discipline.Should().Be("VVO");
     }
 
     [Fact]
-    public void Create_WithEmptyFunctionId_ShouldThrow()
+    public void Create_WithEmptyFunction_ShouldThrow()
     {
         var act = () => ParticipantFunction.Create("", "VVO", true);
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
-    public void Create_WithEmptyDisciplineCode_ShouldThrow()
+    public void Create_WithEmptyDiscipline_ShouldThrow()
     {
         var act = () => ParticipantFunction.Create("COACH", "", true);
         act.Should().Throw<ArgumentException>();

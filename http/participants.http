@@ -13,11 +13,15 @@ Content-Type: application/json
 {
   "givenName": "Katie",
   "familyName": "Ledecky",
-  "genderCode": "F",
+  "gender": "F",
   "birthDate": "1997-03-17",
   "organisation": "USA",
   "functions": [
-    { "functionId": "ATH", "disciplineCode": "SWM", "isMain": true }
+    {
+      "function": "ATH",
+      "discipline": "SWM",
+      "isMain": true
+    }
   ]
 }
 
@@ -28,11 +32,15 @@ Content-Type: application/json
 {
   "givenName": "Shelly-Ann",
   "familyName": "Fraser-Pryce",
-  "genderCode": "F",
+  "gender": "F",
   "birthDate": "1986-12-27",
   "organisation": "JAM",
   "functions": [
-    { "functionId": "ATH", "disciplineCode": "ATH", "isMain": true }
+    {
+      "function": "ATH",
+      "discipline": "ATH",
+      "isMain": true
+    }
   ]
 }
 
@@ -43,11 +51,15 @@ Content-Type: application/json
 {
   "givenName": null,
   "familyName": "Pele",
-  "genderCode": "M",
+  "gender": "M",
   "birthDate": "1940-10-23",
   "organisation": "BRA",
   "functions": [
-    { "functionId": "ATH", "disciplineCode": "FBL", "isMain": true }
+    {
+      "function": "ATH",
+      "discipline": "FBL",
+      "isMain": true
+    }
   ]
 }
 
@@ -58,11 +70,15 @@ Content-Type: application/json
 {
   "givenName": "María",
   "familyName": "López",
-  "genderCode": "F",
+  "gender": "F",
   "birthDate": "2000-05-10",
   "organisation": "ESP",
   "functions": [
-    { "functionId": "ATH", "disciplineCode": "GAR", "isMain": true }
+    {
+      "function": "ATH",
+      "discipline": "GAR",
+      "isMain": true
+    }
   ]
 }
 
@@ -73,11 +89,15 @@ Content-Type: application/json
 {
   "givenName": "Liz",
   "familyName": "McPherson",
-  "genderCode": "F",
+  "gender": "F",
   "birthDate": "1995-08-14",
   "organisation": "AUS",
   "functions": [
-    { "functionId": "ATH", "disciplineCode": "SWM", "isMain": true }
+    {
+      "function": "ATH",
+      "discipline": "SWM",
+      "isMain": true
+    }
   ]
 }
 
@@ -88,11 +108,15 @@ Content-Type: application/json
 {
   "givenName": "Yuki",
   "familyName": "Tanaka",
-  "genderCode": "M",
+  "gender": "M",
   "birthDate": "1998-03-22",
   "organisation": "JPN",
   "functions": [
-    { "functionId": "ATH", "disciplineCode": "SWM", "isMain": true }
+    {
+      "function": "ATH",
+      "discipline": "SWM",
+      "isMain": true
+    }
   ]
 }
 
@@ -103,11 +127,15 @@ Content-Type: application/json
 {
   "givenName": "Robert",
   "familyName": "de Castella",
-  "genderCode": "M",
+  "gender": "M",
   "birthDate": "1957-02-27",
   "organisation": "AUS",
   "functions": [
-    { "functionId": "ATH", "disciplineCode": "ATH", "isMain": true }
+    {
+      "function": "ATH",
+      "discipline": "ATH",
+      "isMain": true
+    }
   ]
 }
 
@@ -122,11 +150,15 @@ Content-Type: application/json
 {
   "givenName": "Carlos",
   "familyName": "Rodriguez",
-  "genderCode": "M",
+  "gender": "M",
   "birthDate": "1975-06-15",
   "organisation": "ESP",
   "functions": [
-    { "functionId": "COACH", "disciplineCode": "VVO", "isMain": true }
+    {
+      "function": "COACH",
+      "discipline": "VVO",
+      "isMain": true
+    }
   ]
 }
 
@@ -137,12 +169,20 @@ Content-Type: application/json
 {
   "givenName": "Ana",
   "familyName": "Martinez",
-  "genderCode": "F",
+  "gender": "F",
   "birthDate": "1980-09-20",
   "organisation": "CRC",
   "functions": [
-    { "functionId": "COACH", "disciplineCode": "VVO", "isMain": true },
-    { "functionId": "TM_MGR", "disciplineCode": "VVO", "isMain": false }
+    {
+      "function": "COACH",
+      "discipline": "VVO",
+      "isMain": true
+    },
+    {
+      "function": "TM_MGR",
+      "discipline": "VVO",
+      "isMain": false
+    }
   ]
 }
 
@@ -153,12 +193,20 @@ Content-Type: application/json
 {
   "givenName": "Elena",
   "familyName": "Rodriguez",
-  "genderCode": "F",
+  "gender": "F",
   "birthDate": "1990-06-10",
   "organisation": "ESP",
   "functions": [
-    { "functionId": "COACH", "disciplineCode": "VVO", "isMain": true },
-    { "functionId": "AST_COA", "disciplineCode": "BVO", "isMain": true }
+    {
+      "function": "COACH",
+      "discipline": "VVO",
+      "isMain": true
+    },
+    {
+      "function": "AST_COA",
+      "discipline": "BVO",
+      "isMain": true
+    }
   ]
 }
 
@@ -173,11 +221,15 @@ Content-Type: application/json
 {
   "givenName": "Maria Fernanda",
   "familyName": "Coto",
-  "genderCode": "F",
+  "gender": "F",
   "birthDate": "1985-03-15",
   "organisation": "CRC",
   "functions": [
-    { "functionId": "RE", "disciplineCode": "BOX", "isMain": true }
+    {
+      "function": "RE",
+      "discipline": "BOX",
+      "isMain": true
+    }
   ]
 }
 
@@ -188,11 +240,19 @@ Content-Type: application/json
 {
   "givenName": "Hans",
   "familyName": "Mueller",
-  "genderCode": "M",
+  "gender": "M",
   "organisation": "GER",
   "functions": [
-    { "functionId": "D1", "disciplineCode": "GAR", "isMain": true },
-    { "functionId": "PR", "disciplineCode": "GAR", "isMain": false }
+    {
+      "function": "D1",
+      "discipline": "GAR",
+      "isMain": true
+    },
+    {
+      "function": "PR",
+      "discipline": "GAR",
+      "isMain": false
+    }
   ]
 }
 
@@ -245,7 +305,7 @@ Content-Type: application/json
 {
   "givenName": "Test",
   "familyName": "User",
-  "genderCode": "M",
+  "gender": "M",
   "organisation": "USA",
   "functions": []
 }
@@ -257,10 +317,14 @@ Content-Type: application/json
 {
   "givenName": "Test",
   "familyName": "User",
-  "genderCode": "M",
+  "gender": "M",
   "organisation": "USA",
   "functions": [
-    { "functionId": "", "disciplineCode": "SWM", "isMain": true }
+    {
+      "function": "",
+      "discipline": "SWM",
+      "isMain": true
+    }
   ]
 }
 
@@ -271,10 +335,14 @@ Content-Type: application/json
 {
   "givenName": "Test",
   "familyName": "User",
-  "genderCode": "M",
+  "gender": "M",
   "organisation": "ZZZ",
   "functions": [
-    { "functionId": "ATH", "disciplineCode": "SWM", "isMain": true }
+    {
+      "function": "ATH",
+      "discipline": "SWM",
+      "isMain": true
+    }
   ]
 }
 
@@ -285,10 +353,14 @@ Content-Type: application/json
 {
   "givenName": "Test",
   "familyName": "User",
-  "genderCode": "M",
+  "gender": "M",
   "organisation": "USA",
   "functions": [
-    { "functionId": "INVALID_FN", "disciplineCode": "SWM", "isMain": true }
+    {
+      "function": "INVALID_FN",
+      "discipline": "SWM",
+      "isMain": true
+    }
   ]
 }
 
@@ -299,10 +371,14 @@ Content-Type: application/json
 {
   "givenName": "Test",
   "familyName": "User",
-  "genderCode": "M",
+  "gender": "M",
   "organisation": "USA",
   "functions": [
-    { "functionId": "ATH", "disciplineCode": "ZZZZZ", "isMain": true }
+    {
+      "function": "ATH",
+      "discipline": "ZZZZZ",
+      "isMain": true
+    }
   ]
 }
 
@@ -313,10 +389,14 @@ Content-Type: application/json
 {
   "givenName": "Test",
   "familyName": "",
-  "genderCode": "M",
+  "gender": "M",
   "organisation": "USA",
   "functions": [
-    { "functionId": "ATH", "disciplineCode": "SWM", "isMain": true }
+    {
+      "function": "ATH",
+      "discipline": "SWM",
+      "isMain": true
+    }
   ]
 }
 
@@ -327,9 +407,13 @@ Content-Type: application/json
 {
   "givenName": "Test",
   "familyName": "User",
-  "genderCode": "Z",
+  "gender": "Z",
   "organisation": "USA",
   "functions": [
-    { "functionId": "ATH", "disciplineCode": "SWM", "isMain": true }
+    {
+      "function": "ATH",
+      "discipline": "SWM",
+      "isMain": true
+    }
   ]
 }

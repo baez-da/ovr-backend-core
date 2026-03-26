@@ -2,7 +2,7 @@ namespace OVR.Modules.DataEntry.SportRules;
 
 public interface ISportRuleEngine
 {
-    string DisciplineCode { get; }
+    string Discipline { get; }
     bool ValidateResult(object resultData);
     int CalculateRank(object resultData);
 }

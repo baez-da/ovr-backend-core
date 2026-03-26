@@ -9,7 +9,7 @@ public sealed class ParticipantDocument
     public List<ParticipantFunctionDocument> Functions { get; set; } = [];
     public string? GivenName { get; set; }
     public string FamilyName { get; set; } = string.Empty;
-    public string GenderCode { get; set; } = string.Empty;
+    public string Gender { get; set; } = string.Empty;
     public DateOnly? BirthDate { get; set; }
     public string Organisation { get; set; } = string.Empty;
     public string PrintName { get; set; } = string.Empty;
@@ -28,7 +28,7 @@ public sealed class ParticipantDocument
 
 public sealed class ParticipantFunctionDocument
 {
-    public string FunctionId { get; set; } = string.Empty;
-    public string DisciplineCode { get; set; } = string.Empty;
+    public string Function { get; set; } = string.Empty;
+    public string Discipline { get; set; } = string.Empty;
     public bool IsMain { get; set; }
 }

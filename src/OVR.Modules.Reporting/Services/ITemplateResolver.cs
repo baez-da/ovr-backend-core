@@ -11,5 +11,5 @@ public record ResolvedTemplates(
 
 public interface ITemplateResolver
 {
-    Task<ErrorOr<ResolvedTemplates>> ResolveAsync(string? disciplineCode, string orisCode, CancellationToken ct = default);
+    Task<ErrorOr<ResolvedTemplates>> ResolveAsync(string? discipline, string orisCode, CancellationToken ct = default);
 }

@@ -38,7 +38,7 @@ public record ReportData(
 public interface IReportDataProvider
 {
     string OrisCode { get; }
-    string? DisciplineCode { get; }
+    string? Discipline { get; }
 
     Task<ReportData> GetDataAsync(Rsc rsc, ReportDataOptions options, CancellationToken ct = default);
 }

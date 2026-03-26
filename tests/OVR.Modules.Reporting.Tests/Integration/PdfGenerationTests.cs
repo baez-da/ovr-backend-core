@@ -78,7 +78,7 @@ public sealed class PdfGenerationTests
             .Returns(new ReportTemplateDocument
             {
                 OrisCode = "C51",
-                DisciplineCode = null,
+                Discipline = null,
                 Content = BodyTemplate,
                 UpdatedAt = DateTime.UtcNow
             });

@@ -12,13 +12,13 @@ public static class ParticipantErrors
         Error.Validation("Participant.InvalidOrganisation", $"Organisation '{code}' does not exist in CommonCodes.",
             new Dictionary<string, object> { ["code"] = code });
 
-    public static Error InvalidFunction(string functionId) =>
+    public static Error InvalidFunction(string function) =>
         Error.Validation("Participant.InvalidFunction",
-            $"Function '{functionId}' does not exist in CommonCodes.",
-            new Dictionary<string, object> { ["functionId"] = functionId });
+            $"Function '{function}' does not exist in CommonCodes.",
+            new Dictionary<string, object> { ["function"] = function });
 
-    public static Error InvalidDiscipline(string disciplineCode) =>
+    public static Error InvalidDiscipline(string discipline) =>
         Error.Validation("Participant.InvalidDiscipline",
-            $"Discipline '{disciplineCode}' does not exist in CommonCodes.",
-            new Dictionary<string, object> { ["disciplineCode"] = disciplineCode });
+            $"Discipline '{discipline}' does not exist in CommonCodes.",
+            new Dictionary<string, object> { ["discipline"] = discipline });
 }

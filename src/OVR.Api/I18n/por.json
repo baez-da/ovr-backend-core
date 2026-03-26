@@ -14,6 +14,6 @@
   "Fields.Type": "Tipo",
   "Fields.GivenName": "Nome",
   "Fields.FamilyName": "Sobrenome",
-  "Fields.GenderCode": "Código de gênero",
+  "Fields.Gender": "Gênero",
   "Fields.Function": "Função"
 }

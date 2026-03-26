@@ -35,17 +35,17 @@ internal sealed class ReportGenerator : IReportGenerator
     {
         // Extract discipline from RSC
         var rscValue = Rsc.Create(rsc);
-        var disciplineCode = rscValue.Discipline;
+        var discipline = rscValue.Discipline;
 
         // Resolve data provider
-        var providerResult = _dataProviderFactory.Resolve(disciplineCode, orisCode);
+        var providerResult = _dataProviderFactory.Resolve(discipline, orisCode);
         if (providerResult.IsError)
             return providerResult.Errors;
 
         var provider = providerResult.Value.Provider;
 
         // Run template resolution and data fetch in parallel
-        var templateTask = _templateResolver.ResolveAsync(disciplineCode, orisCode, ct);
+        var templateTask = _templateResolver.ResolveAsync(discipline, orisCode, ct);
         var dataTask = provider.GetDataAsync(rscValue, options, ct);
 
         await Task.WhenAll(templateTask, dataTask);
@@ -75,7 +75,7 @@ internal sealed class ReportGenerator : IReportGenerator
         var metadata = new ReportMetadata(
             Rsc: rsc,
             OrisCode: orisCode,
-            DisciplineCode: disciplineCode,
+            Discipline: discipline,
             Version: version,
             DataHash: dataHash,
             GeneratedAt: now);
@@ -85,7 +85,7 @@ internal sealed class ReportGenerator : IReportGenerator
         {
             Rsc = rsc,
             OrisCode = orisCode,
-            DisciplineCode = disciplineCode,
+            Discipline = discipline,
             Version = version,
             DataHash = dataHash,
             S3Key = string.Empty, // S3 upload handled separately

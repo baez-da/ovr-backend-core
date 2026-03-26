@@ -10,7 +10,7 @@ namespace OVR.Modules.Reporting.DataProviders;
 public sealed class C51DataProvider : IReportDataProvider
 {
     public string OrisCode => "C51";
-    public string? DisciplineCode => null; // generic — applies to any discipline
+    public string? Discipline => null; // generic — applies to any discipline
 
     public Task<ReportData> GetDataAsync(Rsc rsc, ReportDataOptions options, CancellationToken ct = default)
     {
