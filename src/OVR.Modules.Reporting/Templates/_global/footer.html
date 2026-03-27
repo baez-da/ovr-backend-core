@@ -1,11 +1,78 @@
-﻿<div style="width: 100%; font-family: Arial, sans-serif; font-size: 8px; padding: 4px 16px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #ccc; box-sizing: border-box; color: #555;">
-  <div>
-    {{ if footer.official_text }}{{ footer.official_text }}{{ end }}
+<div
+  style="
+    margin: 0;
+    padding: 0;
+    bottom: 0;
+    position: absolute;
+    box-sizing: border-box;
+    height: 35mm;
+    width: 100%;
+    font-family: Arial, sans-serif;
+    font-size: 6pt;
+    -webkit-print-color-adjust: exact;
+  "
+>
+  <!-- Top divider -->
+  <div
+    style="
+      position: absolute;
+      top: 0;
+      left: 8mm;
+      right: 8mm;
+      height: 0.5pt;
+      background-color: #000;
+    "
+  ></div>
+
+  <!-- Text row: left / center / right / page number -->
+  <div
+    style="
+      position: absolute;
+      top: 2mm;
+      left: 8mm;
+      right: 8mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      line-height: 1.2;
+      font-size: 4pt;
+    "
+  >
+    <div style="width: 33.33%; text-align: left">
+      {{ footer.left_texts | array.first }}
+    </div>
+    <div style="width: 33.33%; text-align: center">
+      {{ footer.center_texts | array.first }}
+    </div>
+    <div style="width: 16.67%; text-align: center">
+      {{ footer.right_texts | array.first }}
+    </div>
+    <div style="width: 16.67%; text-align: right">
+      PAGE <span class="pageNumber"></span>/<span class="totalPages"></span>
+    </div>
   </div>
-  <div style="text-align: center;">
-    <span class="pageNumber"></span> / <span class="totalPages"></span>
-  </div>
-  <div style="text-align: right;">
-    Generated: {{ footer.generated_at }}
+
+  <!-- Sponsor logos -->
+  <div
+    style="
+      position: absolute;
+      bottom: 1mm;
+      left: 8mm;
+      right: 8mm;
+      text-align: center;
+    "
+  >
+    {{ for logo in footer.logos | array.limit 1 }}
+    <img
+      src="{{ logo.image_data }}"
+      alt="{{ if logo.alt_text }}{{ logo.alt_text }}{{ else }}Sponsor Logo{{ end }}"
+      style="
+        max-width: 97%;
+        max-height: 37%;
+        object-fit: contain;
+        -webkit-print-color-adjust: exact;
+      "
+    />
+    {{ end }}
   </div>
 </div>

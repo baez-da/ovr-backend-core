@@ -8,6 +8,7 @@ namespace OVR.Modules.Reporting.Services;
 internal sealed class PlaywrightPdfRenderer : IPdfRenderer, IAsyncDisposable
 {
     private readonly string? _wsEndpoint;
+    private readonly Margin _margin;
     private IPlaywright? _playwright;
     private IBrowser? _browser;
     private readonly SemaphoreSlim _lock = new(1, 1);
@@ -16,6 +17,13 @@ internal sealed class PlaywrightPdfRenderer : IPdfRenderer, IAsyncDisposable
     public PlaywrightPdfRenderer(IConfiguration configuration)
     {
         _wsEndpoint = configuration["Reporting:PlaywrightWsEndpoint"];
+        _margin = new Margin
+        {
+            Top    = configuration["Reporting:Margins:Top"]    ?? "40mm",
+            Bottom = configuration["Reporting:Margins:Bottom"] ?? "38mm",
+            Left   = configuration["Reporting:Margins:Left"]   ?? "0",
+            Right  = configuration["Reporting:Margins:Right"]  ?? "0"
+        };
     }
 
     public async Task<ErrorOr<byte[]>> RenderAsync(RenderedHtml html, CancellationToken ct = default)
@@ -39,7 +47,8 @@ internal sealed class PlaywrightPdfRenderer : IPdfRenderer, IAsyncDisposable
                     DisplayHeaderFooter = true,
                     HeaderTemplate = html.Header,
                     FooterTemplate = html.Footer,
-                    Format = "A4"
+                    Format = "A4",
+                    Margin = _margin
                 });
 
                 return pdfBytes;

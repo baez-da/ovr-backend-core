@@ -27,6 +27,9 @@ internal sealed class MongoReportTemplateRepository(IMongoDatabase database) : I
         var filter = Builders<ReportTemplateDocument>.Filter.Eq(d => d.OrisCode, doc.OrisCode)
             & Builders<ReportTemplateDocument>.Filter.Eq(d => d.Discipline, doc.Discipline)
             & Builders<ReportTemplateDocument>.Filter.Eq(d => d.ChampionshipCode, doc.ChampionshipCode);
+        var existing = await Collection.Find(filter).Project(d => d.Id).FirstOrDefaultAsync(ct);
+        if (existing is not null)
+            doc.Id = existing;
         await Collection.ReplaceOneAsync(filter, doc, new ReplaceOptions { IsUpsert = true }, ct);
     }
 }

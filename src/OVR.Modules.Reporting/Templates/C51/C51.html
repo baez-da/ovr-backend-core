@@ -1,30 +1,24 @@
-﻿<div class="report-section">
-  <div class="report-title">
-    <h2>{{ header.event_name }}</h2>
-    <p class="phase-name">{{ header.phase_name }}</p>
-    <p class="report-date">{{ header.date }}</p>
-  </div>
+{{ include 'title' }}
 
-  <table class="start-list-table">
-    <thead>
-      <tr>
-        <th class="col-bib">Bib</th>
-        <th class="col-name">Athlete</th>
-        <th class="col-org">Organisation</th>
-        <th class="col-time">Start Time</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{ for entry in body.entries }}
-      <tr class="{{ if for.index % 2 == 0 }}row-even{{ else }}row-odd{{ end }}">
-        <td class="col-bib">{{ entry.bib }}</td>
-        <td class="col-name">{{ entry.name }}</td>
-        <td class="col-org">{{ entry.organisation }}</td>
-        <td class="col-time">{{ entry.start_time }}</td>
-      </tr>
-      {{ end }}
-    </tbody>
-  </table>
+<table class="start-list-table">
+  <thead>
+    <tr>
+      <th class="col-bib">Bib</th>
+      <th class="col-name">Athlete</th>
+      <th class="col-org">NOC</th>
+      <th class="col-time">Start Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{ for entry in body.entries }}
+    <tr class="{{ if for.index % 2 == 0 }}row-even{{ else }}row-odd{{ end }}">
+      <td class="col-bib">{{ entry.bib }}</td>
+      <td class="col-name">{{ entry.name }}</td>
+      <td class="col-org">{{ entry.organisation }}</td>
+      <td class="col-time">{{ entry.start_time }}</td>
+    </tr>
+    {{ end }}
+  </tbody>
+</table>
 
-  <p class="entry-count">Total entries: {{ body.entries | array.size }}</p>
-</div>
+<p class="entry-count">Total entries: {{ body.entries | array.size }}</p>

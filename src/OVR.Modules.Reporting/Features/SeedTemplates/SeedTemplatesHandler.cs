@@ -7,7 +7,8 @@ namespace OVR.Modules.Reporting.Features.SeedTemplates;
 
 public sealed class SeedTemplatesHandler(
     IReportTemplateRepository templateRepository,
-    IReportLayoutRepository layoutRepository)
+    IReportLayoutRepository layoutRepository,
+    IReportPartialRepository partialRepository)
     : IRequestHandler<SeedTemplatesCommand, ErrorOr<SeedTemplatesResponse>>
 {
     // Layout component names that map to _global directory
@@ -29,26 +30,43 @@ public sealed class SeedTemplatesHandler(
 
             if (dirName == "_global")
             {
-                // Upsert layout components (header, footer, style/styles)
-                foreach (var file in Directory.EnumerateFiles(dir, "*", SearchOption.AllDirectories))
+                foreach (var file in Directory.EnumerateFiles(dir, "*.html", SearchOption.AllDirectories))
                 {
-                    var component = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
-                    // Normalize "styles" → "style"
-                    if (component == "styles") component = "style";
+                    var relativePath = Path.GetRelativePath(dir, file);
+                    var segments = relativePath.Split(Path.DirectorySeparatorChar);
 
-                    if (!LayoutComponents.Contains(component))
-                        continue;
-
-                    var content = await File.ReadAllTextAsync(file, cancellationToken);
-                    var doc = new ReportLayoutDocument
+                    if (segments.Length >= 2 && segments[0].Equals("partials", StringComparison.OrdinalIgnoreCase))
                     {
-                        Component = component,
-                        Discipline = null,
-                        ChampionshipCode = null,
-                        Content = content,
-                        UpdatedAt = now
-                    };
-                    await layoutRepository.UpsertAsync(doc, cancellationToken);
+                        // Upsert as reusable partial (name = filename without extension)
+                        var partialName = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
+                        var content = await File.ReadAllTextAsync(file, cancellationToken);
+                        var doc = new ReportPartialDocument
+                        {
+                            Name = partialName,
+                            Content = content,
+                            UpdatedAt = now
+                        };
+                        await partialRepository.UpsertAsync(doc, cancellationToken);
+                    }
+                    else
+                    {
+                        // Upsert as layout component (header, footer, style)
+                        var component = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
+                        if (component == "styles") component = "style";
+                        if (!LayoutComponents.Contains(component)) continue;
+
+                        var content = await File.ReadAllTextAsync(file, cancellationToken);
+                        var doc = new ReportLayoutDocument
+                        {
+                            Component = component,
+                            Discipline = null,
+                            ChampionshipCode = null,
+                            Content = content,
+                            UpdatedAt = now
+                        };
+                        await layoutRepository.UpsertAsync(doc, cancellationToken);
+                    }
+
                     processed++;
                 }
             }

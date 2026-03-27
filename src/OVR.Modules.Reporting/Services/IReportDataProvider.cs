@@ -16,22 +16,36 @@ public record CommunicationContent(
     string? Affects = null);
 
 public record HeaderData(
-    string EventName,
-    string PhaseName,
-    string Date,
-    string? VenueName,
-    string? LogoUrl);
+    string? LogoImageData,
+    string? PictogramImageData,
+    string? VenueEn,
+    string? VenueLocal,
+    string? DateStr,
+    string? StartTime,
+    string? EndTime,
+    string? DisciplinePrimaryLang,
+    string? DisciplineSecondaryLang,
+    string? EventPrimaryLang,
+    string? EventSecondaryLang,
+    string? PhasePrimaryLang,
+    string? PhaseSecondaryLang,
+    string? UnitPrimaryLang,
+    string? UnitSecondaryLang);
 
-public record FooterLogo(string Url, string? AltText);
+public record FooterLogo(string ImageData, string? AltText);
 
 public record FooterData(
-    string GeneratedAt,
-    string? OfficialText,
+    IReadOnlyList<string> LeftTexts,
+    IReadOnlyList<string> CenterTexts,
+    IReadOnlyList<string> RightTexts,
     IReadOnlyList<FooterLogo> Logos);
+
+public record TitleData(string ReportName, string GeneratedAt);
 
 public record ReportData(
     HeaderData Header,
     FooterData Footer,
+    TitleData Title,
     CommunicationContent Communication,
     object Body);
 

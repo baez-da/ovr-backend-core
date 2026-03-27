@@ -26,16 +26,31 @@ public sealed class C51DataProvider : IReportDataProvider
         var eventTrimmed = rsc.Event.TrimEnd('-');
         var phaseTrimmed = rsc.Phase.TrimEnd('-');
 
+        var eventLabel = string.IsNullOrEmpty(eventTrimmed) ? "Demo Event" : eventTrimmed;
+        var phaseLabel = string.IsNullOrEmpty(phaseTrimmed) ? "Heat 1" : phaseTrimmed;
+        var dateLabel = (options.Date?.ToString("dddd, MMMM d, yyyy") ?? DateTime.UtcNow.ToString("dddd, MMMM d, yyyy")).ToUpperInvariant();
+
         var header = new HeaderData(
-            EventName: $"{discipline} {gender} — {(string.IsNullOrEmpty(eventTrimmed) ? "Demo Event" : eventTrimmed)}",
-            PhaseName: string.IsNullOrEmpty(phaseTrimmed) ? "Heat 1" : phaseTrimmed,
-            Date: options.Date?.ToString("yyyy-MM-dd") ?? DateTime.UtcNow.ToString("yyyy-MM-dd"),
-            VenueName: "Demo Venue",
-            LogoUrl: null);
+            LogoImageData: null,
+            PictogramImageData: null,
+            VenueEn: "Demo Venue",
+            VenueLocal: null,
+            DateStr: dateLabel,
+            StartTime: "10:00",
+            EndTime: null,
+            DisciplinePrimaryLang: discipline,
+            DisciplineSecondaryLang: null,
+            EventPrimaryLang: $"{gender} {eventLabel}",
+            EventSecondaryLang: null,
+            PhasePrimaryLang: phaseLabel,
+            PhaseSecondaryLang: null,
+            UnitPrimaryLang: null,
+            UnitSecondaryLang: null);
 
         var footer = new FooterData(
-            GeneratedAt: DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-            OfficialText: $"Official Start List — {rsc.Value} — {OrisCode}",
+            LeftTexts: [$"Official Start List — {OrisCode}"],
+            CenterTexts: [$"RSC: {rsc.Value}"],
+            RightTexts: [$"Generated: {DateTime.UtcNow:yyyy-MM-dd HH:mm}"],
             Logos: []);
 
         var body = new
@@ -62,9 +77,14 @@ public sealed class C51DataProvider : IReportDataProvider
             Subtitle: $"RSC: {rsc.Value}",
             Description: "Official start list for the competition unit.");
 
+        var title = new TitleData(
+            ReportName: "Start List",
+            GeneratedAt: DateTime.UtcNow.ToString("dd/MM/yyyy HH:mm"));
+
         var reportData = new ReportData(
             Header: header,
             Footer: footer,
+            Title: title,
             Communication: communication,
             Body: body);
 

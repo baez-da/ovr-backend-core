@@ -22,6 +22,9 @@ internal sealed class MongoReportLayoutRepository(IMongoDatabase database) : IRe
         var filter = Builders<ReportLayoutDocument>.Filter.Eq(d => d.Component, doc.Component)
             & Builders<ReportLayoutDocument>.Filter.Eq(d => d.Discipline, doc.Discipline)
             & Builders<ReportLayoutDocument>.Filter.Eq(d => d.ChampionshipCode, doc.ChampionshipCode);
+        var existing = await Collection.Find(filter).Project(d => d.Id).FirstOrDefaultAsync(ct);
+        if (existing is not null)
+            doc.Id = existing;
         await Collection.ReplaceOneAsync(filter, doc, new ReplaceOptions { IsUpsert = true }, ct);
     }
 }

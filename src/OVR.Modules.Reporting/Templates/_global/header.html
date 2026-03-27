@@ -1,17 +1,104 @@
-﻿<div style="width: 100%; font-family: Arial, sans-serif; font-size: 9px; padding: 4px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ccc; box-sizing: border-box;">
-  <div style="display: flex; align-items: center; gap: 8px;">
-    {{ if header.logo_url }}
-    <img src="{{ header.logo_url }}" style="height: 32px;" alt="Logo" />
+<div
+  style="
+    position: relative;
+    height: 36mm;
+    width: 100%;
+    font-family: Arial, sans-serif;
+    font-size: 10pt;
+    -webkit-print-color-adjust: exact;
+  "
+>
+  <!-- Games Logo -->
+  <div style="position: absolute; top: 8mm; left: 8mm; width: 18mm; height: 24mm">
+    {{ if header.logo_image_data }}
+    <img
+      src="{{ header.logo_image_data }}"
+      alt="Games Logo"
+      style="width: 100%; height: 100%; object-fit: contain; -webkit-print-color-adjust: exact;"
+    />
     {{ end }}
-    <div>
-      <div style="font-weight: bold; font-size: 10px;">{{ header.venue_name }}</div>
+  </div>
+
+  <!-- Sport Pictogram -->
+  <div style="position: absolute; top: 11mm; right: 8mm; width: 21mm; height: 21mm">
+    {{ if header.pictogram_image_data }}
+    <img
+      src="{{ header.pictogram_image_data }}"
+      alt="Sport Pictogram"
+      style="width: 100%; height: 100%; object-fit: contain; -webkit-print-color-adjust: exact;"
+    />
+    {{ end }}
+  </div>
+
+  <!-- Venue -->
+  <div style="position: absolute; top: 8mm; left: 38mm; max-width: 80mm">
+    {{ if header.venue_en }}
+    <div style="font-size: 8pt; font-weight: bold; line-height: 1.2; margin-bottom: 2pt;">
+      {{ header.venue_en }}
     </div>
+    {{ end }}
+    {{ if header.venue_local }}
+    <div style="font-size: 7pt; font-weight: normal; line-height: 1.2">
+      {{ header.venue_local }}
+    </div>
+    {{ end }}
   </div>
-  <div style="text-align: center;">
-    <div style="font-weight: bold; font-size: 11px;">{{ header.event_name }}</div>
-    <div style="color: #555;">{{ header.phase_name }}</div>
+
+  <!-- Date / Start / End times -->
+  <div style="position: absolute; top: 22mm; left: 38mm; font-size: 9pt; line-height: 1.3;">
+    {{ if header.date_str }}
+    <div style="text-transform: uppercase; font-weight: normal; margin-bottom: 1pt">{{ header.date_str }}</div>
+    {{ end }}
+    {{ if header.start_time }}
+    <div style="font-size: 9pt; font-weight: normal; margin-bottom: 1pt">Start Time {{ header.start_time }}</div>
+    {{ end }}
+    {{ if header.end_time }}
+    <div style="font-size: 9pt; font-weight: normal">End Time {{ header.end_time }}</div>
+    {{ end }}
   </div>
-  <div style="text-align: right; color: #555;">
-    <div>{{ header.date }}</div>
+
+  <!-- Discipline -->
+  <div style="position: absolute; top: 8mm; right: 38mm; text-align: right; width: 100mm;">
+    {{ if header.discipline_primary_lang }}
+    <div style="font-size: 10pt; font-weight: bold; line-height: 1.2; margin-bottom: 2pt;">
+      {{ header.discipline_primary_lang }}
+    </div>
+    {{ end }}
+    {{ if header.discipline_secondary_lang }}
+    <div style="font-size: 7pt; font-weight: normal; line-height: 1.2">
+      {{ header.discipline_secondary_lang }}
+    </div>
+    {{ end }}
   </div>
+
+  <!-- Event -->
+  <div style="position: absolute; top: 16mm; right: 38mm; text-align: right; width: 100mm;">
+    {{ if header.event_primary_lang }}
+    <div style="font-size: 10pt; font-weight: bold; line-height: 1.2; margin-bottom: 2pt;">
+      {{ header.event_primary_lang }}
+    </div>
+    {{ end }}
+    {{ if header.event_secondary_lang }}
+    <div style="font-size: 7pt; font-weight: normal; line-height: 1.2">
+      {{ header.event_secondary_lang }}
+    </div>
+    {{ end }}
+  </div>
+
+  <!-- Phase + Unit -->
+  <div style="position: absolute; top: 24mm; right: 38mm; text-align: right; width: 100mm;">
+    {{ if header.phase_primary_lang }}
+    <div style="font-size: 10pt; font-weight: bold; line-height: 1.2; margin-bottom: 2pt;">
+      {{ header.phase_primary_lang }}{{ if header.unit_primary_lang }}, {{ header.unit_primary_lang }}{{ end }}{{ if header.unit_secondary_lang }}, {{ header.unit_secondary_lang }}{{ end }}
+    </div>
+    {{ end }}
+    {{ if header.phase_secondary_lang }}
+    <div style="font-size: 7pt; font-weight: normal; line-height: 1.2">
+      {{ header.phase_secondary_lang }}
+    </div>
+    {{ end }}
+  </div>
+
+  <!-- Bottom divider -->
+  <div style="position: absolute; bottom: 0mm; left: 8mm; right: 8mm; height: 0.5pt; background-color: #000;"></div>
 </div>

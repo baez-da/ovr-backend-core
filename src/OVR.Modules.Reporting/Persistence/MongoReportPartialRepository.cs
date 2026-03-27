@@ -16,6 +16,9 @@ internal sealed class MongoReportPartialRepository(IMongoDatabase database) : IR
     public async Task UpsertAsync(ReportPartialDocument doc, CancellationToken ct)
     {
         var filter = Builders<ReportPartialDocument>.Filter.Eq(d => d.Name, doc.Name);
+        var existing = await Collection.Find(filter).Project(d => d.Id).FirstOrDefaultAsync(ct);
+        if (existing is not null)
+            doc.Id = existing;
         await Collection.ReplaceOneAsync(filter, doc, new ReplaceOptions { IsUpsert = true }, ct);
     }
 }
