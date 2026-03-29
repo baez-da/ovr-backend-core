@@ -9,4 +9,9 @@ public interface IEntryRepository
     Task<IReadOnlyList<Entry>> FindByParticipantIdAsync(string participantId, CancellationToken ct = default);
     Task AddAsync(Entry entry, CancellationToken ct = default);
     Task UpdateAsync(Entry entry, CancellationToken ct = default);
+    Task DeleteByParticipantIdsAsync(
+        IReadOnlyList<string> participantIds, string rscPrefix,
+        CancellationToken ct = default);
+    Task AddManyAsync(
+        IReadOnlyList<Entry> entries, CancellationToken ct = default);
 }

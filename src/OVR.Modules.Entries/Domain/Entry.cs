@@ -16,6 +16,7 @@ public sealed class Entry : AggregateRoot<string>
     public string? Category { get; private set; }
     public TeamId? TeamId { get; private set; }
     public string? Seed { get; private set; }
+    public Dictionary<string, string>? EventEntries { get; private set; }
     public ExternalSystemId? ExternalId { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
@@ -54,6 +55,30 @@ public sealed class Entry : AggregateRoot<string>
         return entry;
     }
 
+    public static Entry CreateFromOdf(
+        ParticipantId participantId,
+        Rsc eventRsc,
+        CompetitorType competitorType,
+        Organisation organisation,
+        Dictionary<string, string>? eventEntries,
+        string? seed)
+    {
+        return new Entry
+        {
+            Id = $"{participantId.Value}_{eventRsc.Value}",
+            ParticipantId = participantId,
+            EventRsc = eventRsc,
+            CompetitorType = competitorType,
+            Organisation = organisation,
+            Status = EntryStatus.Entered,
+            InscriptionStatus = InscriptionStatus.Pending,
+            EventEntries = eventEntries,
+            Seed = seed,
+            CreatedAt = DateTime.UtcNow
+        };
+        // No domain events — bulk import uses DtParticImportedEvent
+    }
+
     public static Entry Hydrate(
         string id,
         ParticipantId participantId,
@@ -66,6 +91,7 @@ public sealed class Entry : AggregateRoot<string>
         string? category,
         TeamId? teamId,
         string? seed,
+        Dictionary<string, string>? eventEntries,
         ExternalSystemId? externalId,
         DateTime createdAt,
         DateTime? updatedAt)
@@ -83,6 +109,7 @@ public sealed class Entry : AggregateRoot<string>
             Category = category,
             TeamId = teamId,
             Seed = seed,
+            EventEntries = eventEntries,
             ExternalId = externalId,
             CreatedAt = createdAt,
             UpdatedAt = updatedAt

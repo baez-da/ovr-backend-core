@@ -18,6 +18,7 @@ internal static class EntryMapping
         Category = entry.Category,
         TeamId = entry.TeamId?.Value,
         Seed = entry.Seed,
+        EventEntries = entry.EventEntries,
         ExternalSystem = entry.ExternalId?.System,
         ExternalIdValue = entry.ExternalId?.Value,
         CreatedAt = entry.CreatedAt,
@@ -41,6 +42,6 @@ internal static class EntryMapping
         return Entry.Hydrate(
             doc.Id, participantId, eventRsc, competitorType, organisation,
             status, inscriptionStatus, registeredEventRsc, doc.Category,
-            teamId, doc.Seed, externalId, doc.CreatedAt, doc.UpdatedAt);
+            teamId, doc.Seed, doc.EventEntries, externalId, doc.CreatedAt, doc.UpdatedAt);
     }
 }

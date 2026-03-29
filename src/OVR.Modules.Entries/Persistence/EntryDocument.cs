@@ -16,6 +16,7 @@ public sealed class EntryDocument
     public string? Category { get; set; }
     public string? TeamId { get; set; }
     public string? Seed { get; set; }
+    public Dictionary<string, string>? EventEntries { get; set; }
     public string? ExternalSystem { get; set; }
     public string? ExternalIdValue { get; set; }
     public DateTime CreatedAt { get; set; }
