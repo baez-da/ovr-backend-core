@@ -1,0 +1,5 @@
+{
+  "Ingestion.InvalidDocumentType": "Expected DT_PARTIC but received '{{documentType}}'.",
+  "Ingestion.EmptyParticipantList": "The XML contains no participants.",
+  "Ingestion.MalformedXml": "The XML file could not be parsed: {{reason}}."
+}

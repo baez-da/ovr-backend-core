@@ -18,6 +18,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/OVR.Api.IntegrationTests/OVR.Api.IntegrationTests.csproj" />
+    <Project Path="tests/OVR.Ingestion.Tests/OVR.Ingestion.Tests.csproj" />
     <Project Path="tests/OVR.Modules.CommonCodes.Tests/OVR.Modules.CommonCodes.Tests.csproj" />
     <Project Path="tests/OVR.Modules.DataEntry.Tests/OVR.Modules.DataEntry.Tests.csproj" />
     <Project Path="tests/OVR.Modules.Entries.Tests/OVR.Modules.Entries.Tests.csproj" />

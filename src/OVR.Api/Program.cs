@@ -14,6 +14,7 @@ using OVR.Modules.Progression;
 using OVR.Modules.Reporting;
 using OVR.Modules.DataDistribution;
 using OVR.Modules.CommonCodes;
+using OVR.Ingestion;
 using OVR.SharedKernel.Behaviors;
 using OVR.SharedKernel.I18n;
 using Scalar.AspNetCore;
@@ -68,7 +69,8 @@ try
             typeof(ProgressionModule).Assembly,
             typeof(ReportingModule).Assembly,
             typeof(DataDistributionModule).Assembly,
-            typeof(CommonCodesModule).Assembly);
+            typeof(CommonCodesModule).Assembly,
+            typeof(IngestionModule).Assembly);
 
         cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
         cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
@@ -81,7 +83,8 @@ try
         typeof(OfficialAssignmentModule).Assembly,
         typeof(CoachAssignmentModule).Assembly,
         typeof(CommonCodesModule).Assembly,
-        typeof(ReportingModule).Assembly
+        typeof(ReportingModule).Assembly,
+        typeof(IngestionModule).Assembly
     ]);
 
     // i18n — global primero, luego módulos (auto-discovery de I18n.* en output dir)
@@ -116,6 +119,7 @@ try
     builder.Services.AddReportingModule();
     builder.Services.AddDataDistributionModule();
     builder.Services.AddCommonCodesModule();
+    builder.Services.AddIngestionModule();
 
     var app = builder.Build();
 
@@ -149,6 +153,7 @@ try
     app.MapReportingEndpoints();
     app.MapDataDistributionEndpoints();
     app.MapCommonCodesEndpoints();
+    app.MapIngestionEndpoints();
 
     app.Run();
 }
