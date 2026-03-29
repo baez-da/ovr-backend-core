@@ -7,25 +7,28 @@ public sealed class ParticipantFunction : ValueObject
     public string Function { get; }
     public string Discipline { get; }
     public bool IsMain { get; }
+    public string? IFId { get; }
 
-    private ParticipantFunction(string function, string discipline, bool isMain)
+    private ParticipantFunction(string function, string discipline, bool isMain, string? ifId)
     {
         Function = function;
         Discipline = discipline;
         IsMain = isMain;
+        IFId = ifId;
     }
 
-    public static ParticipantFunction Create(string function, string discipline, bool isMain)
+    public static ParticipantFunction Create(
+        string function, string discipline, bool isMain, string? ifId = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(function);
         ArgumentException.ThrowIfNullOrWhiteSpace(discipline);
-        return new ParticipantFunction(function.Trim(), discipline.Trim(), isMain);
+        return new ParticipantFunction(function.Trim(), discipline.Trim(), isMain, ifId?.Trim());
     }
 
     protected override IEnumerable<object?> GetEqualityComponents()
     {
         yield return Function;
         yield return Discipline;
-        // IsMain is NOT part of identity — two functions with same Function+Discipline are equal regardless of IsMain
+        // IsMain and IFId are NOT part of identity
     }
 }

@@ -59,4 +59,26 @@ public class ParticipantFunctionTests
         var fn2 = ParticipantFunction.Create("COACH", "BVO", true);
         fn1.Should().NotBe(fn2);
     }
+
+    [Fact]
+    public void Create_WithIFId_ShouldStoreIt()
+    {
+        var fn = ParticipantFunction.Create("AA01", "BOX-------------------------------", true, "MEX00024311");
+        fn.IFId.Should().Be("MEX00024311");
+    }
+
+    [Fact]
+    public void Create_WithoutIFId_ShouldDefaultToNull()
+    {
+        var fn = ParticipantFunction.Create("AA01", "BOX-------------------------------", true);
+        fn.IFId.Should().BeNull();
+    }
+
+    [Fact]
+    public void IFId_ShouldNotAffectEquality()
+    {
+        var fn1 = ParticipantFunction.Create("AA01", "BOX-------------------------------", true, "MEX00024311");
+        var fn2 = ParticipantFunction.Create("AA01", "BOX-------------------------------", true, "DIFFERENT");
+        fn1.Should().Be(fn2);
+    }
 }

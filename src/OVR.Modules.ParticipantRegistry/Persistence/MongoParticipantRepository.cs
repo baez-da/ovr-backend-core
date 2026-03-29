@@ -38,4 +38,33 @@ internal sealed class MongoParticipantRepository(IMongoDatabase database) : IPar
         var doc = ParticipantMapping.ToDocument(participant);
         await Collection.ReplaceOneAsync(d => d.Id == doc.Id, doc, cancellationToken: ct);
     }
+
+    public async Task<IReadOnlyList<Participant>> FindByOdfDisciplineAsync(
+        string discipline, CancellationToken ct = default)
+    {
+        var filter = Builders<ParticipantDocument>.Filter.And(
+            Builders<ParticipantDocument>.Filter.Ne(d => d.Code, null),
+            Builders<ParticipantDocument>.Filter.ElemMatch(
+                d => d.Functions,
+                f => f.Discipline == discipline));
+
+        var docs = await Collection.Find(filter).ToListAsync(ct);
+        return docs.Select(ParticipantMapping.ToDomain).ToList();
+    }
+
+    public async Task DeleteManyAsync(
+        IReadOnlyList<string> ids, CancellationToken ct = default)
+    {
+        if (ids.Count == 0) return;
+        var filter = Builders<ParticipantDocument>.Filter.In(d => d.Id, ids);
+        await Collection.DeleteManyAsync(filter, ct);
+    }
+
+    public async Task AddManyAsync(
+        IReadOnlyList<Participant> participants, CancellationToken ct = default)
+    {
+        if (participants.Count == 0) return;
+        var docs = participants.Select(ParticipantMapping.ToDocument).ToList();
+        await Collection.InsertManyAsync(docs, cancellationToken: ct);
+    }
 }

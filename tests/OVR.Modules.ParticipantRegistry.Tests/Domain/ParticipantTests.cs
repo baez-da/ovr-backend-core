@@ -156,4 +156,90 @@ public class ParticipantTests
         participant.PscbShortName.Should().Be("pscbShortName");
         participant.PscbLongName.Should().Be("pscbLongName");
     }
+
+    [Fact]
+    public void CreateFromOdf_ShouldSetAllOdfFields()
+    {
+        var biographic = BiographicData.Create(
+            "Miguel Angel", "Martinez Ramirez",
+            Gender.FromCode("M"), new DateOnly(2001, 3, 17),
+            Organisation.Create("MEX"));
+        var functions = new List<ParticipantFunction>
+        {
+            ParticipantFunction.Create("AA01", "BOX-------------------------------", true)
+        };
+
+        var participant = Participant.CreateFromOdf(
+            code: "1535186",
+            biographicData: biographic,
+            functions: functions,
+            printName: "MARTINEZ RAMIREZ Miguel Angel",
+            printInitialName: "MARTINEZ RAMIREZ M",
+            tvName: "Miguel Angel MARTINEZ RAMIREZ",
+            tvInitialName: "M.MARTINEZ RAMIREZ",
+            tvFamilyName: "MARTINEZ RAMIREZ",
+            pscbName: "MARTINEZ RAMIREZ MIGUEL ANGEL",
+            pscbShortName: "MARTINEZ RAMIREZ M",
+            pscbLongName: "MARTINEZ RAMIREZ MIGUEL ANGEL",
+            nationality: "MEX",
+            status: "ACTIVE",
+            current: true,
+            passportGivenName: "MIGUEL",
+            passportFamilyName: "MARTINEZ RAMIREZ",
+            height: 178,
+            supplementaryData: null);
+
+        participant.Code.Should().Be("1535186");
+        participant.Nationality.Should().Be("MEX");
+        participant.Status.Should().Be("ACTIVE");
+        participant.Current.Should().BeTrue();
+        participant.PassportGivenName.Should().Be("MIGUEL");
+        participant.PassportFamilyName.Should().Be("MARTINEZ RAMIREZ");
+        participant.Height.Should().Be(178);
+        participant.Id.Should().NotBeNullOrEmpty();
+        participant.DomainEvents.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void CreateFromOdf_NullOptionals_ShouldSucceed()
+    {
+        var biographic = BiographicData.Create(
+            null, "Smith", Gender.FromCode("M"), null,
+            Organisation.Create("USA"));
+        var functions = new List<ParticipantFunction>
+        {
+            ParticipantFunction.Create("JU", "BOX-------------------------------", true)
+        };
+
+        var participant = Participant.CreateFromOdf(
+            code: "9999999",
+            biographicData: biographic,
+            functions: functions,
+            printName: "SMITH", printInitialName: "SMITH",
+            tvName: "SMITH", tvInitialName: "SMITH", tvFamilyName: "SMITH",
+            pscbName: "SMITH", pscbShortName: "SMITH", pscbLongName: "SMITH",
+            nationality: null, status: "ACTIVE", current: true,
+            passportGivenName: null, passportFamilyName: null,
+            height: null, supplementaryData: null);
+
+        participant.Nationality.Should().BeNull();
+        participant.PassportGivenName.Should().BeNull();
+        participant.Height.Should().BeNull();
+    }
+
+    [Fact]
+    public void Create_ShouldDefaultNewFieldsToNull()
+    {
+        var participant = Participant.Create(
+            TestBiographicData, null, SingleFunction,
+            "p", "pi", "tv", "tvi", "tvf", "pscb", "pscbs", "pscbl");
+
+        participant.Code.Should().BeNull();
+        participant.Nationality.Should().BeNull();
+        participant.Status.Should().BeNull();
+        participant.Current.Should().BeTrue();
+        participant.PassportGivenName.Should().BeNull();
+        participant.PassportFamilyName.Should().BeNull();
+        participant.Height.Should().BeNull();
+    }
 }

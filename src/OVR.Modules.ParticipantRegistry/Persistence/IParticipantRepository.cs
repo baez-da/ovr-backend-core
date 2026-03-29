@@ -9,4 +9,7 @@ public interface IParticipantRepository
     Task<IReadOnlyList<Participant>> GetByIdsAsync(IReadOnlyList<string> ids, CancellationToken ct = default);
     Task AddAsync(Participant participant, CancellationToken ct = default);
     Task UpdateAsync(Participant participant, CancellationToken ct = default);
+    Task<IReadOnlyList<Participant>> FindByOdfDisciplineAsync(string discipline, CancellationToken ct = default);
+    Task DeleteManyAsync(IReadOnlyList<string> ids, CancellationToken ct = default);
+    Task AddManyAsync(IReadOnlyList<Participant> participants, CancellationToken ct = default);
 }

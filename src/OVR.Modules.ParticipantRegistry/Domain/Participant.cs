@@ -19,6 +19,13 @@ public sealed class Participant : AggregateRoot<string>
     public string PscbShortName { get; private set; } = string.Empty;
     public string PscbLongName { get; private set; } = string.Empty;
     public string? PhotoUrl { get; private set; }
+    public string? Code { get; private set; }
+    public string? Nationality { get; private set; }
+    public string? Status { get; private set; }
+    public bool Current { get; private set; } = true;
+    public string? PassportGivenName { get; private set; }
+    public string? PassportFamilyName { get; private set; }
+    public int? Height { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
 
@@ -69,6 +76,47 @@ public sealed class Participant : AggregateRoot<string>
         return participant;
     }
 
+    public static Participant CreateFromOdf(
+        string code,
+        BiographicData biographicData,
+        IReadOnlyList<ParticipantFunction> functions,
+        string printName, string printInitialName,
+        string tvName, string tvInitialName, string tvFamilyName,
+        string pscbName, string pscbShortName, string pscbLongName,
+        string? nationality, string? status, bool current,
+        string? passportGivenName, string? passportFamilyName,
+        int? height, SupplementaryData? supplementaryData)
+    {
+        ValidateFunctions(functions);
+
+        var participantId = ParticipantId.Generate();
+        return new Participant
+        {
+            Id = participantId.Value,
+            ParticipantId = participantId,
+            BiographicData = biographicData,
+            SupplementaryData = supplementaryData ?? new SupplementaryData(),
+            Functions = functions.ToList(),
+            PrintName = printName,
+            PrintInitialName = printInitialName,
+            TvName = tvName,
+            TvInitialName = tvInitialName,
+            TvFamilyName = tvFamilyName,
+            PscbName = pscbName,
+            PscbShortName = pscbShortName,
+            PscbLongName = pscbLongName,
+            Code = code,
+            Nationality = nationality,
+            Status = status,
+            Current = current,
+            PassportGivenName = passportGivenName,
+            PassportFamilyName = passportFamilyName,
+            Height = height,
+            CreatedAt = DateTime.UtcNow
+        };
+        // No domain events — bulk import uses DtParticImportedEvent
+    }
+
     public static Participant Hydrate(
         ParticipantId participantId,
         BiographicData biographicData,
@@ -84,7 +132,14 @@ public sealed class Participant : AggregateRoot<string>
         string pscbLongName,
         DateTime createdAt,
         DateTime? updatedAt,
-        string? photoUrl = null)
+        string? photoUrl = null,
+        string? code = null,
+        string? nationality = null,
+        string? status = null,
+        bool current = true,
+        string? passportGivenName = null,
+        string? passportFamilyName = null,
+        int? height = null)
     {
         return new Participant
         {
@@ -102,6 +157,13 @@ public sealed class Participant : AggregateRoot<string>
             PscbShortName = pscbShortName,
             PscbLongName = pscbLongName,
             PhotoUrl = photoUrl,
+            Code = code,
+            Nationality = nationality,
+            Status = status,
+            Current = current,
+            PassportGivenName = passportGivenName,
+            PassportFamilyName = passportFamilyName,
+            Height = height,
             CreatedAt = createdAt,
             UpdatedAt = updatedAt
         };

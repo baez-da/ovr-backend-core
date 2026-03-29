@@ -12,7 +12,8 @@ internal static class ParticipantMapping
         {
             Function = f.Function,
             Discipline = f.Discipline,
-            IsMain = f.IsMain
+            IsMain = f.IsMain,
+            IFId = f.IFId
         }).ToList(),
         GivenName = participant.BiographicData.GivenName,
         FamilyName = participant.BiographicData.FamilyName,
@@ -28,6 +29,13 @@ internal static class ParticipantMapping
         PscbShortName = participant.PscbShortName,
         PscbLongName = participant.PscbLongName,
         PhotoUrl = participant.PhotoUrl,
+        Code = participant.Code,
+        Nationality = participant.Nationality,
+        Status = participant.Status,
+        Current = participant.Current,
+        PassportGivenName = participant.PassportGivenName,
+        PassportFamilyName = participant.PassportFamilyName,
+        Height = participant.Height,
         SupplementaryData = new Dictionary<string, string>(participant.SupplementaryData.Properties),
         CreatedAt = participant.CreatedAt,
         UpdatedAt = participant.UpdatedAt
@@ -41,7 +49,7 @@ internal static class ParticipantMapping
         var biographicData = BiographicData.Create(doc.GivenName, doc.FamilyName, gender, doc.BirthDate, organisation);
 
         var functions = doc.Functions
-            .Select(f => ParticipantFunction.Create(f.Function, f.Discipline, f.IsMain))
+            .Select(f => ParticipantFunction.Create(f.Function, f.Discipline, f.IsMain, f.IFId))
             .ToList();
 
         var extendedDescription = new SupplementaryData();
@@ -52,6 +60,8 @@ internal static class ParticipantMapping
             participantId, biographicData, extendedDescription, functions,
             doc.PrintName, doc.PrintInitialName, doc.TvName, doc.TvInitialName,
             doc.TvFamilyName, doc.PscbName, doc.PscbShortName, doc.PscbLongName,
-            doc.CreatedAt, doc.UpdatedAt, doc.PhotoUrl);
+            doc.CreatedAt, doc.UpdatedAt, doc.PhotoUrl,
+            doc.Code, doc.Nationality, doc.Status, doc.Current,
+            doc.PassportGivenName, doc.PassportFamilyName, doc.Height);
     }
 }
