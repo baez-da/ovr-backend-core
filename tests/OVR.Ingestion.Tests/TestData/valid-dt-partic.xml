@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OdfBody CompetitionCode="OG2024" DocumentCode="BOX-------------------------------" DocumentType="DT_PARTIC" Version="6" FeedFlag="P" Date="2024-07-21" Time="045536786" LogicalDate="2024-07-21" Source="ODS">
+    <Competition>
+        <Participant Code="1958435" Parent="1958435" Status="ACTIVE" GivenName="Ben" FamilyName="McGarrigle" PassportGivenName="BRENDAN" PassportFamilyName="MCGARRIGLE" PrintName="McGARRIGLE Ben" PrintInitialName="McGARRIGLE B" TVName="Ben McGARRIGLE" TVInitialName="B. McGARRIGLE" TVFamilyName="McGARRIGLE" Gender="M" Organisation="PBU" PlaceofBirth="DERRY" CountryofBirth="GBR" Nationality="IRL" MainFunctionId="JU" Current="true">
+            <Discipline Code="BOX-------------------------------"/>
+        </Participant>
+        <Participant Code="1535186" Parent="1535186" Status="ACTIVE" GivenName="Miguel Angel" FamilyName="Martinez Ramirez" PassportGivenName="MIGUEL" PassportFamilyName="MARTINEZ RAMIREZ" PrintName="MARTINEZ RAMIREZ Miguel Angel" PrintInitialName="MARTINEZ RAMIREZ M" TVName="Miguel Angel MARTINEZ RAMIREZ" TVInitialName="M.MARTINEZ RAMIREZ" TVFamilyName="MARTINEZ RAMIREZ" Gender="M" Organisation="MEX" BirthDate="2001-03-17" Height="178" PlaceofBirth="DURANGO MEXICO" CountryofBirth="MEX" Nationality="MEX" MainFunctionId="AA01" Current="true">
+            <Discipline Code="BOX-------------------------------" IFId="MEX00024311">
+                <DisciplineEntry Type="ENTRY" Code="STANCE" Value="L"/>
+                <RegisteredEvent Event="BOXM63KG--------------------------">
+                    <EventEntry Type="ENTRY" Code="QUAL_TYPE" Value="CNT"/>
+                    <EventEntry Type="ENTRY" Code="SEED" Value="3"/>
+                </RegisteredEvent>
+            </Discipline>
+        </Participant>
+        <Participant Code="1979696" Parent="1979696" Status="CANCEL" GivenName="Abdelhakim" FamilyName="Madani" PrintName="MADANI Abdelhakim" PrintInitialName="MADANI A" TVName="Abdelhakim MADANI" TVInitialName="A. MADANI" TVFamilyName="MADANI" Gender="M" Organisation="PBU" Nationality="ALG" MainFunctionId="JU" Current="true">
+            <Discipline Code="BOX-------------------------------"/>
+        </Participant>
+    </Competition>
+</OdfBody>
