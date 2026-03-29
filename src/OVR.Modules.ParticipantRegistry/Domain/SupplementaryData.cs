@@ -1,6 +1,6 @@
 namespace OVR.Modules.ParticipantRegistry.Domain;
 
-public sealed class ExtendedDescription
+public sealed class SupplementaryData
 {
     private readonly Dictionary<string, string> _properties = new(StringComparer.OrdinalIgnoreCase);
 

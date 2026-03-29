@@ -28,7 +28,7 @@ internal static class ParticipantMapping
         PscbShortName = participant.PscbShortName,
         PscbLongName = participant.PscbLongName,
         PhotoUrl = participant.PhotoUrl,
-        ExtendedDescription = new Dictionary<string, string>(participant.ExtendedDescription.Properties),
+        SupplementaryData = new Dictionary<string, string>(participant.SupplementaryData.Properties),
         CreatedAt = participant.CreatedAt,
         UpdatedAt = participant.UpdatedAt
     };
@@ -44,8 +44,8 @@ internal static class ParticipantMapping
             .Select(f => ParticipantFunction.Create(f.Function, f.Discipline, f.IsMain))
             .ToList();
 
-        var extendedDescription = new ExtendedDescription();
-        foreach (var kvp in doc.ExtendedDescription)
+        var extendedDescription = new SupplementaryData();
+        foreach (var kvp in doc.SupplementaryData)
             extendedDescription.Set(kvp.Key, kvp.Value);
 
         return Participant.Hydrate(

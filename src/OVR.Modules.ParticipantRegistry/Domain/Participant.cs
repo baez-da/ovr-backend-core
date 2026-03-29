@@ -8,7 +8,7 @@ public sealed class Participant : AggregateRoot<string>
 {
     public ParticipantId ParticipantId { get; private set; } = null!;
     public BiographicData BiographicData { get; private set; } = null!;
-    public ExtendedDescription ExtendedDescription { get; private set; } = new();
+    public SupplementaryData SupplementaryData { get; private set; } = new();
     public IReadOnlyList<ParticipantFunction> Functions { get; private set; } = [];
     public string PrintName { get; private set; } = string.Empty;
     public string PrintInitialName { get; private set; } = string.Empty;
@@ -26,7 +26,7 @@ public sealed class Participant : AggregateRoot<string>
 
     public static Participant Create(
         BiographicData biographicData,
-        ExtendedDescription? extendedDescription,
+        SupplementaryData? extendedDescription,
         IReadOnlyList<ParticipantFunction> functions,
         string printName,
         string printInitialName,
@@ -46,7 +46,7 @@ public sealed class Participant : AggregateRoot<string>
             Id = participantId.Value,
             ParticipantId = participantId,
             BiographicData = biographicData,
-            ExtendedDescription = extendedDescription ?? new ExtendedDescription(),
+            SupplementaryData = extendedDescription ?? new SupplementaryData(),
             Functions = functions.ToList(),
             PrintName = printName,
             PrintInitialName = printInitialName,
@@ -72,7 +72,7 @@ public sealed class Participant : AggregateRoot<string>
     public static Participant Hydrate(
         ParticipantId participantId,
         BiographicData biographicData,
-        ExtendedDescription? extendedDescription,
+        SupplementaryData? extendedDescription,
         IReadOnlyList<ParticipantFunction> functions,
         string printName,
         string printInitialName,
@@ -91,7 +91,7 @@ public sealed class Participant : AggregateRoot<string>
             Id = participantId.Value,
             ParticipantId = participantId,
             BiographicData = biographicData,
-            ExtendedDescription = extendedDescription ?? new ExtendedDescription(),
+            SupplementaryData = extendedDescription ?? new SupplementaryData(),
             Functions = functions.ToList(),
             PrintName = printName,
             PrintInitialName = printInitialName,
