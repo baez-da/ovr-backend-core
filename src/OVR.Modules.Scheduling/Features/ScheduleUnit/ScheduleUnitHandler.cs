@@ -22,7 +22,7 @@ public sealed class ScheduleUnitHandler(
         if (session is null)
             return SchedulingErrors.SessionNotFound(request.SessionCode);
 
-        if (request.StartTime < session.StartDate || request.StartTime > session.EndDate)
+        if (request.StartTime < session.StartDate || request.StartTime >= session.EndDate)
             return SchedulingErrors.StartTimeOutsideSession(
                 request.StartTime, session.StartDate, session.EndDate);
 
@@ -40,7 +40,19 @@ public sealed class ScheduleUnitHandler(
             unitRsc, request.SessionCode, request.LocationCode,
             request.StartTime, request.OrderInSession, request.OrderInLocation);
 
-        await scheduleRepository.AddAsync(schedule, ct);
+        try
+        {
+            await scheduleRepository.AddAsync(schedule, ct);
+        }
+        catch (MongoDB.Driver.MongoWriteException ex) when (ex.WriteError?.Category == MongoDB.Driver.ServerErrorCategory.DuplicateKey)
+        {
+            // Concurrent second insert lost the race against the unique index on
+            // (locationCode, startTime). The collision check earlier didn't see it
+            // because the first insert happened in the TOCTOU window. Translate to
+            // the same error a pre-check collision would have produced.
+            return SchedulingErrors.LocationTimeOccupied(
+                request.LocationCode, request.StartTime, conflictingUnitRsc: "(unknown)");
+        }
 
         foreach (var e in schedule.DomainEvents)
             await publisher.Publish(e, ct);

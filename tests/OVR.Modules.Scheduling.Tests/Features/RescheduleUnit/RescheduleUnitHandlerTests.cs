@@ -149,4 +149,28 @@ public class RescheduleUnitHandlerTests
         result.IsError.Should().BeTrue();
         result.FirstError.Code.Should().Be("Scheduling.StartTimeOutsideSession");
     }
+
+    [Fact]
+    public async Task Handle_ChangingSessionCode_AllowedAsLongAsNewSessionExists()
+    {
+        // Cross-session reschedule is intentional MVP behavior. The handler only requires
+        // that the new session exists; venue equivalence is NOT enforced.
+        _scheduleRepo.GetByUnitRscAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(ExistingSchedule());
+        var differentVenueSession = Session.Create("BOX99", "DEF", "different venue session",
+            new DateTime(2026, 4, 20, 10, 0, 0, DateTimeKind.Utc),
+            new DateTime(2026, 4, 20, 14, 0, 0, DateTimeKind.Utc),
+            null);
+        _sessionRepo.GetByCodeAsync("BOX99", Arg.Any<CancellationToken>())
+            .Returns(differentVenueSession);
+        _collision.EnsureNoCollisionAsync(
+            Arg.Any<string>(), Arg.Any<DateTime>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
+            .Returns(Result.Success);
+
+        var cmd = ValidCommand() with { SessionCode = "BOX99" };
+        var result = await _handler.Handle(cmd, CancellationToken.None);
+
+        result.IsError.Should().BeFalse();
+        result.Value.SessionCode.Should().Be("BOX99");
+    }
 }

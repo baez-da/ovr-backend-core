@@ -25,7 +25,7 @@ public sealed class RescheduleUnitHandler(
         if (session is null)
             return SchedulingErrors.SessionNotFound(request.SessionCode);
 
-        if (request.StartTime < session.StartDate || request.StartTime > session.EndDate)
+        if (request.StartTime < session.StartDate || request.StartTime >= session.EndDate)
             return SchedulingErrors.StartTimeOutsideSession(
                 request.StartTime, session.StartDate, session.EndDate);
 
@@ -39,7 +39,15 @@ public sealed class RescheduleUnitHandler(
             request.SessionCode, request.LocationCode, request.StartTime,
             request.OrderInSession, request.OrderInLocation, request.Reason);
 
-        await scheduleRepository.UpdateAsync(schedule, ct);
+        try
+        {
+            await scheduleRepository.UpdateAsync(schedule, ct);
+        }
+        catch (MongoDB.Driver.MongoWriteException ex) when (ex.WriteError?.Category == MongoDB.Driver.ServerErrorCategory.DuplicateKey)
+        {
+            return SchedulingErrors.LocationTimeOccupied(
+                request.LocationCode, request.StartTime, conflictingUnitRsc: "(unknown)");
+        }
 
         foreach (var e in schedule.DomainEvents)
             await publisher.Publish(e, ct);

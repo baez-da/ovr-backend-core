@@ -19,6 +19,7 @@ public static class SchedulingModule
         services.AddScoped<ISessionRepository, MongoSessionRepository>();
         services.AddScoped<IUnitScheduleRepository, MongoUnitScheduleRepository>();
         services.AddScoped<IScheduleCollisionDetector, ScheduleCollisionDetector>();
+        services.AddHostedService<SchedulingIndexInitializer>();
         return services;
     }
 

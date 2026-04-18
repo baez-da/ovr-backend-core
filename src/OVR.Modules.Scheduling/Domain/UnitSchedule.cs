@@ -139,6 +139,11 @@ public sealed class UnitSchedule : AggregateRoot<string>
             throw new InvalidOperationException(
                 $"Cannot reschedule a unit in status '{Status}'.");
 
+        // MVP: cross-session and cross-venue reschedules are intentionally permitted.
+        // Operators may move a unit to a different session (e.g., weather delays moving
+        // matches to the next available slot in another session, possibly at a different
+        // venue). Validation that the target session exists is enforced at the handler
+        // level (Level 2). No cross-aggregate venue invariant is enforced here.
         SessionCode = newSessionCode;
         LocationCode = newLocationCode;
         StartTime = newStartTime;
