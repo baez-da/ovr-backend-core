@@ -25,6 +25,7 @@
     <Project Path="tests/OVR.Modules.Entries.Tests/OVR.Modules.Entries.Tests.csproj" />
     <Project Path="tests/OVR.Modules.ParticipantRegistry.Tests/OVR.Modules.ParticipantRegistry.Tests.csproj" />
     <Project Path="tests/OVR.Modules.Reporting.Tests/OVR.Modules.Reporting.Tests.csproj" />
+    <Project Path="tests/OVR.Modules.Scheduling.Tests/OVR.Modules.Scheduling.Tests.csproj" />
     <Project Path="tests/OVR.SharedKernel.Tests/OVR.SharedKernel.Tests.csproj" />
   </Folder>
 </Solution>
