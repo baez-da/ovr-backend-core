@@ -88,4 +88,17 @@ public sealed class Event : AggregateRoot<string>
 
         return unitRscs;
     }
+
+    internal void HydrateFromStorage(
+        CompetitionFormat format,
+        int size,
+        IReadOnlyList<(string Code, int Order, int UnitCount)> phases,
+        DateTime structureGeneratedAt)
+    {
+        Format = format;
+        Size = size;
+        _phases.Clear();
+        _phases.AddRange(phases.Select(p => Phase.CreateInternal(p.Code, p.Order, p.UnitCount)));
+        StructureGeneratedAt = structureGeneratedAt;
+    }
 }
