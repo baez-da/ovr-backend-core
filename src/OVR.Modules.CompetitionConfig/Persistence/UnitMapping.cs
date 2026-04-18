@@ -11,12 +11,14 @@ internal static class UnitMapping
         EventRsc = unit.EventRsc.Value,
         PhaseCode = unit.PhaseCode,
         UnitNumber = unit.UnitNumber,
+        SeedA = unit.SeedA,
+        SeedB = unit.SeedB,
         CreatedAt = unit.CreatedAt
     };
 
     public static Unit ToDomain(UnitDocument doc)
     {
         var rsc = Rsc.Create(doc.Id);
-        return Unit.Create(rsc);
+        return Unit.Hydrate(rsc, doc.SeedA, doc.SeedB, doc.CreatedAt);
     }
 }

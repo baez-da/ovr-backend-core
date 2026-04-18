@@ -28,7 +28,9 @@ public sealed class GenerateEventStructureHandler(
         if (structureResult.IsError)
             return structureResult.Errors;
 
-        var units = structureResult.Value.Select(Domain.Unit.Create).ToList();
+        var units = structureResult.Value
+            .Select(e => Domain.Unit.Create(e.Rsc, e.SeedA, e.SeedB))
+            .ToList();
         // Write the Event first — it is the authoritative "structure generated" signal.
         // If the subsequent Units insert fails, the Event marker prevents duplicate-key
         // retries and allows operator-level reconciliation (see spec: partial-failure recovery).
@@ -46,6 +48,6 @@ public sealed class GenerateEventStructureHandler(
             Phases: evt.Phases
                 .Select(p => new GenerateEventStructurePhase(p.Code, p.Order, p.UnitCount))
                 .ToList(),
-            UnitRscs: structureResult.Value.Select(r => r.Value).ToList());
+            UnitRscs: structureResult.Value.Select(e => e.Rsc.Value).ToList());
     }
 }

@@ -118,4 +118,33 @@ public class BracketGeneratorTests
 
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
+
+    [Fact]
+    public void Generate_PopulatesSeedAAndSeedB_ForFirstRoundUnitsOnly()
+    {
+        var plan = _generator.Generate(CompetitionFormat.SingleElimination, size: 16, startUnitNumber: 1);
+
+        // First phase (EighthFinals) has 8 units — all should have seed pairings
+        var firstPhaseUnitCount = plan.Phases[0].UnitCount; // 8
+        firstPhaseUnitCount.Should().Be(8);
+
+        var firstRoundPairings = plan.UnitSeedPairings.Take(firstPhaseUnitCount).ToList();
+        firstRoundPairings.Should().HaveCount(8);
+
+        // Classic recursive seed order pairings
+        var pairings = firstRoundPairings.Select(u => (u.SeedA, u.SeedB)).ToList();
+        pairings.Should().BeEquivalentTo(new (int?, int?)[]
+        {
+            (1, 16), (8, 9), (4, 13), (5, 12),
+            (2, 15), (7, 10), (3, 14), (6, 11)
+        }, options => options.WithStrictOrdering());
+
+        // Later rounds have no seeds assigned
+        var laterRoundPairings = plan.UnitSeedPairings.Skip(firstPhaseUnitCount).ToList();
+        laterRoundPairings.Should().AllSatisfy(p =>
+        {
+            p.SeedA.Should().BeNull();
+            p.SeedB.Should().BeNull();
+        });
+    }
 }

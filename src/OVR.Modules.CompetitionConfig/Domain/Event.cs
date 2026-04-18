@@ -72,7 +72,7 @@ public sealed class Event : AggregateRoot<string>
         };
     }
 
-    public ErrorOr<IReadOnlyList<Rsc>> GenerateStructure(
+    public ErrorOr<IReadOnlyList<(Rsc Rsc, int? SeedA, int? SeedB)>> GenerateStructure(
         CompetitionFormat format,
         int size,
         int startUnitNumber,
@@ -95,8 +95,11 @@ public sealed class Event : AggregateRoot<string>
         StructureGeneratedAt = DateTime.UtcNow;
 
         var eventPrefix = Rsc.Value[..22];
-        var unitRscs = plan.UnitLocalSegments
-            .Select(seg => Rsc.Create(eventPrefix + seg))
+        var unitEntries = plan.UnitLocalSegments
+            .Select((seg, idx) => (
+                Rsc: Rsc.Create(eventPrefix + seg),
+                SeedA: plan.UnitSeedPairings[idx].SeedA,
+                SeedB: plan.UnitSeedPairings[idx].SeedB))
             .ToList();
 
         RaiseDomainEvent(new EventStructureGeneratedEvent(
@@ -104,10 +107,10 @@ public sealed class Event : AggregateRoot<string>
             Format: format.ToString(),
             Size: size,
             Phases: plan.Phases.Select(p => new PhaseInfo(p.Code, p.Order, p.UnitCount)).ToList(),
-            UnitRscs: unitRscs.Select(r => r.Value).ToList(),
+            UnitRscs: unitEntries.Select(e => e.Rsc.Value).ToList(),
             GeneratedAt: StructureGeneratedAt.Value));
 
-        return unitRscs;
+        return unitEntries;
     }
 
     internal void HydrateFromStorage(
