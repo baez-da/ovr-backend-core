@@ -1,0 +1,9 @@
+{
+  "CompetitionConfig.InvalidDiscipline": "Discipline '{{discipline}}' is not recognized.",
+  "CompetitionConfig.InvalidEventCode": "Event code '{{eventCode}}' is not recognized.",
+  "CompetitionConfig.EventAlreadyExists": "An event with RSC '{{rsc}}' already exists.",
+  "CompetitionConfig.EventNotFound": "Event '{{rsc}}' was not found.",
+  "CompetitionConfig.StructureAlreadyGenerated": "Structure for event '{{rsc}}' was already generated.",
+  "CompetitionConfig.UnsupportedFormat": "Competition format '{{format}}' is not supported.",
+  "CompetitionConfig.InvalidSize": "Bracket size {{size}} is out of range (2..128)."
+}
