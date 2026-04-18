@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\OVR.Api\OVR.Api.csproj" />
+    <ProjectReference Include="..\..\src\OVR.Modules.CommonCodes\OVR.Modules.CommonCodes.csproj" />
   </ItemGroup>
 
   <ItemGroup>
