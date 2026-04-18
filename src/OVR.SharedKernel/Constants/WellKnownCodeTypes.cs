@@ -8,6 +8,7 @@ public static class WellKnownCodeTypes
     public const string DisciplineGender = "DISCIPLINE_GENDER";
     public const string Event = "EVENT";
     public const string Venue = "VENUES";
+    public const string Location = "LOCATION";
     public const string Cluster = "CLUSTER";
     public const string Organisation = "ORGANISATIONS";
     public const string OrganisationType = "ORGANISATION_TYPE";
