@@ -1,0 +1,9 @@
+{
+  "Scheduling.InvalidVenue": "Venue '{{venueCode}}' is not recognized.",
+  "Scheduling.SessionAlreadyExists": "Session '{{sessionCode}}' already exists.",
+  "Scheduling.SessionNotFound": "Session '{{sessionCode}}' was not found.",
+  "Scheduling.StartTimeOutsideSession": "StartTime {{startTime}} is outside the session window ({{sessionStart}} – {{sessionEnd}}).",
+  "Scheduling.UnitAlreadyScheduled": "Unit '{{unitRsc}}' is already scheduled. Use reschedule instead.",
+  "Scheduling.LocationTimeOccupied": "Location '{{locationCode}}' is already occupied at {{startTime}} by unit '{{conflictingUnit}}'.",
+  "Scheduling.UnitScheduleNotFound": "Schedule for unit '{{unitRsc}}' was not found."
+}
