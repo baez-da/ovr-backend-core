@@ -1,6 +1,6 @@
 namespace OVR.SharedKernel.Domain.Events.Integration;
 
-public sealed record UnitScheduleChangedEvent(
+public sealed record UnitScheduledEvent(
     string UnitRsc,
     string EventRsc,
     string SessionCode,
@@ -8,5 +8,4 @@ public sealed record UnitScheduleChangedEvent(
     DateTime StartTime,
     int OrderInSession,
     int OrderInLocation,
-    string? Reason,
-    DateTime ChangedAt) : DomainEventBase;
+    DateTime ScheduledAt) : DomainEventBase;

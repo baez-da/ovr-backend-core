@@ -1,0 +1,9 @@
+{
+  "Scheduling.InvalidVenue": "A sede '{{venueCode}}' não está registrada.",
+  "Scheduling.SessionAlreadyExists": "Já existe uma sessão com o código '{{sessionCode}}'.",
+  "Scheduling.SessionNotFound": "A sessão '{{sessionCode}}' não foi encontrada.",
+  "Scheduling.StartTimeOutsideSession": "A hora de início {{startTime}} está fora da janela da sessão ({{sessionStart}} – {{sessionEnd}}).",
+  "Scheduling.UnitAlreadyScheduled": "A unidade '{{unitRsc}}' já está programada. Use reprogramar.",
+  "Scheduling.LocationTimeOccupied": "O local '{{locationCode}}' já está ocupado às {{startTime}} pela unidade '{{conflictingUnit}}'.",
+  "Scheduling.UnitScheduleNotFound": "Programação para a unidade '{{unitRsc}}' não foi encontrada."
+}

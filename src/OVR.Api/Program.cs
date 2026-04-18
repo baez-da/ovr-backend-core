@@ -80,6 +80,7 @@ try
     builder.Services.AddValidatorsFromAssemblies([
         typeof(ParticipantRegistryModule).Assembly,
         typeof(CompetitionConfigModule).Assembly,
+        typeof(SchedulingModule).Assembly,
         typeof(EntriesModule).Assembly,
         typeof(OfficialAssignmentModule).Assembly,
         typeof(CoachAssignmentModule).Assembly,
