@@ -38,6 +38,27 @@ public sealed class Event : AggregateRoot<string>
         ArgumentException.ThrowIfNullOrWhiteSpace(eventCode);
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
+        // Cross-field consistency: the RSC must be derivable from the denormalized fields.
+        // Protects against callers (integration handlers, imports, reconstitution paths)
+        // passing mismatched values.
+        if (rsc.Discipline != discipline)
+            throw new ArgumentException(
+                $"RSC discipline segment '{rsc.Discipline}' does not match discipline '{discipline}'.",
+                nameof(discipline));
+
+        if (rsc.Gender.ToString() != gender.Value)
+            throw new ArgumentException(
+                $"RSC gender segment '{rsc.Gender}' does not match gender '{gender.Value}'.",
+                nameof(gender));
+
+        // Event segment in RSC is right-padded with '-'; compare by trimming.
+        var rscEventSegment = rsc.Event;
+        var expectedEventPrefix = eventCode.PadRight(8, '-');
+        if (!rscEventSegment.StartsWith(expectedEventPrefix))
+            throw new ArgumentException(
+                $"RSC event segment '{rscEventSegment}' does not start with event code '{eventCode}'.",
+                nameof(eventCode));
+
         return new Event
         {
             Id = rsc.Value,

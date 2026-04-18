@@ -29,8 +29,11 @@ public sealed class GenerateEventStructureHandler(
             return structureResult.Errors;
 
         var units = structureResult.Value.Select(Domain.Unit.Create).ToList();
-        await unitRepository.AddManyAsync(units, ct);
+        // Write the Event first — it is the authoritative "structure generated" signal.
+        // If the subsequent Units insert fails, the Event marker prevents duplicate-key
+        // retries and allows operator-level reconciliation (see spec: partial-failure recovery).
         await eventRepository.UpdateAsync(evt, ct);
+        await unitRepository.AddManyAsync(units, ct);
 
         foreach (var e in evt.DomainEvents)
             await publisher.Publish(e, ct);
