@@ -81,6 +81,34 @@ public sealed class UnitSchedule : AggregateRoot<string>
         return schedule;
     }
 
+    internal static UnitSchedule Hydrate(
+        Rsc unitRsc,
+        Rsc eventRsc,
+        string sessionCode,
+        string locationCode,
+        DateTime startTime,
+        int orderInSession,
+        int orderInLocation,
+        ScheduleStatus status,
+        DateTime scheduledAt,
+        DateTime? updatedAt)
+    {
+        return new UnitSchedule
+        {
+            Id = unitRsc.Value,
+            UnitRsc = unitRsc,
+            EventRsc = eventRsc,
+            SessionCode = sessionCode,
+            LocationCode = locationCode,
+            StartTime = startTime,
+            OrderInSession = orderInSession,
+            OrderInLocation = orderInLocation,
+            Status = status,
+            ScheduledAt = scheduledAt,
+            UpdatedAt = updatedAt
+        };
+    }
+
     public void Reschedule(
         string newSessionCode,
         string newLocationCode,
