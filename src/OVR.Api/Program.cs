@@ -79,6 +79,7 @@ try
     // FluentValidation
     builder.Services.AddValidatorsFromAssemblies([
         typeof(ParticipantRegistryModule).Assembly,
+        typeof(CompetitionConfigModule).Assembly,
         typeof(EntriesModule).Assembly,
         typeof(OfficialAssignmentModule).Assembly,
         typeof(CoachAssignmentModule).Assembly,

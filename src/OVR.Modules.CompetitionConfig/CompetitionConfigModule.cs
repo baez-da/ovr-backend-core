@@ -2,6 +2,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using OVR.Modules.CompetitionConfig.Domain;
+using OVR.Modules.CompetitionConfig.Features.CreateEvent;
+using OVR.Modules.CompetitionConfig.Features.GenerateEventStructure;
+using OVR.Modules.CompetitionConfig.Persistence;
 
 namespace OVR.Modules.CompetitionConfig;
 
@@ -9,6 +13,9 @@ public static class CompetitionConfigModule
 {
     public static IServiceCollection AddCompetitionConfigModule(this IServiceCollection services)
     {
+        services.AddScoped<IEventRepository, MongoEventRepository>();
+        services.AddScoped<IUnitRepository, MongoUnitRepository>();
+        services.AddSingleton<BracketGenerator>();
         return services;
     }
 
@@ -17,8 +24,11 @@ public static class CompetitionConfigModule
         var group = app.MapGroup("/api/competition-config")
             .WithTags("CompetitionConfig");
 
-        group.MapGet("/", () => TypedResults.Ok(new { Message = "CompetitionConfig module" }))
-            .WithName("GetCompetitionConfig");
+        group.MapPost("/events", CreateEventEndpoint.Handle)
+            .WithName("CreateEvent");
+
+        group.MapPost("/events/{rsc}/generate-structure", GenerateEventStructureEndpoint.Handle)
+            .WithName("GenerateEventStructure");
 
         return app;
     }
