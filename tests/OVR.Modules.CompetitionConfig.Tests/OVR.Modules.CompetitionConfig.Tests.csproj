@@ -9,17 +9,11 @@
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="FluentAssertions" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
-    <PackageReference Include="Testcontainers.MongoDb" />
+    <PackageReference Include="NSubstitute" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\OVR.Api\OVR.Api.csproj" />
-    <ProjectReference Include="..\..\src\OVR.Modules.CommonCodes\OVR.Modules.CommonCodes.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+    <ProjectReference Include="..\..\src\OVR.Modules.CompetitionConfig\OVR.Modules.CompetitionConfig.csproj" />
   </ItemGroup>
 
   <ItemGroup>

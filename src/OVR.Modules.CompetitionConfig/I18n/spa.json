@@ -1,0 +1,9 @@
+{
+  "CompetitionConfig.InvalidDiscipline": "La disciplina '{{discipline}}' no está registrada.",
+  "CompetitionConfig.InvalidEventCode": "El código de evento '{{eventCode}}' no está registrado.",
+  "CompetitionConfig.EventAlreadyExists": "Ya existe un evento con RSC '{{rsc}}'.",
+  "CompetitionConfig.EventNotFound": "El evento '{{rsc}}' no fue encontrado.",
+  "CompetitionConfig.StructureAlreadyGenerated": "La estructura para el evento '{{rsc}}' ya fue generada.",
+  "CompetitionConfig.UnsupportedFormat": "El formato de competición '{{format}}' no es soportado.",
+  "CompetitionConfig.InvalidSize": "El tamaño {{size}} está fuera del rango (2..128)."
+}

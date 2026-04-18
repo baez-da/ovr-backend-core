@@ -16,4 +16,5 @@ public static class CommonCodeTypes
     public const string Country = "COUNTRY";
     public const string PersonGender = "PERSON_GENDER";
     public const string Sport = "SPORT";
+    public const string Event = "EVENT";
 }
