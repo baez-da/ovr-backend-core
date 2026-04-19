@@ -250,6 +250,70 @@ public sealed class UnitResult : AggregateRoot<string>
         return Result.Success;
     }
 
+    /// <summary>
+    /// Creates a UnitResult that is immediately Official because the opponent is a bye.
+    /// Raises both <see cref="UnitResultStartListCreatedEvent"/> and
+    /// <see cref="UnitResultOfficialEvent"/> so downstream handlers receive the full
+    /// state machine trace even though the unit never enters Live.
+    /// </summary>
+    public static ErrorOr<UnitResult> CreateByeOfficial(Rsc unitRsc, Competitor winner)
+    {
+        if (unitRsc is null)
+            return DataEntryErrors.InvalidCompetitors("UnitRsc is required.");
+
+        if (winner.ParticipantId is null)
+            return DataEntryErrors.InvalidCompetitors(
+                "Bye winner must have a real ParticipantId.");
+
+        if (winner.SortOrder < 1 || winner.SortOrder > 2)
+            return DataEntryErrors.InvalidCompetitors(
+                "Bye winner must have SortOrder 1 or 2.");
+
+        var now = DateTime.UtcNow;
+        var ur = new UnitResult
+        {
+            Id = unitRsc.Value,
+            UnitRsc = unitRsc,
+            Status = ResultStatus.Official,
+            CreatedAt = now,
+            UpdatedAt = now,
+            EndedAt = now
+        };
+
+        var byeSlot = winner.SortOrder == 1 ? 2 : 1;
+        var bye = new Competitor(byeSlot, null, null, null,
+            Organisation.Create("BYE"), Wlt.L);
+        var winnerWithWlt = winner with { Wlt = Wlt.W };
+
+        ur._competitors.Add(winnerWithWlt);
+        ur._competitors.Add(bye);
+
+        ur.RaiseDomainEvent(new UnitResultStartListCreatedEvent(
+            UnitRsc: unitRsc.Value,
+            EventRsc: Rsc.Create(unitRsc.AtEventLevel()).Value,
+            Competitors: new[]
+            {
+                new CompetitorSnapshot(winnerWithWlt.SortOrder,
+                    winnerWithWlt.ParticipantId?.Value, winnerWithWlt.Seed,
+                    winnerWithWlt.Organisation.Code),
+                new CompetitorSnapshot(bye.SortOrder,
+                    bye.ParticipantId?.Value, bye.Seed, bye.Organisation.Code)
+            },
+            CreatedAt: now));
+
+        ur.RaiseDomainEvent(new UnitResultOfficialEvent(
+            UnitRsc: unitRsc.Value,
+            WinnerParticipantId: winnerWithWlt.ParticipantId?.Value,
+            ResultCode: "BYE",
+            ResultType: "BYE",
+            DecisionMark: null,
+            StoppageRound: null,
+            StoppageTime: null,
+            ConfirmedAt: now));
+
+        return ur;
+    }
+
     // Pre-condition: UnitResult is in StartList state. Progression guarantees this by
     // withholding advancements until UnitResultStartListCreatedEvent has fired.
     // Revisit if direct-advancement-without-scheduling becomes a requirement.

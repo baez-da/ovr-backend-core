@@ -111,4 +111,81 @@ public class UnitScheduledEventHandlerTests
         await _publisher.DidNotReceive().Publish(
             Arg.Any<UnitResultStartListCreatedEvent>(), Arg.Any<CancellationToken>());
     }
+
+    // ── Task 22: Bye auto-OFFICIAL ─────────────────────────────────────────────
+
+    [Fact]
+    public async Task Handle_WhenOnlyOneResolvedCompetitor_CreatesUnitResultOfficialImmediately()
+    {
+        // Only seed 1 has an entry; seed 8 is a bye (no entry found).
+        _repository.ExistsAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(false);
+        _lineupReader.GetSeedsForUnit(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns((1, 8));
+        _entryReader.ListActiveByEventRsc(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(new List<EntryDto>
+            {
+                new(ParticipantId.Create("NOC-ESP-0001"), 1, Organisation.Create("ESP"))
+                // seed 8 is absent → bye
+            });
+        _repository.SaveNewAsync(
+            Arg.Any<OVR.Modules.DataEntry.Domain.UnitResult>(), Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        // Capture the aggregate passed to SaveNewAsync.
+        OVR.Modules.DataEntry.Domain.UnitResult? saved = null;
+        await _repository.SaveNewAsync(
+            Arg.Do<OVR.Modules.DataEntry.Domain.UnitResult>(ur => saved = ur),
+            Arg.Any<CancellationToken>());
+
+        await Handler().Handle(Evt(), default);
+
+        await _repository.Received(1).SaveNewAsync(
+            Arg.Any<OVR.Modules.DataEntry.Domain.UnitResult>(), Arg.Any<CancellationToken>());
+
+        saved.Should().NotBeNull();
+        saved!.Status.Should().Be(OVR.Modules.DataEntry.Domain.ResultStatus.Official);
+        saved.Competitors.First(c => c.SortOrder == 1).ParticipantId!.Value
+            .Should().Be("NOC-ESP-0001");
+
+        // Both StartList and Official events must be published.
+        await _publisher.Received(1).Publish(
+            Arg.Any<UnitResultStartListCreatedEvent>(), Arg.Any<CancellationToken>());
+        await _publisher.Received(1).Publish(
+            Arg.Any<UnitResultOfficialEvent>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenTwoResolvedCompetitors_BehavesAsMvp3()
+    {
+        // Two real entries → normal StartList path (unchanged from MVP 3).
+        _repository.ExistsAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(false);
+        _lineupReader.GetSeedsForUnit(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns((1, 8));
+        _entryReader.ListActiveByEventRsc(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(new List<EntryDto>
+            {
+                new(ParticipantId.Create("NOC-ESP-0001"), 1, Organisation.Create("ESP")),
+                new(ParticipantId.Create("NOC-POL-0014"), 8, Organisation.Create("POL"))
+            });
+        _repository.SaveNewAsync(
+            Arg.Any<OVR.Modules.DataEntry.Domain.UnitResult>(), Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        OVR.Modules.DataEntry.Domain.UnitResult? saved = null;
+        await _repository.SaveNewAsync(
+            Arg.Do<OVR.Modules.DataEntry.Domain.UnitResult>(ur => saved = ur),
+            Arg.Any<CancellationToken>());
+
+        await Handler().Handle(Evt(), default);
+
+        saved.Should().NotBeNull();
+        saved!.Status.Should().Be(OVR.Modules.DataEntry.Domain.ResultStatus.StartList);
+
+        await _publisher.Received(1).Publish(
+            Arg.Any<UnitResultStartListCreatedEvent>(), Arg.Any<CancellationToken>());
+        await _publisher.DidNotReceive().Publish(
+            Arg.Any<UnitResultOfficialEvent>(), Arg.Any<CancellationToken>());
+    }
 }
