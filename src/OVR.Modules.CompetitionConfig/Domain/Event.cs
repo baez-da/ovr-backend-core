@@ -108,7 +108,8 @@ public sealed class Event : AggregateRoot<string>
             Size: size,
             Phases: plan.Phases.Select(p => new PhaseInfo(p.Code, p.Order, p.UnitCount)).ToList(),
             UnitRscs: unitEntries.Select(e => e.Rsc.Value).ToList(),
-            GeneratedAt: StructureGeneratedAt.Value));
+            GeneratedAt: StructureGeneratedAt.Value,
+            Edges: plan.Edges.ToList()));
 
         return unitEntries;
     }
