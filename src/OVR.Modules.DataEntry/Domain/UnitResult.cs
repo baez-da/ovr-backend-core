@@ -1,5 +1,6 @@
 using ErrorOr;
 using OVR.Modules.DataEntry.Errors;
+using OVR.Modules.DataEntry.SportRules;
 using OVR.SharedKernel.Domain.Events.Integration;
 using OVR.SharedKernel.Domain.Primitives;
 using OVR.SharedKernel.Domain.ValueObjects;
@@ -66,5 +67,71 @@ public sealed class UnitResult : AggregateRoot<string>
             CreatedAt: now));
 
         return ur;
+    }
+
+    public ErrorOr<Success> Start()
+    {
+        if (Status != ResultStatus.StartList)
+            return DataEntryErrors.InvalidStatusTransition(Status.ToString(), "Live");
+
+        Status = ResultStatus.Live;
+        StartedAt = DateTime.UtcNow;
+        CurrentPeriodCode = "R1";
+        UpdatedAt = StartedAt;
+
+        RaiseDomainEvent(new UnitResultLiveEvent(UnitRsc.Value, StartedAt.Value));
+        return Result.Success;
+    }
+
+    public ErrorOr<Success> ScorePeriod(
+        string periodCode, IReadOnlyList<PeriodScorecard> cards)
+    {
+        if (Status != ResultStatus.Live)
+            return DataEntryErrors.InvalidStatusTransition(Status.ToString(), "score period");
+
+        if (Decision is not null)
+            return DataEntryErrors.DecisionAlreadyExists();
+
+        if (!BoxingRules.PeriodCodes.Contains(periodCode))
+            return DataEntryErrors.InvalidPeriodCode(periodCode);
+
+        if (_periods.Any(p => p.Code == periodCode))
+            return DataEntryErrors.PeriodAlreadyScored(periodCode);
+
+        var expectedNextIndex = _periods.Count;
+        if (BoxingRules.PeriodCodes[expectedNextIndex] != periodCode)
+            return DataEntryErrors.InvalidPeriodOrder(periodCode);
+
+        if (cards.Count != BoxingRules.JudgeCount)
+            return DataEntryErrors.InvalidScorecardCount();
+
+        if (cards.Select(c => c.JudgePos).Distinct().Count() != cards.Count)
+            return DataEntryErrors.DuplicateJudgePosition(
+                cards.GroupBy(c => c.JudgePos).First(g => g.Count() > 1).Key.ToString());
+
+        foreach (var c in cards)
+        {
+            if (c.HomeScore < BoxingRules.MinPeriodScore || c.HomeScore > BoxingRules.MaxPeriodScore)
+                return DataEntryErrors.InvalidScoreRange(c.HomeScore);
+            if (c.AwayScore < BoxingRules.MinPeriodScore || c.AwayScore > BoxingRules.MaxPeriodScore)
+                return DataEntryErrors.InvalidScoreRange(c.AwayScore);
+        }
+
+        _periods.Add(new Period(periodCode, cards.OrderBy(c => c.JudgePos).ToList()));
+        UpdatedAt = DateTime.UtcNow;
+
+        var nextIndex = _periods.Count;
+        CurrentPeriodCode = nextIndex < BoxingRules.PeriodCount
+            ? BoxingRules.PeriodCodes[nextIndex]
+            : BoxingRules.PeriodCodes[^1];
+
+        RaiseDomainEvent(new UnitResultPeriodScoredEvent(
+            UnitRsc.Value,
+            periodCode,
+            cards.Select(c => new ScorecardSnapshot(
+                c.JudgePos.ToString(), c.HomeScore, c.AwayScore)).ToList(),
+            UpdatedAt.Value));
+
+        return Result.Success;
     }
 }
