@@ -67,4 +67,51 @@ public sealed class BracketProgression
             pending: [],
             createdAt: DateTime.UtcNow);
     }
+
+    public AdvancementOutcome RecordAdvancement(
+        string sourceUnitRsc,
+        Outcome outcome,
+        string? participantId)
+    {
+        if (string.IsNullOrEmpty(participantId))
+            return new AdvancementOutcome.Skipped(sourceUnitRsc, "NoWinner");
+
+        if (!_edgeIndex.TryGetValue((sourceUnitRsc, outcome), out var edge))
+            return new AdvancementOutcome.Terminal(sourceUnitRsc, participantId);
+
+        // Buffering invariant: we never emit advancements toward a target whose StartList
+        // has not been created. This keeps DataEntry free of "pending/partial UnitResult"
+        // state. If future sports need cross-event advancement or lazy target creation,
+        // the buffering invariant is where to revisit.
+        var alreadyPending = _pending.Any(p =>
+            p.SourceUnitRsc == sourceUnitRsc &&
+            p.TargetUnitRsc == edge.TargetUnitRsc &&
+            p.TargetSlot == edge.TargetSlot &&
+            p.ParticipantId == participantId);
+
+        if (_readyTargets.Contains(edge.TargetUnitRsc))
+        {
+            return new AdvancementOutcome.Ready(edge, participantId);
+        }
+
+        if (!alreadyPending)
+        {
+            _pending.Add(new PendingAdvancement(
+                TargetUnitRsc: edge.TargetUnitRsc,
+                TargetSlot: edge.TargetSlot,
+                ParticipantId: participantId,
+                SourceUnitRsc: sourceUnitRsc,
+                RecordedAt: DateTime.UtcNow));
+        }
+
+        return new AdvancementOutcome.Buffered(edge, participantId);
+    }
+
+    public IReadOnlyList<PendingAdvancement> MarkTargetReady(string targetUnitRsc)
+    {
+        _readyTargets.Add(targetUnitRsc);
+        var drained = _pending.Where(p => p.TargetUnitRsc == targetUnitRsc).ToList();
+        _pending.RemoveAll(p => p.TargetUnitRsc == targetUnitRsc);
+        return drained;
+    }
 }
