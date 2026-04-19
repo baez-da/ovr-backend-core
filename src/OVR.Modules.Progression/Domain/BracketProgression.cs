@@ -114,4 +114,20 @@ public sealed class BracketProgression
         _pending.RemoveAll(p => p.TargetUnitRsc == targetUnitRsc);
         return drained;
     }
+
+    // Visibility: the mapping class lives in the same assembly, so `internal` suffices.
+    internal static BracketProgression Hydrate(
+        string eventRsc,
+        IReadOnlyList<ProgressionEdge> edges,
+        IEnumerable<string> readyTargets,
+        IEnumerable<PendingAdvancement> pending,
+        DateTime createdAt)
+    {
+        return new BracketProgression(
+            eventRsc,
+            edges,
+            readyTargets: [..readyTargets],
+            pending: [..pending],
+            createdAt: createdAt);
+    }
 }
