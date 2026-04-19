@@ -25,7 +25,7 @@ public class ValidationTests : IClassFixture<DataEntryWebAppFactory>
     }
 
     [Fact]
-    public async Task Start_WhenAlreadyLive_Returns422()
+    public async Task Start_WhenAlreadyLive_Returns400()
     {
         var eventRsc = "BOXM91KG---------";
         var unitRsc  = "BOXM91KG--------------FNL-0001----";
@@ -45,7 +45,7 @@ public class ValidationTests : IClassFixture<DataEntryWebAppFactory>
         var client = _factory.CreateClient();
         await client.PostAsync($"/api/data-entry/unit-results/{unitRsc}/start", null);
         var again = await client.PostAsync($"/api/data-entry/unit-results/{unitRsc}/start", null);
-        again.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
+        again.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     [Fact]
