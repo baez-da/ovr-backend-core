@@ -218,4 +218,160 @@ public class UnitResultAggregateTests
         ur.Decision.DecisionMark.Should().Be("3:0");
         ur.Status.Should().Be(ResultStatus.Live); // not yet Official — Confirm is separate
     }
+
+    // ── Task 15: FinishByStoppage ─────────────────────────────────────────────
+
+    [Fact]
+    public void FinishByStoppage_TkoI_InLive_SetsRmPointsDecision()
+    {
+        var ur = NewInStartList();
+        ur.Start();
+        ur.ScorePeriod("R1", EvenCards(10, 9));
+        // stoppage mid-R2
+
+        var red = ur.Competitors.First(c => c.SortOrder == 1).ParticipantId!;
+        var result = ur.FinishByStoppage(
+            ResultCode.TkoI, stoppageRound: "R2", stoppageTime: "01:30",
+            winnerParticipantId: red);
+
+        result.IsError.Should().BeFalse();
+        ur.Decision.Should().NotBeNull();
+        ur.Decision!.Code.Should().Be(ResultCode.TkoI);
+        ur.Decision.Type.Should().Be(ResultType.RmPoints);
+        ur.Decision.StoppageRound.Should().Be("R2");
+        ur.Decision.StoppageTime.Should().Be("01:30");
+        ur.Decision.WinnerParticipantId.Should().Be(red);
+    }
+
+    [Fact]
+    public void FinishByStoppage_Ko_SetsRmDecision_NoPoints()
+    {
+        var ur = NewInStartList();
+        ur.Start();
+
+        var blue = ur.Competitors.First(c => c.SortOrder == 2).ParticipantId!;
+        var result = ur.FinishByStoppage(
+            ResultCode.Ko, "R1", "00:45", blue);
+
+        result.IsError.Should().BeFalse();
+        ur.Decision!.Type.Should().Be(ResultType.Rm);
+        ur.Decision.Code.Should().Be(ResultCode.Ko);
+        ur.Decision.WinnerParticipantId.Should().Be(blue);
+    }
+
+    [Fact]
+    public void FinishByStoppage_Nc_WithWinner_ReturnsInvalidStoppageData()
+    {
+        var ur = NewInStartList();
+        ur.Start();
+
+        var red = ur.Competitors.First(c => c.SortOrder == 1).ParticipantId!;
+        var result = ur.FinishByStoppage(ResultCode.Nc, "R2", "00:30", red);
+
+        result.IsError.Should().BeTrue();
+        result.FirstError.Code.Should().Be("DataEntry.InvalidStoppageData");
+    }
+
+    [Fact]
+    public void FinishByStoppage_Wp_Rejected()
+    {
+        var ur = NewInStartList();
+        ur.Start();
+
+        var red = ur.Competitors.First(c => c.SortOrder == 1).ParticipantId!;
+        var result = ur.FinishByStoppage(ResultCode.Wp, "R2", "00:30", red);
+
+        result.IsError.Should().BeTrue();
+        result.FirstError.Code.Should().Be("DataEntry.InvalidStoppageData");
+    }
+
+    [Fact]
+    public void FinishByStoppage_FromStartList_ReturnsInvalidStatusTransition()
+    {
+        var ur = NewInStartList();
+
+        var red = ur.Competitors.First(c => c.SortOrder == 1).ParticipantId!;
+        var result = ur.FinishByStoppage(ResultCode.TkoI, "R1", "00:30", red);
+
+        result.IsError.Should().BeTrue();
+        result.FirstError.Code.Should().Be("DataEntry.InvalidStatusTransition");
+    }
+
+    [Fact]
+    public void FinishByStoppage_WhenDecisionExists_ReturnsDecisionAlreadyExists()
+    {
+        var ur = NewInStartList();
+        ur.Start();
+        ur.ScorePeriod("R1", EvenCards(10, 9));
+        ur.ScorePeriod("R2", EvenCards(10, 9));
+        ur.ScorePeriod("R3", EvenCards(10, 9));  // auto-decision populated
+
+        var red = ur.Competitors.First(c => c.SortOrder == 1).ParticipantId!;
+        var result = ur.FinishByStoppage(ResultCode.TkoI, "R3", "02:30", red);
+
+        result.IsError.Should().BeTrue();
+        result.FirstError.Code.Should().Be("DataEntry.DecisionAlreadyExists");
+    }
+
+    // ── Task 16: Confirm ──────────────────────────────────────────────────────
+
+    [Fact]
+    public void Confirm_WithDecision_TransitionsToOfficial_AndAssignsWlt()
+    {
+        var ur = NewInStartList();
+        ur.Start();
+        ur.ScorePeriod("R1", EvenCards(10, 9));
+        ur.ScorePeriod("R2", EvenCards(10, 9));
+        ur.ScorePeriod("R3", EvenCards(10, 9));  // red wins 3:0
+
+        var result = ur.Confirm();
+
+        result.IsError.Should().BeFalse();
+        ur.Status.Should().Be(ResultStatus.Official);
+        ur.Competitors.First(c => c.SortOrder == 1).Wlt.Should().Be(Wlt.W);
+        ur.Competitors.First(c => c.SortOrder == 2).Wlt.Should().Be(Wlt.L);
+    }
+
+    [Fact]
+    public void Confirm_AfterNcDecision_AssignsLLToBoth()
+    {
+        var ur = NewInStartList();
+        ur.Start();
+        var drawCards = new[]
+        {
+            new PeriodScorecard(JudgePosition.J1, 10, 10),
+            new PeriodScorecard(JudgePosition.J2, 10, 10),
+            new PeriodScorecard(JudgePosition.J3, 10, 10)
+        };
+        ur.ScorePeriod("R1", drawCards);
+        ur.ScorePeriod("R2", drawCards);
+        ur.ScorePeriod("R3", drawCards);
+
+        ur.Decision!.Code.Should().Be(ResultCode.Nc);
+        ur.Confirm();
+
+        ur.Status.Should().Be(ResultStatus.Official);
+        ur.Competitors.Should().AllSatisfy(c => c.Wlt.Should().Be(Wlt.L));
+    }
+
+    [Fact]
+    public void Confirm_WithoutDecision_ReturnsDecisionRequired()
+    {
+        var ur = NewInStartList();
+        ur.Start();
+
+        var result = ur.Confirm();
+        result.IsError.Should().BeTrue();
+        result.FirstError.Code.Should().Be("DataEntry.DecisionRequired");
+    }
+
+    [Fact]
+    public void Confirm_FromStartList_ReturnsInvalidStatusTransition()
+    {
+        var ur = NewInStartList();
+
+        var result = ur.Confirm();
+        result.IsError.Should().BeTrue();
+        result.FirstError.Code.Should().Be("DataEntry.InvalidStatusTransition");
+    }
 }

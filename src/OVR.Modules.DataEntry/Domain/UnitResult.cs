@@ -144,4 +144,138 @@ public sealed class UnitResult : AggregateRoot<string>
 
         return Result.Success;
     }
+
+    public ErrorOr<Success> FinishByStoppage(
+        ResultCode resultCode,
+        string stoppageRound,
+        string stoppageTime,
+        ParticipantId? winnerParticipantId)
+    {
+        if (Status != ResultStatus.Live)
+            return DataEntryErrors.InvalidStatusTransition(Status.ToString(), "finish");
+
+        if (Decision is not null)
+            return DataEntryErrors.DecisionAlreadyExists();
+
+        if (resultCode == ResultCode.Wp)
+            return DataEntryErrors.InvalidStoppageData(
+                "WP is reserved for point decisions, not stoppages.");
+
+        if (!BoxingRules.PeriodCodes.Contains(stoppageRound))
+            return DataEntryErrors.InvalidStoppageData(
+                $"Invalid stoppage round '{stoppageRound}'.");
+
+        var noWinnerCodes = new[] { ResultCode.Nc, ResultCode.Dko, ResultCode.Bdsq };
+        var requiresWinner = !noWinnerCodes.Contains(resultCode);
+
+        if (requiresWinner && winnerParticipantId is null)
+            return DataEntryErrors.InvalidStoppageData(
+                $"ResultCode {resultCode} requires a winnerParticipantId.");
+
+        if (!requiresWinner && winnerParticipantId is not null)
+            return DataEntryErrors.InvalidStoppageData(
+                $"ResultCode {resultCode} must not have a winnerParticipantId.");
+
+        if (winnerParticipantId is not null &&
+            !_competitors.Any(c => c.ParticipantId == winnerParticipantId))
+            return DataEntryErrors.InvalidStoppageData(
+                "winnerParticipantId does not match any competitor.");
+
+        var type = _periods.Count > 0 ? ResultType.RmPoints : ResultType.Rm;
+
+        var decisionMark = type == ResultType.RmPoints
+            ? ComputeInterimDecisionMark(winnerParticipantId)
+            : null;
+
+        Decision = new Decision(
+            Type: type,
+            Code: resultCode,
+            DecisionMark: decisionMark,
+            StoppageRound: stoppageRound,
+            StoppageTime: stoppageTime,
+            WinnerParticipantId: winnerParticipantId);
+
+        EndedAt = DateTime.UtcNow;
+        UpdatedAt = EndedAt;
+
+        return Result.Success;
+    }
+
+    private string? ComputeInterimDecisionMark(ParticipantId? winner)
+    {
+        if (winner is null) return null;
+        var red = _competitors.First(c => c.SortOrder == 1);
+        var blue = _competitors.First(c => c.SortOrder == 2);
+        var resolver = new TenPointMustResolver();
+        var interim = resolver.Resolve(_periods, red.ParticipantId!, blue.ParticipantId!);
+        return interim.DecisionMark;
+    }
+
+    public ErrorOr<Success> Confirm()
+    {
+        if (Status != ResultStatus.Live)
+            return DataEntryErrors.InvalidStatusTransition(Status.ToString(), "Official");
+
+        if (Decision is null)
+            return DataEntryErrors.DecisionRequired();
+
+        var winner = Decision.WinnerParticipantId;
+        var newCompetitors = _competitors.Select(c =>
+        {
+            Wlt wlt;
+            if (winner is null)
+                wlt = Wlt.L;
+            else
+                wlt = c.ParticipantId == winner ? Wlt.W : Wlt.L;
+            return c with { Wlt = wlt };
+        }).ToList();
+        _competitors.Clear();
+        _competitors.AddRange(newCompetitors);
+
+        Status = ResultStatus.Official;
+        var confirmedAt = DateTime.UtcNow;
+        UpdatedAt = confirmedAt;
+        if (EndedAt is null) EndedAt = confirmedAt;
+
+        RaiseDomainEvent(new UnitResultOfficialEvent(
+            UnitRsc: UnitRsc.Value,
+            WinnerParticipantId: winner?.Value,
+            ResultCode: Decision.Code.ToString(),
+            ResultType: Decision.Type.ToString(),
+            DecisionMark: Decision.DecisionMark,
+            StoppageRound: Decision.StoppageRound,
+            StoppageTime: Decision.StoppageTime,
+            ConfirmedAt: confirmedAt));
+
+        return Result.Success;
+    }
+
+    internal static UnitResult Hydrate(
+        Rsc unitRsc,
+        ResultStatus status,
+        IReadOnlyList<Competitor> competitors,
+        IReadOnlyList<Period> periods,
+        Decision? decision,
+        DateTime? startedAt,
+        DateTime? endedAt,
+        string? currentPeriodCode,
+        DateTime createdAt,
+        DateTime? updatedAt)
+    {
+        var ur = new UnitResult
+        {
+            Id = unitRsc.Value,
+            UnitRsc = unitRsc,
+            Status = status,
+            Decision = decision,
+            StartedAt = startedAt,
+            EndedAt = endedAt,
+            CurrentPeriodCode = currentPeriodCode,
+            CreatedAt = createdAt,
+            UpdatedAt = updatedAt
+        };
+        ur._competitors.AddRange(competitors);
+        ur._periods.AddRange(periods);
+        return ur;
+    }
 }

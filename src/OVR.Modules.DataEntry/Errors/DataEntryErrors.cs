@@ -42,4 +42,11 @@ public static class DataEntryErrors
     public static Error InvalidPeriodCode(string code) =>
         Error.Validation("DataEntry.InvalidPeriodCode",
             $"Invalid period code '{code}'. Expected one of R1, R2, R3.");
+
+    public static Error InvalidStoppageData(string reason) =>
+        Error.Validation("DataEntry.InvalidStoppageData", reason);
+
+    public static Error DecisionRequired() =>
+        Error.Validation("DataEntry.DecisionRequired",
+            "Cannot confirm without a Decision.");
 }
