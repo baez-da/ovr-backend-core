@@ -120,6 +120,16 @@ public sealed class UnitResult : AggregateRoot<string>
         _periods.Add(new Period(periodCode, cards.OrderBy(c => c.JudgePos).ToList()));
         UpdatedAt = DateTime.UtcNow;
 
+        // Auto-compute Decision after R3 (last period).
+        if (_periods.Count == BoxingRules.PeriodCount)
+        {
+            var resolver = new TenPointMustResolver();
+            var red = _competitors.First(c => c.SortOrder == 1);
+            var blue = _competitors.First(c => c.SortOrder == 2);
+            Decision = resolver.Resolve(_periods, red.ParticipantId!, blue.ParticipantId!);
+            EndedAt = UpdatedAt;
+        }
+
         var nextIndex = _periods.Count;
         CurrentPeriodCode = nextIndex < BoxingRules.PeriodCount
             ? BoxingRules.PeriodCodes[nextIndex]

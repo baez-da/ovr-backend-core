@@ -203,4 +203,19 @@ public class UnitResultAggregateTests
         result.IsError.Should().BeTrue();
         result.FirstError.Code.Should().Be("DataEntry.InvalidPeriodCode");
     }
+
+    [Fact]
+    public void ScorePeriod_R3LastCard_PopulatesDecisionViaResolver()
+    {
+        var ur = NewInStartList();
+        ur.Start();
+        ur.ScorePeriod("R1", EvenCards(10, 9));
+        ur.ScorePeriod("R2", EvenCards(10, 9));
+        ur.ScorePeriod("R3", EvenCards(10, 9));
+
+        ur.Decision.Should().NotBeNull();
+        ur.Decision!.Code.Should().Be(ResultCode.Wp);
+        ur.Decision.DecisionMark.Should().Be("3:0");
+        ur.Status.Should().Be(ResultStatus.Live); // not yet Official — Confirm is separate
+    }
 }
