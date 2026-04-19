@@ -35,17 +35,19 @@ public sealed class MongoUnitResultRepository : IUnitResultRepository
         return docs.Select(UnitResultMapping.ToDomain).ToList();
     }
 
-    public async Task SaveNewAsync(UnitResult unitResult, CancellationToken ct)
+    public async Task<bool> SaveNewAsync(UnitResult unitResult, CancellationToken ct)
     {
         try
         {
             var doc = UnitResultMapping.ToDocument(unitResult);
             await _collection.InsertOneAsync(doc, cancellationToken: ct);
+            return true;
         }
         catch (MongoWriteException ex) when (
             ex.WriteError?.Category == ServerErrorCategory.DuplicateKey)
         {
-            // Idempotent: another event instance created it concurrently. No-op.
+            // Idempotent: another event instance created it concurrently.
+            return false;
         }
     }
 

@@ -9,6 +9,6 @@ public interface IUnitResultRepository
     Task<IReadOnlyList<UnitResult>> GetManyAsync(
         IReadOnlyList<string> unitRscs, CancellationToken ct);
     Task<IReadOnlyList<UnitResult>> ListAllAsync(CancellationToken ct);
-    Task SaveNewAsync(UnitResult unitResult, CancellationToken ct);
+    Task<bool> SaveNewAsync(UnitResult unitResult, CancellationToken ct);
     Task UpdateAsync(UnitResult unitResult, CancellationToken ct);
 }

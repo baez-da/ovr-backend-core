@@ -75,7 +75,16 @@ public sealed class UnitScheduledEventHandler : INotificationHandler<UnitSchedul
         }
 
         var unitResult = created.Value;
-        await _repository.SaveNewAsync(unitResult, ct);
+        var inserted = await _repository.SaveNewAsync(unitResult, ct);
+
+        if (!inserted)
+        {
+            _logger.LogInformation(
+                "Concurrent create for {UnitRsc} resolved via duplicate-key; skipping event publication.",
+                notification.UnitRsc);
+            unitResult.ClearDomainEvents();
+            return;
+        }
 
         foreach (var domainEvent in unitResult.DomainEvents)
         {

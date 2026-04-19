@@ -48,6 +48,9 @@ public class UnitScheduledEventHandlerTests
                 new(ParticipantId.Create("NOC-ESP-0001"), 1, Organisation.Create("ESP")),
                 new(ParticipantId.Create("NOC-POL-0014"), 8, Organisation.Create("POL"))
             });
+        _repository.SaveNewAsync(
+            Arg.Any<OVR.Modules.DataEntry.Domain.UnitResult>(), Arg.Any<CancellationToken>())
+            .Returns(true);
 
         await Handler().Handle(Evt(), default);
 
@@ -81,5 +84,31 @@ public class UnitScheduledEventHandlerTests
 
         await _repository.DidNotReceive().SaveNewAsync(
             Arg.Any<OVR.Modules.DataEntry.Domain.UnitResult>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenDuplicateKeyOnInsert_DoesNotPublishEvent()
+    {
+        // Race: ExistsAsync returned false but a concurrent insert beat us to E11000.
+        _repository.ExistsAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(false);
+        _lineupReader.GetSeedsForUnit(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns((1, 8));
+        _entryReader.ListActiveByEventRsc(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(new List<EntryDto>
+            {
+                new(ParticipantId.Create("NOC-ESP-0001"), 1, Organisation.Create("ESP")),
+                new(ParticipantId.Create("NOC-POL-0014"), 8, Organisation.Create("POL"))
+            });
+        _repository.SaveNewAsync(
+            Arg.Any<OVR.Modules.DataEntry.Domain.UnitResult>(), Arg.Any<CancellationToken>())
+            .Returns(false);
+
+        await Handler().Handle(Evt(), default);
+
+        await _repository.Received(1).SaveNewAsync(
+            Arg.Any<OVR.Modules.DataEntry.Domain.UnitResult>(), Arg.Any<CancellationToken>());
+        await _publisher.DidNotReceive().Publish(
+            Arg.Any<UnitResultStartListCreatedEvent>(), Arg.Any<CancellationToken>());
     }
 }
