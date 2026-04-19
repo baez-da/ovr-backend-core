@@ -4,6 +4,5 @@ public enum ResultStatus
 {
     StartList,
     Live,
-    Unofficial,
     Official
 }
