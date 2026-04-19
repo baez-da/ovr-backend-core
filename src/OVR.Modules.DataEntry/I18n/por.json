@@ -1,0 +1,14 @@
+{
+  "DataEntry.UnitResultNotFound": "Resultado da unidade '{Rsc}' não encontrado.",
+  "DataEntry.InvalidCompetitors": "{Message}",
+  "DataEntry.InvalidStatusTransition": "Não é possível transicionar de {From} para {To}.",
+  "DataEntry.InvalidScorecardCount": "São necessários exatamente 3 cartões (J1, J2, J3).",
+  "DataEntry.InvalidScoreRange": "A pontuação {Value} está fora do intervalo permitido [6..10].",
+  "DataEntry.DuplicateJudgePosition": "A posição do juiz {Pos} aparece mais de uma vez.",
+  "DataEntry.InvalidPeriodOrder": "Não é possível pontuar o período {Code} fora de ordem.",
+  "DataEntry.PeriodAlreadyScored": "O período {Code} já foi pontuado.",
+  "DataEntry.DecisionAlreadyExists": "Não é possível modificar a pontuação após uma decisão registrada.",
+  "DataEntry.InvalidPeriodCode": "Código de período '{Code}' inválido. Esperado R1, R2 ou R3.",
+  "DataEntry.InvalidStoppageData": "{Reason}",
+  "DataEntry.DecisionRequired": "Não é possível confirmar sem uma decisão registrada."
+}
