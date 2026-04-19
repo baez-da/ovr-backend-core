@@ -4,6 +4,7 @@ using OVR.SharedKernel.Domain.Events.Integration;
 
 namespace OVR.Modules.Progression.EventHandlers;
 
+#pragma warning disable CS0618 // Type or member is obsolete
 public sealed class ResultConfirmedHandler(ILogger<ResultConfirmedHandler> logger)
     : INotificationHandler<ResultConfirmedEvent>
 {

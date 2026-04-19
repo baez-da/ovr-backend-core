@@ -1,4 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
@@ -13,6 +19,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OVR.SharedKernel\OVR.SharedKernel.csproj" />
+    <ProjectReference Include="..\OVR.Modules.CommonCodes\OVR.Modules.CommonCodes.csproj" />
+    <ProjectReference Include="..\OVR.Modules.CompetitionConfig\OVR.Modules.CompetitionConfig.csproj" />
+    <ProjectReference Include="..\OVR.Modules.Entries\OVR.Modules.Entries.csproj" />
+    <ProjectReference Include="..\OVR.Modules.Scheduling\OVR.Modules.Scheduling.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="I18n\**"
+             Link="I18n.DataEntry\%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@ using OVR.SharedKernel.Domain.Events.Integration;
 
 namespace OVR.Modules.DataDistribution.EventHandlers;
 
+#pragma warning disable CS0618 // Type or member is obsolete
 public sealed class ResultConfirmedDistributionHandler(ILogger<ResultConfirmedDistributionHandler> logger)
     : INotificationHandler<ResultConfirmedEvent>
 {

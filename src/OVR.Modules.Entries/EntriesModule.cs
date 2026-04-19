@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using OVR.Modules.Entries.Contracts;
 using OVR.Modules.Entries.Features.ChangeEntryStatus;
 using OVR.Modules.Entries.Features.CreateEntry;
 using OVR.Modules.Entries.Features.GetEntry;
@@ -16,6 +17,7 @@ public static class EntriesModule
     public static IServiceCollection AddEntriesModule(this IServiceCollection services)
     {
         services.AddScoped<IEntryRepository, MongoEntryRepository>();
+        services.AddScoped<IEntryReader, MongoEntryReader>();
         return services;
     }
 

@@ -9,5 +9,7 @@ public sealed class UnitDocument
     public string EventRsc { get; set; } = string.Empty;
     public string PhaseCode { get; set; } = string.Empty;
     public int UnitNumber { get; set; }
+    public int? SeedA { get; set; }
+    public int? SeedB { get; set; }
     public DateTime CreatedAt { get; set; }
 }

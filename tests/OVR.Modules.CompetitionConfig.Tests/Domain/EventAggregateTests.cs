@@ -57,7 +57,7 @@ public class EventAggregateTests
 
         var result = evt.GenerateStructure(CompetitionFormat.SingleElimination, size: 4, startUnitNumber: 1, _generator);
 
-        result.Value.Select(r => r.Value).Should().Equal(
+        result.Value.Select(r => r.Rsc.Value).Should().Equal(
             "BOXM57KG--------------SFNL0001----",
             "BOXM57KG--------------SFNL0002----",
             "BOXM57KG--------------FNL-0003----");

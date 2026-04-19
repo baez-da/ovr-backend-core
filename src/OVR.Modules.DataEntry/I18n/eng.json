@@ -1,0 +1,14 @@
+{
+  "DataEntry.UnitResultNotFound": "Unit result '{Rsc}' was not found.",
+  "DataEntry.InvalidCompetitors": "{Message}",
+  "DataEntry.InvalidStatusTransition": "Cannot transition from {From} to {To}.",
+  "DataEntry.InvalidScorecardCount": "Exactly 3 scorecards are required (J1, J2, J3).",
+  "DataEntry.InvalidScoreRange": "Score {Value} is outside the allowed range [6..10].",
+  "DataEntry.DuplicateJudgePosition": "Judge position {Pos} appears more than once.",
+  "DataEntry.InvalidPeriodOrder": "Cannot score period {Code} out of order.",
+  "DataEntry.PeriodAlreadyScored": "Period {Code} has already been scored.",
+  "DataEntry.DecisionAlreadyExists": "Cannot modify scoring after a decision has been recorded.",
+  "DataEntry.InvalidPeriodCode": "Invalid period code '{Code}'. Expected one of R1, R2, R3.",
+  "DataEntry.InvalidStoppageData": "{Reason}",
+  "DataEntry.DecisionRequired": "Cannot confirm without a Decision."
+}

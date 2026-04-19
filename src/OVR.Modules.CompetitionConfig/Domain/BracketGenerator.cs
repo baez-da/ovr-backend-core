@@ -2,9 +2,15 @@ namespace OVR.Modules.CompetitionConfig.Domain;
 
 public sealed record PhaseSpec(string Code, int Order, int UnitCount);
 
+/// <summary>
+/// Seed pairing for a single first-round unit. Null for units in later rounds.
+/// </summary>
+public sealed record UnitSeedPairing(int? SeedA, int? SeedB);
+
 public sealed record BracketPlan(
     IReadOnlyList<PhaseSpec> Phases,
-    IReadOnlyList<string> UnitLocalSegments);
+    IReadOnlyList<string> UnitLocalSegments,
+    IReadOnlyList<UnitSeedPairing> UnitSeedPairings);
 
 public sealed class BracketGenerator
 {
@@ -30,7 +36,11 @@ public sealed class BracketGenerator
 
         var phases = new List<PhaseSpec>();
         var segments = new List<string>();
+        var seedPairings = new List<UnitSeedPairing>();
         var unitCounter = startUnitNumber;
+
+        // Compute first-round seed pairings (index 0 = first phase)
+        var firstRoundPairings = ComputeFirstRoundPairings(m);
 
         for (var i = 0; i < phaseCodes.Length; i++)
         {
@@ -41,11 +51,41 @@ public sealed class BracketGenerator
             {
                 var unitBlock = $"{unitCounter:D4}----";
                 segments.Add($"{phaseCodes[i]}{unitBlock}");
+
+                // Only the first phase gets seed pairings
+                if (i == 0)
+                    seedPairings.Add(new UnitSeedPairing(firstRoundPairings[u].SeedA, firstRoundPairings[u].SeedB));
+                else
+                    seedPairings.Add(new UnitSeedPairing(null, null));
+
                 unitCounter++;
             }
         }
 
-        return new BracketPlan(phases, segments);
+        return new BracketPlan(phases, segments, seedPairings);
+    }
+
+    private static IReadOnlyList<(int SeedA, int SeedB)> ComputeFirstRoundPairings(int bracketSize)
+    {
+        var pairings = new List<(int, int)>();
+        var seedOrder = BuildSeedOrder(bracketSize);
+        for (var i = 0; i < bracketSize; i += 2)
+            pairings.Add((seedOrder[i], seedOrder[i + 1]));
+        return pairings;
+    }
+
+    private static int[] BuildSeedOrder(int size)
+    {
+        // Classic recursion: [1,2] → [1,4,3,2] → [1,8,5,4,3,6,7,2] → ...
+        if (size == 1) return [1];
+        var half = BuildSeedOrder(size / 2);
+        var result = new int[size];
+        for (var i = 0; i < half.Length; i++)
+        {
+            result[2 * i] = half[i];
+            result[2 * i + 1] = size + 1 - half[i];
+        }
+        return result;
     }
 
     private static int SmallestPowerOf2AtLeast(int n)

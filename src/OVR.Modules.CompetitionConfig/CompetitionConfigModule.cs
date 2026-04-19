@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using OVR.Modules.CompetitionConfig.Contracts;
 using OVR.Modules.CompetitionConfig.Domain;
 using OVR.Modules.CompetitionConfig.Features.CreateEvent;
 using OVR.Modules.CompetitionConfig.Features.GenerateEventStructure;
@@ -15,6 +16,7 @@ public static class CompetitionConfigModule
     {
         services.AddScoped<IEventRepository, MongoEventRepository>();
         services.AddScoped<IUnitRepository, MongoUnitRepository>();
+        services.AddScoped<IUnitLineupReader, MongoUnitLineupReader>();
         services.AddSingleton<BracketGenerator>();
         return services;
     }
