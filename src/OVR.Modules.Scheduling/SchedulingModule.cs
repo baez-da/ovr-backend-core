@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using OVR.Modules.Scheduling.Contracts;
 using OVR.Modules.Scheduling.Domain;
 using OVR.Modules.Scheduling.Features.CreateSession;
 using OVR.Modules.Scheduling.Features.ListUnitsByLocation;
@@ -18,6 +19,7 @@ public static class SchedulingModule
     {
         services.AddScoped<ISessionRepository, MongoSessionRepository>();
         services.AddScoped<IUnitScheduleRepository, MongoUnitScheduleRepository>();
+        services.AddScoped<IUnitScheduleReader, MongoUnitScheduleReader>();
         services.AddScoped<IScheduleCollisionDetector, ScheduleCollisionDetector>();
         services.AddHostedService<SchedulingIndexInitializer>();
         return services;
