@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\src\OVR.Modules.CommonCodes\OVR.Modules.CommonCodes.csproj" />
     <ProjectReference Include="..\..\src\OVR.Modules.CompetitionConfig\OVR.Modules.CompetitionConfig.csproj" />
     <ProjectReference Include="..\..\src\OVR.Modules.Entries\OVR.Modules.Entries.csproj" />
+    <ProjectReference Include="..\..\src\OVR.Modules.Scheduling\OVR.Modules.Scheduling.csproj" />
   </ItemGroup>
 
   <ItemGroup>
