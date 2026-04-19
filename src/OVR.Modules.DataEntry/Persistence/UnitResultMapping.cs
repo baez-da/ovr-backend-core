@@ -52,18 +52,18 @@ public static class UnitResultMapping
             NocompDetail: c.NocompDetail,
             Seed: c.Seed,
             Organisation: Organisation.Create(c.Organisation),
-            Wlt: c.Wlt is null ? null : Enum.Parse<Wlt>(c.Wlt))).ToList();
+            Wlt: c.Wlt is null ? null : ParseEnum<Wlt>(doc.Id, nameof(c.Wlt), c.Wlt))).ToList();
 
         var periods = doc.Periods.Select(p => new Period(
             p.Code,
             p.Scorecards.Select(s => new PeriodScorecard(
-                Enum.Parse<JudgePosition>(s.JudgePos),
+                ParseEnum<JudgePosition>(doc.Id, nameof(s.JudgePos), s.JudgePos),
                 s.HomeScore,
                 s.AwayScore)).ToList())).ToList();
 
         var decision = doc.Decision is null ? null : new Decision(
-            Enum.Parse<ResultType>(doc.Decision.Type),
-            Enum.Parse<ResultCode>(doc.Decision.Code),
+            ParseEnum<ResultType>(doc.Id, nameof(doc.Decision.Type), doc.Decision.Type),
+            ParseEnum<ResultCode>(doc.Id, nameof(doc.Decision.Code), doc.Decision.Code),
             doc.Decision.DecisionMark,
             doc.Decision.StoppageRound,
             doc.Decision.StoppageTime,
@@ -72,7 +72,7 @@ public static class UnitResultMapping
 
         return UnitResult.Hydrate(
             Rsc.Create(doc.Id),
-            Enum.Parse<ResultStatus>(doc.Status),
+            ParseEnum<ResultStatus>(doc.Id, nameof(doc.Status), doc.Status),
             competitors,
             periods,
             decision,
@@ -81,5 +81,14 @@ public static class UnitResultMapping
             doc.CurrentPeriodCode,
             doc.CreatedAt,
             doc.UpdatedAt);
+    }
+
+    private static TEnum ParseEnum<TEnum>(string docId, string fieldName, string raw)
+        where TEnum : struct, Enum
+    {
+        if (!Enum.TryParse<TEnum>(raw, ignoreCase: false, out var parsed))
+            throw new InvalidOperationException(
+                $"UnitResult '{docId}' has invalid {fieldName} value '{raw}' for enum {typeof(TEnum).Name}.");
+        return parsed;
     }
 }
