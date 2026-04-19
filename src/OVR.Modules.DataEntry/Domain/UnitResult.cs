@@ -250,6 +250,36 @@ public sealed class UnitResult : AggregateRoot<string>
         return Result.Success;
     }
 
+    // Pre-condition: UnitResult is in StartList state. Progression guarantees this by
+    // withholding advancements until UnitResultStartListCreatedEvent has fired.
+    // Revisit if direct-advancement-without-scheduling becomes a requirement.
+    public ErrorOr<Success> AdvanceCompetitor(int slot, ParticipantId participantId)
+    {
+        if (slot < 1 || slot > 2)
+            return DataEntryErrors.InvalidSlot(slot);
+
+        if (Status != ResultStatus.StartList)
+            return DataEntryErrors.UnitNotInStartList(UnitRsc.Value);
+
+        var existing = _competitors.FirstOrDefault(c => c.SortOrder == slot);
+        if (existing is not null && existing.ParticipantId == participantId)
+            return Result.Success; // idempotent no-op
+
+        if (existing is not null && existing.ParticipantId is not null)
+            return DataEntryErrors.SlotConflict(
+                UnitRsc.Value, slot,
+                existing.ParticipantId.Value,
+                participantId.Value);
+
+        // Slot is empty (ParticipantId is null) — fill it.
+        var updated = existing! with { ParticipantId = participantId };
+        var index = _competitors.IndexOf(existing);
+        _competitors[index] = updated;
+        UpdatedAt = DateTime.UtcNow;
+
+        return Result.Success;
+    }
+
     internal static UnitResult Hydrate(
         Rsc unitRsc,
         ResultStatus status,

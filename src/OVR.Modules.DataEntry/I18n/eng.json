@@ -10,5 +10,8 @@
   "DataEntry.DecisionAlreadyExists": "Cannot modify scoring after a decision has been recorded.",
   "DataEntry.InvalidPeriodCode": "Invalid period code '{Code}'. Expected one of R1, R2, R3.",
   "DataEntry.InvalidStoppageData": "{Reason}",
-  "DataEntry.DecisionRequired": "Cannot confirm without a Decision."
+  "DataEntry.DecisionRequired": "Cannot confirm without a Decision.",
+  "DataEntry.UnitNotInStartList": "UnitResult {{unitRsc}} is not in StartList state.",
+  "DataEntry.SlotConflict": "Slot {{slot}} of unit {{unitRsc}} already contains a different participant.",
+  "DataEntry.InvalidSlot": "Slot must be 1 or 2 (got {{slot}})."
 }

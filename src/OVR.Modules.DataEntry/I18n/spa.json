@@ -10,5 +10,8 @@
   "DataEntry.DecisionAlreadyExists": "No se puede modificar la puntuación después de registrar una decisión.",
   "DataEntry.InvalidPeriodCode": "Código de período '{Code}' inválido. Se esperaba R1, R2 o R3.",
   "DataEntry.InvalidStoppageData": "{Reason}",
-  "DataEntry.DecisionRequired": "No se puede confirmar sin una decisión registrada."
+  "DataEntry.DecisionRequired": "No se puede confirmar sin una decisión registrada.",
+  "DataEntry.UnitNotInStartList": "El UnitResult {{unitRsc}} no está en estado StartList.",
+  "DataEntry.SlotConflict": "El slot {{slot}} de la unidad {{unitRsc}} ya tiene otro participante.",
+  "DataEntry.InvalidSlot": "El slot debe ser 1 o 2 (recibido {{slot}})."
 }
