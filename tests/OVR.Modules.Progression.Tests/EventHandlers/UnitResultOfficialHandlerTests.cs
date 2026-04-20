@@ -12,9 +12,9 @@ namespace OVR.Modules.Progression.Tests.EventHandlers;
 
 public class UnitResultOfficialHandlerTests
 {
-    private const string EventRsc = "BOXM54KG--------------";       // 22 chars
-    private const string SourceUnit = EventRsc + "SFNL0001----";   // 34 chars
-    private const string TargetUnit = EventRsc + "FNL-0001----";   // 34 chars
+    private const string EventRsc = "BOXM54KG--------------------------";  // 34 chars (event-level, padded)
+    private const string SourceUnit = "BOXM54KG--------------SFNL0001----"; // 34 chars
+    private const string TargetUnit = "BOXM54KG--------------FNL-0001----"; // 34 chars
 
     private readonly IBracketProgressionRepository _repo = Substitute.For<IBracketProgressionRepository>();
     private readonly IPublisher _publisher = Substitute.For<IPublisher>();

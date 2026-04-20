@@ -2,9 +2,9 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using OVR.Modules.Progression.Domain;
 using OVR.Modules.Progression.Persistence;
-using OVR.SharedKernel.Domain;
 using OVR.SharedKernel.Domain.Events.Integration;
 using OVR.SharedKernel.Domain.Progression;
+using OVR.SharedKernel.Domain.ValueObjects;
 
 namespace OVR.Modules.Progression.EventHandlers;
 
@@ -16,7 +16,7 @@ public sealed class UnitResultOfficialHandler(
 {
     public async Task Handle(UnitResultOfficialEvent notification, CancellationToken ct)
     {
-        var eventRsc = RscParser.GetEventRscFromUnitRsc(notification.UnitRsc);
+        var eventRsc = Rsc.Create(notification.UnitRsc).AtEventLevel();
         var agg = await repository.GetByEventAsync(eventRsc, ct);
         if (agg is null)
         {
