@@ -13,7 +13,6 @@ public static class ProgressionModule
     public static IServiceCollection AddProgressionModule(this IServiceCollection services)
     {
         services.AddScoped<IBracketProgressionRepository, MongoBracketProgressionRepository>();
-        services.AddHostedService<ProgressionIndexInitializer>();
 
         var assembly = Assembly.GetExecutingAssembly();
         // MediatR handlers are registered globally via Program.cs (covers all module assemblies).
