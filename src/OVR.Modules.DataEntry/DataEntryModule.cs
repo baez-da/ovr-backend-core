@@ -1,6 +1,5 @@
 using System.Reflection;
 using FluentValidation;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -27,7 +26,8 @@ public static class DataEntryModule
         services.AddHostedService<DataEntryIndexInitializer>();
 
         var assembly = Assembly.GetExecutingAssembly();
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
+        // MediatR handlers are registered globally via Program.cs (covers all module assemblies).
+        // Only FluentValidation validators need module-level registration here.
         services.AddValidatorsFromAssembly(assembly);
 
         return services;

@@ -1,20 +1,14 @@
 using Microsoft.Extensions.Hosting;
-using MongoDB.Driver;
 
 namespace OVR.Modules.Progression.Persistence;
 
-public sealed class ProgressionIndexInitializer(IMongoDatabase db) : IHostedService
+public sealed class ProgressionIndexInitializer : IHostedService
 {
-    public async Task StartAsync(CancellationToken ct)
+    public Task StartAsync(CancellationToken ct)
     {
-        var collection = db.GetCollection<BracketProgressionDocument>(
-            MongoBracketProgressionRepository.CollectionName);
-
-        var eventRscIdx = new CreateIndexModel<BracketProgressionDocument>(
-            Builders<BracketProgressionDocument>.IndexKeys.Ascending(d => d.EventRsc),
-            new CreateIndexOptions { Unique = true, Name = "eventRsc_unique" });
-
-        await collection.Indexes.CreateOneAsync(eventRscIdx, cancellationToken: ct);
+        // EventRsc is the BsonId (_id), so MongoDB guarantees uniqueness automatically.
+        // No additional indexes are needed for this collection at this time.
+        return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken ct) => Task.CompletedTask;

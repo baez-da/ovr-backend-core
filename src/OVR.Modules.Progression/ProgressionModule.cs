@@ -16,7 +16,8 @@ public static class ProgressionModule
         services.AddHostedService<ProgressionIndexInitializer>();
 
         var assembly = Assembly.GetExecutingAssembly();
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
+        // MediatR handlers are registered globally via Program.cs (covers all module assemblies).
+        // Only FluentValidation validators need module-level registration here.
         services.AddValidatorsFromAssembly(assembly);
 
         return services;

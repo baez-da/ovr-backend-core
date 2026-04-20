@@ -46,10 +46,40 @@ public sealed class UnitScheduledEventHandler : INotificationHandler<UnitSchedul
         }
 
         var (seedA, seedB) = await _lineupReader.GetSeedsForUnit(notification.UnitRsc, ct);
+        if (seedA is null && seedB is null)
+        {
+            // Later-round unit: no seeds assigned yet — create an empty StartList UnitResult
+            // with two placeholder slots so Progression can fill them via CompetitorAdvanced.
+            var laterCreated = UnitResult.CreateForLaterRound(Rsc.Create(notification.UnitRsc));
+            if (laterCreated.IsError)
+            {
+                _logger.LogWarning(
+                    "Failed to create later-round UnitResult for {UnitRsc}: {Error}",
+                    notification.UnitRsc, laterCreated.FirstError.Description);
+                return;
+            }
+
+            var laterUnit = laterCreated.Value;
+            var laterInserted = await _repository.SaveNewAsync(laterUnit, ct);
+            if (!laterInserted)
+            {
+                _logger.LogInformation(
+                    "Concurrent create for later-round {UnitRsc} resolved via duplicate-key; skipping event publication.",
+                    notification.UnitRsc);
+                laterUnit.ClearDomainEvents();
+                return;
+            }
+
+            foreach (var domainEvent in laterUnit.DomainEvents)
+                await _publisher.Publish(domainEvent, ct);
+            laterUnit.ClearDomainEvents();
+            return;
+        }
+
         if (seedA is null || seedB is null)
         {
             _logger.LogWarning(
-                "Unit {UnitRsc} has no seeds assigned; skipping lineup fill.",
+                "Unit {UnitRsc} has exactly one null seed (unusual configuration); skipping lineup fill.",
                 notification.UnitRsc);
             return;
         }

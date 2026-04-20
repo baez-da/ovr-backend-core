@@ -251,6 +251,46 @@ public sealed class UnitResult : AggregateRoot<string>
     }
 
     /// <summary>
+    /// Creates an empty StartList UnitResult for a later-round unit whose competitors
+    /// have not yet advanced. The two competitor slots are initialised with no ParticipantId;
+    /// they are filled later via <see cref="AdvanceCompetitor"/>.
+    /// Raises <see cref="UnitResultStartListCreatedEvent"/> so Progression can flush any
+    /// buffered advancements immediately.
+    /// </summary>
+    public static ErrorOr<UnitResult> CreateForLaterRound(Rsc unitRsc)
+    {
+        if (unitRsc is null)
+            return DataEntryErrors.InvalidCompetitors("UnitRsc is required.");
+
+        var now = DateTime.UtcNow;
+        var ur = new UnitResult
+        {
+            Id = unitRsc.Value,
+            UnitRsc = unitRsc,
+            Status = ResultStatus.StartList,
+            CreatedAt = now
+        };
+
+        // Two empty slots — ParticipantId is null until a competitor advances in.
+        var red  = new Competitor(1, null, null, null, Organisation.Create("TBD"), null);
+        var blue = new Competitor(2, null, null, null, Organisation.Create("TBD"), null);
+        ur._competitors.Add(red);
+        ur._competitors.Add(blue);
+
+        ur.RaiseDomainEvent(new UnitResultStartListCreatedEvent(
+            UnitRsc: unitRsc.Value,
+            EventRsc: Rsc.Create(unitRsc.AtEventLevel()).Value,
+            Competitors: new[]
+            {
+                new CompetitorSnapshot(red.SortOrder,  red.ParticipantId?.Value,  red.Seed,  red.Organisation.Code),
+                new CompetitorSnapshot(blue.SortOrder, blue.ParticipantId?.Value, blue.Seed, blue.Organisation.Code)
+            },
+            CreatedAt: now));
+
+        return ur;
+    }
+
+    /// <summary>
     /// Creates a UnitResult that is immediately Official because the opponent is a bye.
     /// Raises both <see cref="UnitResultStartListCreatedEvent"/> and
     /// <see cref="UnitResultOfficialEvent"/> so downstream handlers receive the full
@@ -270,11 +310,22 @@ public sealed class UnitResult : AggregateRoot<string>
                 "Bye winner must have SortOrder 1 or 2.");
 
         var now = DateTime.UtcNow;
+
+        // Bye = walkover (Wo). No periods, no scoring → Rm decision type.
+        var byeDecision = new Decision(
+            Type: ResultType.Rm,
+            Code: ResultCode.Wo,
+            DecisionMark: null,
+            StoppageRound: null,
+            StoppageTime: null,
+            WinnerParticipantId: winner.ParticipantId);
+
         var ur = new UnitResult
         {
             Id = unitRsc.Value,
             UnitRsc = unitRsc,
             Status = ResultStatus.Official,
+            Decision = byeDecision,
             CreatedAt = now,
             UpdatedAt = now,
             EndedAt = now
@@ -304,8 +355,8 @@ public sealed class UnitResult : AggregateRoot<string>
         ur.RaiseDomainEvent(new UnitResultOfficialEvent(
             UnitRsc: unitRsc.Value,
             WinnerParticipantId: winnerWithWlt.ParticipantId?.Value,
-            ResultCode: "BYE",
-            ResultType: "BYE",
+            ResultCode: byeDecision.Code.ToString(),
+            ResultType: byeDecision.Type.ToString(),
             DecisionMark: null,
             StoppageRound: null,
             StoppageTime: null,
