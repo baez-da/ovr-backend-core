@@ -15,4 +15,14 @@
     <ProjectReference Include="..\OVR.SharedKernel\OVR.SharedKernel.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="OVR.Modules.Progression.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="I18n\**"
+             Link="I18n.Progression\%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

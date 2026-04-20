@@ -1,0 +1,7 @@
+{
+  "Progression.BracketNotFound": "No se encontró la progresión para el evento {{eventRsc}}.",
+  "Progression.DuplicateEdge": "Arista duplicada desde la unidad {{sourceUnitRsc}} con resultado {{outcome}}.",
+  "Progression.DuplicateTargetSlot": "El slot {{targetSlot}} de la unidad {{targetUnitRsc}} tiene más de un predecesor.",
+  "Progression.InvalidSlot": "El slot debe ser 1 o 2 (recibido {{slot}}).",
+  "Progression.InvalidEventRsc": "EventRsc es requerido."
+}

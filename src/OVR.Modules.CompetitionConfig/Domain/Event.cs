@@ -102,13 +102,24 @@ public sealed class Event : AggregateRoot<string>
                 SeedB: plan.UnitSeedPairings[idx].SeedB))
             .ToList();
 
+        // Prefix each edge's source and target with the event RSC prefix so that
+        // Progression can match against full 34-char unit RSCs (which all modules use).
+        var fullEdges = plan.Edges
+            .Select(e => e with
+            {
+                SourceUnitRsc = eventPrefix + e.SourceUnitRsc,
+                TargetUnitRsc = eventPrefix + e.TargetUnitRsc
+            })
+            .ToList();
+
         RaiseDomainEvent(new EventStructureGeneratedEvent(
             EventRsc: Id,
             Format: format.ToString(),
             Size: size,
             Phases: plan.Phases.Select(p => new PhaseInfo(p.Code, p.Order, p.UnitCount)).ToList(),
             UnitRscs: unitEntries.Select(e => e.Rsc.Value).ToList(),
-            GeneratedAt: StructureGeneratedAt.Value));
+            GeneratedAt: StructureGeneratedAt.Value,
+            Edges: fullEdges));
 
         return unitEntries;
     }

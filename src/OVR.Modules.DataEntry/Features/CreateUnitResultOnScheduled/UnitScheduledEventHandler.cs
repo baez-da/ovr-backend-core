@@ -46,15 +46,97 @@ public sealed class UnitScheduledEventHandler : INotificationHandler<UnitSchedul
         }
 
         var (seedA, seedB) = await _lineupReader.GetSeedsForUnit(notification.UnitRsc, ct);
+        if (seedA is null && seedB is null)
+        {
+            // Later-round unit: no seeds assigned yet — create an empty StartList UnitResult
+            // with two placeholder slots so Progression can fill them via CompetitorAdvanced.
+            var laterCreated = UnitResult.CreateForLaterRound(Rsc.Create(notification.UnitRsc));
+            if (laterCreated.IsError)
+            {
+                _logger.LogWarning(
+                    "Failed to create later-round UnitResult for {UnitRsc}: {Error}",
+                    notification.UnitRsc, laterCreated.FirstError.Description);
+                return;
+            }
+
+            var laterUnit = laterCreated.Value;
+            var laterInserted = await _repository.SaveNewAsync(laterUnit, ct);
+            if (!laterInserted)
+            {
+                _logger.LogInformation(
+                    "Concurrent create for later-round {UnitRsc} resolved via duplicate-key; skipping event publication.",
+                    notification.UnitRsc);
+                laterUnit.ClearDomainEvents();
+                return;
+            }
+
+            foreach (var domainEvent in laterUnit.DomainEvents)
+                await _publisher.Publish(domainEvent, ct);
+            laterUnit.ClearDomainEvents();
+            return;
+        }
+
         if (seedA is null || seedB is null)
         {
             _logger.LogWarning(
-                "Unit {UnitRsc} has no seeds assigned; skipping lineup fill.",
+                "Unit {UnitRsc} has exactly one null seed (unusual configuration); skipping lineup fill.",
                 notification.UnitRsc);
             return;
         }
 
         var activeEntries = await _entryReader.ListActiveByEventRsc(notification.EventRsc, ct);
+
+        // Detect bye: exactly one of the two seeds has a matching entry.
+        var entryA = activeEntries.SingleOrDefault(e => e.Seed == seedA.Value);
+        var entryB = activeEntries.SingleOrDefault(e => e.Seed == seedB.Value);
+
+        if (entryA is not null && entryB is null || entryA is null && entryB is not null)
+        {
+            // One real participant, one bye → create directly in Official state.
+            var realEntry = entryA ?? entryB!;
+            var byeSeed = entryA is not null ? seedB.Value : seedA.Value;
+            // Lower-seed gets slot 1 (red), higher seed gets slot 2 (blue).
+            var winnerSortOrder = realEntry.Seed < byeSeed ? 1 : 2;
+
+            var winner = new Competitor(
+                SortOrder: winnerSortOrder,
+                ParticipantId: realEntry.ParticipantId,
+                NocompDetail: null,
+                Seed: realEntry.Seed,
+                Organisation: realEntry.Organisation,
+                Wlt: null);
+
+            var byeCreated = UnitResult.CreateByeOfficial(
+                Rsc.Create(notification.UnitRsc), winner);
+
+            if (byeCreated.IsError)
+            {
+                _logger.LogWarning(
+                    "Failed to create bye UnitResult for {UnitRsc}: {Error}",
+                    notification.UnitRsc, byeCreated.FirstError.Description);
+                return;
+            }
+
+            var byeUnit = byeCreated.Value;
+            var byeInserted = await _repository.SaveNewAsync(byeUnit, ct);
+
+            if (!byeInserted)
+            {
+                _logger.LogInformation(
+                    "Concurrent create for bye {UnitRsc} resolved via duplicate-key; skipping event publication.",
+                    notification.UnitRsc);
+                byeUnit.ClearDomainEvents();
+                return;
+            }
+
+            foreach (var domainEvent in byeUnit.DomainEvents)
+            {
+                await _publisher.Publish(domainEvent, ct);
+            }
+            byeUnit.ClearDomainEvents();
+            return;
+        }
+
         var lineupResult = _resolver.Resolve(seedA.Value, seedB.Value, activeEntries);
         if (lineupResult.IsError)
         {

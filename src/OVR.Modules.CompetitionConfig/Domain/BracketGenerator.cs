@@ -1,3 +1,5 @@
+using OVR.SharedKernel.Domain.Progression;
+
 namespace OVR.Modules.CompetitionConfig.Domain;
 
 public sealed record PhaseSpec(string Code, int Order, int UnitCount);
@@ -10,7 +12,8 @@ public sealed record UnitSeedPairing(int? SeedA, int? SeedB);
 public sealed record BracketPlan(
     IReadOnlyList<PhaseSpec> Phases,
     IReadOnlyList<string> UnitLocalSegments,
-    IReadOnlyList<UnitSeedPairing> UnitSeedPairings);
+    IReadOnlyList<UnitSeedPairing> UnitSeedPairings,
+    IReadOnlyList<ProgressionEdge> Edges);
 
 public sealed class BracketGenerator
 {
@@ -62,7 +65,53 @@ public sealed class BracketGenerator
             }
         }
 
-        return new BracketPlan(phases, segments, seedPairings);
+        var edges = ComputeEdges(phaseCodes, m, startUnitNumber);
+        return new BracketPlan(phases, segments, seedPairings, edges);
+    }
+
+    private static IReadOnlyList<ProgressionEdge> ComputeEdges(
+        string[] phaseCodes,
+        int bracketSize,
+        int startUnitNumber)
+    {
+        var edges = new List<ProgressionEdge>();
+        var phaseOffsets = ComputePhaseOffsets(phaseCodes, bracketSize, startUnitNumber);
+
+        // No edges out of the final phase.
+        for (var i = 0; i < phaseCodes.Length - 1; i++)
+        {
+            var phaseUnitCount = bracketSize >> (i + 1);
+            var sourceOffset = phaseOffsets[i];
+            var targetOffset = phaseOffsets[i + 1];
+
+            for (var u = 1; u <= phaseUnitCount; u++)
+            {
+                var sourceUnitNumber = sourceOffset + u - 1;
+                var targetUnitIndex = (u + 1) / 2;          // ceil(u / 2)
+                var targetUnitNumber = targetOffset + targetUnitIndex - 1;
+                var targetSlot = (u % 2 == 1) ? 1 : 2;
+
+                edges.Add(new ProgressionEdge(
+                    SourceUnitRsc: $"{phaseCodes[i]}{sourceUnitNumber:D4}----",
+                    Outcome: Outcome.W,
+                    TargetUnitRsc: $"{phaseCodes[i + 1]}{targetUnitNumber:D4}----",
+                    TargetSlot: targetSlot));
+            }
+        }
+
+        return edges;
+    }
+
+    private static int[] ComputePhaseOffsets(string[] phaseCodes, int bracketSize, int startUnitNumber)
+    {
+        var offsets = new int[phaseCodes.Length];
+        var cursor = startUnitNumber;
+        for (var i = 0; i < phaseCodes.Length; i++)
+        {
+            offsets[i] = cursor;
+            cursor += bracketSize >> (i + 1);
+        }
+        return offsets;
     }
 
     private static IReadOnlyList<(int SeedA, int SeedB)> ComputeFirstRoundPairings(int bracketSize)

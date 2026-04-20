@@ -1,0 +1,7 @@
+{
+  "Progression.BracketNotFound": "Bracket progression not found for event {{eventRsc}}.",
+  "Progression.DuplicateEdge": "Duplicate edge from unit {{sourceUnitRsc}} with outcome {{outcome}}.",
+  "Progression.DuplicateTargetSlot": "Target slot {{targetSlot}} of unit {{targetUnitRsc}} is fed by more than one edge.",
+  "Progression.InvalidSlot": "Slot must be 1 or 2 (got {{slot}}).",
+  "Progression.InvalidEventRsc": "EventRsc is required."
+}

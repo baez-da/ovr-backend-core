@@ -49,4 +49,28 @@ public static class DataEntryErrors
     public static Error DecisionRequired() =>
         Error.Validation("DataEntry.DecisionRequired",
             "Cannot confirm without a Decision.");
+
+    public static Error UnitNotInStartList(string unitRsc) =>
+        Error.Conflict(
+            code: "DataEntry.UnitNotInStartList",
+            description: "UnitResult is not in StartList state.",
+            metadata: new Dictionary<string, object> { ["unitRsc"] = unitRsc });
+
+    public static Error SlotConflict(string unitRsc, int slot, string existingParticipantId, string incomingParticipantId) =>
+        Error.Conflict(
+            code: "DataEntry.SlotConflict",
+            description: "Slot already contains a different participant.",
+            metadata: new Dictionary<string, object>
+            {
+                ["unitRsc"] = unitRsc,
+                ["slot"] = slot,
+                ["existingParticipantId"] = existingParticipantId,
+                ["incomingParticipantId"] = incomingParticipantId
+            });
+
+    public static Error InvalidSlot(int slot) =>
+        Error.Validation(
+            code: "DataEntry.InvalidSlot",
+            description: "Slot must be 1 or 2.",
+            metadata: new Dictionary<string, object> { ["slot"] = slot });
 }

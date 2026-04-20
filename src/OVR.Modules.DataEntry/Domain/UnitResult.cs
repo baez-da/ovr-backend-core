@@ -250,6 +250,151 @@ public sealed class UnitResult : AggregateRoot<string>
         return Result.Success;
     }
 
+    /// <summary>
+    /// Creates an empty StartList UnitResult for a later-round unit whose competitors
+    /// have not yet advanced. The two competitor slots are initialised with no ParticipantId;
+    /// they are filled later via <see cref="AdvanceCompetitor"/>.
+    /// Raises <see cref="UnitResultStartListCreatedEvent"/> so Progression can flush any
+    /// buffered advancements immediately.
+    /// </summary>
+    public static ErrorOr<UnitResult> CreateForLaterRound(Rsc unitRsc)
+    {
+        if (unitRsc is null)
+            return DataEntryErrors.InvalidCompetitors("UnitRsc is required.");
+
+        var now = DateTime.UtcNow;
+        var ur = new UnitResult
+        {
+            Id = unitRsc.Value,
+            UnitRsc = unitRsc,
+            Status = ResultStatus.StartList,
+            CreatedAt = now
+        };
+
+        // Two empty slots — ParticipantId is null until a competitor advances in.
+        var red  = new Competitor(1, null, null, null, Organisation.Create("TBD"), null);
+        var blue = new Competitor(2, null, null, null, Organisation.Create("TBD"), null);
+        ur._competitors.Add(red);
+        ur._competitors.Add(blue);
+
+        ur.RaiseDomainEvent(new UnitResultStartListCreatedEvent(
+            UnitRsc: unitRsc.Value,
+            EventRsc: Rsc.Create(unitRsc.AtEventLevel()).Value,
+            Competitors: new[]
+            {
+                new CompetitorSnapshot(red.SortOrder,  red.ParticipantId?.Value,  red.Seed,  red.Organisation.Code),
+                new CompetitorSnapshot(blue.SortOrder, blue.ParticipantId?.Value, blue.Seed, blue.Organisation.Code)
+            },
+            CreatedAt: now));
+
+        return ur;
+    }
+
+    /// <summary>
+    /// Creates a UnitResult that is immediately Official because the opponent is a bye.
+    /// Raises both <see cref="UnitResultStartListCreatedEvent"/> and
+    /// <see cref="UnitResultOfficialEvent"/> so downstream handlers receive the full
+    /// state machine trace even though the unit never enters Live.
+    /// </summary>
+    public static ErrorOr<UnitResult> CreateByeOfficial(Rsc unitRsc, Competitor winner)
+    {
+        if (unitRsc is null)
+            return DataEntryErrors.InvalidCompetitors("UnitRsc is required.");
+
+        if (winner.ParticipantId is null)
+            return DataEntryErrors.InvalidCompetitors(
+                "Bye winner must have a real ParticipantId.");
+
+        if (winner.SortOrder < 1 || winner.SortOrder > 2)
+            return DataEntryErrors.InvalidCompetitors(
+                "Bye winner must have SortOrder 1 or 2.");
+
+        var now = DateTime.UtcNow;
+
+        // Bye = walkover (Wo). No periods, no scoring → Rm decision type.
+        var byeDecision = new Decision(
+            Type: ResultType.Rm,
+            Code: ResultCode.Wo,
+            DecisionMark: null,
+            StoppageRound: null,
+            StoppageTime: null,
+            WinnerParticipantId: winner.ParticipantId);
+
+        var ur = new UnitResult
+        {
+            Id = unitRsc.Value,
+            UnitRsc = unitRsc,
+            Status = ResultStatus.Official,
+            Decision = byeDecision,
+            CreatedAt = now,
+            UpdatedAt = now,
+            EndedAt = now
+        };
+
+        var byeSlot = winner.SortOrder == 1 ? 2 : 1;
+        var bye = new Competitor(byeSlot, null, null, null,
+            Organisation.Create("BYE"), Wlt.L);
+        var winnerWithWlt = winner with { Wlt = Wlt.W };
+
+        ur._competitors.Add(winnerWithWlt);
+        ur._competitors.Add(bye);
+
+        ur.RaiseDomainEvent(new UnitResultStartListCreatedEvent(
+            UnitRsc: unitRsc.Value,
+            EventRsc: Rsc.Create(unitRsc.AtEventLevel()).Value,
+            Competitors: new[]
+            {
+                new CompetitorSnapshot(winnerWithWlt.SortOrder,
+                    winnerWithWlt.ParticipantId?.Value, winnerWithWlt.Seed,
+                    winnerWithWlt.Organisation.Code),
+                new CompetitorSnapshot(bye.SortOrder,
+                    bye.ParticipantId?.Value, bye.Seed, bye.Organisation.Code)
+            },
+            CreatedAt: now));
+
+        ur.RaiseDomainEvent(new UnitResultOfficialEvent(
+            UnitRsc: unitRsc.Value,
+            WinnerParticipantId: winnerWithWlt.ParticipantId?.Value,
+            ResultCode: byeDecision.Code.ToString(),
+            ResultType: byeDecision.Type.ToString(),
+            DecisionMark: null,
+            StoppageRound: null,
+            StoppageTime: null,
+            ConfirmedAt: now));
+
+        return ur;
+    }
+
+    // Pre-condition: UnitResult is in StartList state. Progression guarantees this by
+    // withholding advancements until UnitResultStartListCreatedEvent has fired.
+    // Revisit if direct-advancement-without-scheduling becomes a requirement.
+    public ErrorOr<Success> AdvanceCompetitor(int slot, ParticipantId participantId)
+    {
+        if (slot < 1 || slot > 2)
+            return DataEntryErrors.InvalidSlot(slot);
+
+        if (Status != ResultStatus.StartList)
+            return DataEntryErrors.UnitNotInStartList(UnitRsc.Value);
+
+        var existing = _competitors.FirstOrDefault(c => c.SortOrder == slot);
+        if (existing is not null && existing.ParticipantId == participantId)
+            return Result.Success; // idempotent no-op
+
+        if (existing is not null && existing.ParticipantId is not null)
+            return DataEntryErrors.SlotConflict(
+                UnitRsc.Value, slot,
+                existing.ParticipantId.Value,
+                participantId.Value);
+
+        // Slot is empty (ParticipantId is null) — fill it.
+        var updated = existing! with { ParticipantId = participantId };
+        var index = _competitors.IndexOf(existing);
+        _competitors[index] = updated;
+        UpdatedAt = DateTime.UtcNow;
+
+        return Result.Success;
+    }
+
     internal static UnitResult Hydrate(
         Rsc unitRsc,
         ResultStatus status,
